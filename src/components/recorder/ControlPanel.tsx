@@ -81,7 +81,7 @@ export function ControlPanel({
       </div>
 
       {idle && (
-        <label className="mx-auto flex cursor-pointer items-center gap-3 rounded-full bg-secondary/40 px-5 py-2.5 text-sm ring-1 ring-border/50 transition-all hover:bg-secondary/60 hover:ring-border">
+        <label className="mx-auto flex cursor-pointer items-center gap-3 rounded-full bg-white/[0.04] px-5 py-2.5 text-sm ring-1 ring-border/50 backdrop-blur-sm transition-all hover:bg-white/[0.08] hover:ring-border/80">
           <Switch checked={includeAudio} onCheckedChange={onIncludeAudioChange} />
           <span className="text-muted-foreground select-none">Capture system / tab audio</span>
         </label>
