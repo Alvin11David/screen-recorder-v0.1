@@ -23,7 +23,7 @@ export function RecordingPreview({ stream, status, elapsed, result }: Props) {
   const isLive = status === "recording" || status === "paused";
 
   return (
-    <div className="glass-panel-strong relative aspect-video w-full overflow-hidden rounded-2xl transition-all duration-500">
+    <div className="glass-strong relative aspect-video w-full overflow-hidden rounded-2xl transition-all duration-500">
       {isLive && (
         <video
           ref={liveRef}
@@ -39,7 +39,7 @@ export function RecordingPreview({ stream, status, elapsed, result }: Props) {
 
       {!isLive && !result && (
         <div className="flex h-full w-full flex-col items-center justify-center gap-5 text-center">
-          <div className="rounded-2xl bg-secondary/50 p-6 ring-1 ring-border/50 backdrop-blur-sm transition-all duration-300 group-hover:bg-secondary/70">
+          <div className="rounded-2xl bg-white/[0.04] p-6 ring-1 ring-border/50 backdrop-blur-sm">
             <Monitor className="h-10 w-10 text-primary" strokeWidth={1.5} />
           </div>
           <div>

@@ -33,10 +33,10 @@ export function RecordingInfo({ result, onReset }: Props) {
   ];
 
   return (
-    <div className="glass-panel-strong rounded-2xl p-6 md:p-8">
+    <div className="glass-strong rounded-2xl p-6 md:p-8">
       <div className="flex items-center justify-between gap-3">
         <h2 className="font-display text-xl font-semibold tracking-tight">Recording ready</h2>
-        <span className="rounded-full bg-primary/[0.1] px-3 py-1 text-xs text-primary ring-1 ring-primary/20">
+        <span className="rounded-full bg-primary/[0.1] px-3 py-1 text-xs text-primary ring-1 ring-primary/20 backdrop-blur-sm">
           WebM · High quality
         </span>
       </div>
@@ -45,7 +45,7 @@ export function RecordingInfo({ result, onReset }: Props) {
         {stats.map(({ icon: Icon, label, value }) => (
           <div
             key={label}
-            className="rounded-xl bg-secondary/30 p-4 ring-1 ring-border/50 transition-all duration-200 hover:bg-secondary/50 hover:ring-border/80"
+            className="rounded-xl bg-white/[0.03] p-4 ring-1 ring-border/50 transition-all duration-200 hover:bg-white/[0.06] hover:ring-border/80"
           >
             <div className="flex items-center gap-2 text-muted-foreground/80">
               <Icon className="h-4 w-4" />
