@@ -12,7 +12,7 @@ interface Props {
 
 export function AuthLayout({ title, subtitle, children, footer }: Props) {
   return (
-    <AnimatedShaderHero className="min-h-screen">
+    <LiquidMetalBackground className="min-h-screen">
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-gradient-primary opacity-10 blur-[120px]" />
         <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-gradient-primary opacity-10 blur-[120px]" />
