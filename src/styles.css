@@ -228,3 +228,66 @@
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
+
+@utility focus-ring {
+  outline: none;
+  ring: 2px solid var(--color-ring);
+  ring-offset: 2px;
+  ring-offset-color: transparent;
+}
+
+@utility focus-glow {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-ring), 0 0 20px -4px oklch(0.74 0.15 222 / 30%);
+}
+
+@keyframes border-rotate {
+  to { --border-angle: 360deg; }
+}
+
+@property --border-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@utility card-border-glow {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(
+      from var(--border-angle),
+      transparent 0%,
+      oklch(0.74 0.15 222 / 30%) 25%,
+      transparent 50%,
+      oklch(0.72 0.16 200 / 30%) 75%,
+      transparent 100%
+    );
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    animation: border-rotate 6s linear infinite;
+  }
+}
+
+@utility input-base {
+  width: 100%;
+  border-radius: var(--radius-xl);
+  background-color: oklch(1 0 0 / 4%);
+  padding-left: 2.5rem;
+  padding-right: 0.875rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  &::placeholder {
+    color: oklch(1 0 0 / 22%);
+  }
+  &:focus {
+    outline: none;
+    background-color: oklch(1 0 0 / 7%);
+    box-shadow: 0 0 0 2px var(--color-ring), 0 0 20px -6px oklch(0.74 0.15 222 / 25%);
+  }
+}
