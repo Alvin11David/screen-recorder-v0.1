@@ -50,7 +50,7 @@ function Index() {
 
   return (
     <main className="relative min-h-screen overflow-hidden">
-      <ShaderAnimation className="pointer-events-none fixed inset-0 -z-10 h-screen w-screen opacity-30" />
+      <LiquidMetalBackground className="fixed inset-0 -z-10 h-screen w-screen opacity-30 pointer-events-none" />
 
       <div className="mx-auto flex max-w-5xl flex-col gap-10 px-4 py-12 md:py-16">
         <div className="flex items-center justify-end gap-3">
