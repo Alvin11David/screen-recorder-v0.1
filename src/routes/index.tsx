@@ -6,7 +6,6 @@ import { RecordingPreview } from "@/components/recorder/RecordingPreview";
 import { SourceSelect } from "@/components/recorder/SourceSelect";
 import { ControlPanel } from "@/components/recorder/ControlPanel";
 import { RecordingInfo } from "@/components/recorder/RecordingInfo";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { useScreenRecorder, type CaptureSurface } from "@/hooks/use-screen-recorder";
 
 export const Route = createFileRoute("/")({
@@ -49,14 +48,11 @@ function Index() {
 
   return (
     <main className="relative min-h-screen overflow-hidden">
-      <ShaderAnimation className="pointer-events-none fixed inset-0 -z-10 h-screen w-screen opacity-40" />
+      <ShaderAnimation className="pointer-events-none fixed inset-0 -z-10 h-screen w-screen opacity-30" />
 
       <div className="mx-auto flex max-w-5xl flex-col gap-10 px-4 py-12 md:py-16">
-        <div className="flex justify-end">
-          <ThemeToggle />
-        </div>
         <header className="flex flex-col items-center gap-6 text-center">
-          <span className="glass-panel inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium text-muted-foreground animate-in fade-in slide-in-from-top-4 duration-700">
+          <span className="glass-deep inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium text-muted-foreground">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
             Browser-native · No installs · No watermarks
           </span>
@@ -75,7 +71,7 @@ function Index() {
         </header>
 
         {error && (
-          <div className="glass-panel flex items-start gap-3 rounded-xl border-destructive/40 p-4 text-sm animate-in fade-in slide-in-from-top-2 duration-500">
+          <div className="glass-hover flex items-start gap-3 rounded-xl p-4 text-sm">
             <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
             <p className="text-foreground">{error}</p>
           </div>
@@ -88,7 +84,7 @@ function Index() {
             <SourceSelect value={source} onChange={setSource} disabled={!isIdle} />
           )}
 
-          <div className="glass-panel-strong rounded-2xl p-6 md:p-8">
+          <div className="glass-strong rounded-2xl p-6 md:p-8">
             <ControlPanel
               status={status}
               includeAudio={includeAudio}
