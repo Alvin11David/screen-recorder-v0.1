@@ -69,18 +69,18 @@ export function useScreenRecorder() {
       }
 
       try {
-        const displayStream = await navigator.mediaDevices.getDisplayMedia({
+        const constraints: DisplayMediaStreamOptions = {
           video: {
-            // @ts-expect-error displaySurface is a valid display media hint
             displaySurface: surface,
             frameRate: { ideal: 60, max: 60 },
             width: { ideal: 3840 },
             height: { ideal: 2160 },
-          },
+          } as MediaTrackConstraints,
           audio: includeAudio
             ? { echoCancellation: false, noiseSuppression: false, sampleRate: 44100 }
             : false,
-        });
+        };
+        const displayStream = await navigator.mediaDevices.getDisplayMedia(constraints);
 
         const [videoTrack] = displayStream.getVideoTracks();
         const settings = videoTrack.getSettings();
