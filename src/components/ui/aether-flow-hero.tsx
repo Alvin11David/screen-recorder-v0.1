@@ -2,10 +2,11 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Zap } from "lucide-react";
 
-const cn = (...classes: (string | undefined | null | false)[]): string =>
-  classes.filter(Boolean).join(" ");
+interface AetherFlowHeroProps {
+  children?: React.ReactNode;
+}
 
-const AetherFlowHero = () => {
+const AetherFlowHero = ({ children }: AetherFlowHeroProps) => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
   React.useEffect(() => {
