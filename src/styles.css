@@ -165,7 +165,11 @@
   }
 
   html {
-    color-scheme: dark;
+    color-scheme: light dark;
+  }
+
+  html, body {
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   body {
