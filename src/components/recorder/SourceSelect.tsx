@@ -26,21 +26,33 @@ export function SourceSelect({ value, onChange, disabled }: Props) {
             disabled={disabled}
             onClick={() => onChange(id)}
             className={cn(
-              "glass-panel group flex flex-col gap-2 rounded-xl p-4 text-left transition-all",
-              "hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0",
-              active && "ring-2 ring-primary",
+              "group relative flex flex-col gap-2.5 rounded-xl p-4 text-left transition-all duration-300",
+              "bg-secondary/30 backdrop-blur-sm",
+              "border border-border/50",
+              "hover:border-primary/30 hover:bg-secondary/50 hover:-translate-y-0.5",
+              "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:border-border/50",
+              active && [
+                "border-primary/60 bg-primary/[0.08]",
+                "shadow-[0_0_0_1px_oklch(0.74_0.15_222/0.3),0_0_30px_oklch(0.74_0.15_222/0.1)]",
+              ],
             )}
           >
+            {active && (
+              <span className="absolute inset-0 -z-10 rounded-xl bg-gradient-to-b from-primary/[0.08] to-transparent" />
+            )}
             <span
               className={cn(
-                "flex h-9 w-9 items-center justify-center rounded-lg transition-colors",
-                active ? "bg-gradient-primary text-primary-foreground" : "bg-secondary/60 text-primary",
+                "flex h-10 w-10 items-center justify-center rounded-lg transition-all duration-300",
+                "group-hover:scale-105",
+                active
+                  ? "bg-gradient-primary text-primary-foreground shadow-[0_0_20px_oklch(0.74_0.15_222/0.3)]"
+                  : "bg-secondary/60 text-primary group-hover:bg-secondary",
               )}
             >
               <Icon className="h-5 w-5" strokeWidth={1.75} />
             </span>
             <span className="font-display text-sm font-semibold text-foreground">{label}</span>
-            <span className="text-xs text-muted-foreground">{description}</span>
+            <span className="text-xs text-muted-foreground/80">{description}</span>
           </button>
         );
       })}

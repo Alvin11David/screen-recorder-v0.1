@@ -48,18 +48,17 @@ function Index() {
 
   return (
     <main className="relative min-h-screen overflow-hidden">
-      <ShaderAnimation className="pointer-events-none fixed inset-0 -z-10 h-screen w-screen opacity-30" />
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-background/40" />
+      <ShaderAnimation className="pointer-events-none fixed inset-0 -z-10 h-screen w-screen opacity-40" />
 
-      <div className="mx-auto flex max-w-5xl flex-col gap-8 px-4 py-10 md:py-14">
-        <header className="flex flex-col items-center gap-5 text-center">
-          <span className="glass-panel inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium text-muted-foreground">
+      <div className="mx-auto flex max-w-5xl flex-col gap-10 px-4 py-12 md:py-16">
+        <header className="flex flex-col items-center gap-6 text-center">
+          <span className="glass-panel inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium text-muted-foreground animate-in fade-in slide-in-from-top-4 duration-700">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
             Browser-native · No installs · No watermarks
           </span>
           <div className="flex items-center gap-3">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-primary shadow-[var(--shadow-glow)]">
-              <Video className="h-6 w-6 text-primary-foreground" />
+            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-primary shadow-[var(--shadow-glow)] ring-1 ring-white/10">
+              <Video className="h-7 w-7 text-primary-foreground" />
             </span>
             <h1 className="font-display text-4xl font-bold tracking-tight md:text-5xl">
               ScreenCapture <span className="text-gradient">Pro</span>
@@ -72,20 +71,20 @@ function Index() {
         </header>
 
         {error && (
-          <div className="glass-panel flex items-start gap-3 rounded-xl border-destructive/40 p-4 text-sm">
+          <div className="glass-panel flex items-start gap-3 rounded-xl border-destructive/40 p-4 text-sm animate-in fade-in slide-in-from-top-2 duration-500">
             <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
             <p className="text-foreground">{error}</p>
           </div>
         )}
 
-        <section className="flex flex-col gap-6">
+        <section className="flex flex-col gap-8">
           <RecordingPreview stream={stream} status={status} elapsed={elapsed} result={result} />
 
           {isIdle && !result && (
             <SourceSelect value={source} onChange={setSource} disabled={!isIdle} />
           )}
 
-          <div className="glass-panel rounded-2xl p-6">
+          <div className="glass-panel-strong rounded-2xl p-6 md:p-8">
             <ControlPanel
               status={status}
               includeAudio={includeAudio}
@@ -100,8 +99,8 @@ function Index() {
           {result && <RecordingInfo result={result} onReset={reset} />}
         </section>
 
-        <footer className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-          <ShieldCheck className="h-4 w-4 text-primary" />
+        <footer className="flex items-center justify-center gap-2 text-xs text-muted-foreground/60">
+          <ShieldCheck className="h-3.5 w-3.5 text-primary/60" />
           Recordings never leave your device — everything is processed locally.
         </footer>
       </div>
