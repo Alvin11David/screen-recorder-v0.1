@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { Video } from "lucide-react";
-import { AnimatedShaderHero } from "@/components/ui/animated-shader-hero";
+import { LiquidMetalBackground } from "@/components/ui/liquid-metal-background";
 
 interface Props {
   title: string;
