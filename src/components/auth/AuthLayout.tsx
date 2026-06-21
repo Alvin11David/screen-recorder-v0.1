@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { Video } from "lucide-react";
+import { AnimatedShaderHero } from "@/components/ui/animated-shader-hero";
 import { LiquidMetalBackground } from "@/components/ui/liquid-metal-background";
 
 interface Props {
@@ -8,11 +9,19 @@ interface Props {
   subtitle: string;
   children: ReactNode;
   footer: ReactNode;
+  background?: "shader" | "liquid-metal";
 }
 
-export function AuthLayout({ title, subtitle, children, footer }: Props) {
+const backgrounds = {
+  shader: AnimatedShaderHero,
+  "liquid-metal": LiquidMetalBackground,
+};
+
+export function AuthLayout({ title, subtitle, children, footer, background = "shader" }: Props) {
+  const Bg = backgrounds[background];
+
   return (
-    <LiquidMetalBackground className="min-h-screen">
+    <Bg className="min-h-screen">
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-gradient-primary opacity-10 blur-[120px]" />
         <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-gradient-primary opacity-10 blur-[120px]" />
@@ -41,6 +50,6 @@ export function AuthLayout({ title, subtitle, children, footer }: Props) {
           {footer}
         </p>
       </div>
-    </LiquidMetalBackground>
+    </Bg>
   );
 }
