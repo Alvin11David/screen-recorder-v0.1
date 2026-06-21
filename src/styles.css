@@ -198,3 +198,33 @@
 @utility bg-gradient-destructive {
   background-image: var(--gradient-destructive);
 }
+
+@utility hero-fade-in-down {
+  animation: hero-fade-in-down 0.8s ease-out forwards;
+}
+
+@utility hero-fade-in-up {
+  animation: hero-fade-in-up 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+@utility hero-animate-gradient {
+  background-size: 200% 200%;
+  animation: hero-gradient-shift 3s ease infinite;
+}
+
+@keyframes hero-fade-in-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hero-fade-in-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hero-gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
