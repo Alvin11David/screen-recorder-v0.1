@@ -1,6 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { Mail, AlertCircle, Loader2, ArrowLeft, Check, Video } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState, useRef } from "react";
+import { Mail, AlertCircle, Loader2, ArrowLeft, Video, KeyRound } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import AetherFlowHero from "@/components/ui/aether-flow-hero";
 
@@ -15,10 +15,15 @@ export const Route = createFileRoute("/forgot-password")({
 });
 
 function ForgotPasswordPage() {
+  const navigate = useNavigate();
   const { sendResetLink, isLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+  const [code, setCode] = useState(["", "", "", "", ""]);
+  const [codeError, setCodeError] = useState<string | null>(null);
+  const [verifying, setVerifying] = useState(false);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +32,54 @@ function ForgotPasswordPage() {
     const err = await sendResetLink(email);
     if (err) setError(err);
     else setSent(true);
+  };
+
+  const handleCodeChange = (index: number, value: string) => {
+    if (!/^\d*$/.test(value)) return;
+    const newCode = [...code];
+    newCode[index] = value.slice(-1);
+    setCode(newCode);
+    setCodeError(null);
+
+    if (value && index < 4) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleCodeKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === "Backspace" && !code[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleCodePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 5);
+    const newCode = [...code];
+    for (let i = 0; i < 5; i++) {
+      newCode[i] = pasted[i] || "";
+    }
+    setCode(newCode);
+    const nextIndex = Math.min(pasted.length, 4);
+    inputRefs.current[nextIndex]?.focus();
+  };
+
+  const handleVerifyCode = async () => {
+    const fullCode = code.join("");
+    if (fullCode.length !== 5) { setCodeError("Please enter the full 5-digit code."); return; }
+    setVerifying(true);
+    setCodeError(null);
+    // Simulate verification — in production this would call an API
+    await new Promise((r) => setTimeout(r, 1000));
+    setVerifying(false);
+    navigate({ to: "/login" });
+  };
+
+  const handleSendAgain = () => {
+    setSent(false);
+    setCode(["", "", "", "", ""]);
+    setCodeError(null);
+    sendResetLink(email);
   };
 
   return (
@@ -53,25 +106,57 @@ function ForgotPasswordPage() {
             </h1>
             <p className="mt-2 text-sm text-muted-foreground/80">
               {sent
-                ? "We sent a reset link to the email you provided."
-                : "Enter your email and we'll send you a reset link."}
+                ? `Enter the 5-digit code sent to ${email}`
+                : "Enter your email and we'll send you a reset code."}
             </p>
           </div>
 
           {sent ? (
-            <div className="flex flex-col items-center gap-5 py-6 text-center animate-in fade-in duration-300">
+            <div className="flex flex-col items-center gap-6 py-2 animate-in fade-in duration-300">
               <span className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-primary/20 ring-1 ring-primary/30 shadow-[0_0_30px_-8px_oklch(0.74_0.15_222/40%)]">
-                <Check className="h-7 w-7 text-primary" />
+                <KeyRound className="h-7 w-7 text-primary" />
               </span>
-              <p className="text-sm text-muted-foreground/80 leading-relaxed max-w-xs">
-                If an account exists with <span className="font-medium text-foreground">{email}</span>, you&apos;ll receive a reset link shortly.
-              </p>
-              <button
-                onClick={() => { setSent(false); setEmail(""); }}
-                className="text-xs text-primary/70 hover:text-primary transition-colors"
-              >
-                Send again
-              </button>
+
+              {codeError && (
+                <div className="flex items-start gap-2.5 rounded-xl bg-destructive/10 p-3.5 text-sm ring-1 ring-destructive/20 w-full">
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+                  <p className="text-destructive-foreground/90 leading-snug">{codeError}</p>
+                </div>
+              )}
+
+              <div className="flex items-center gap-3" onPaste={handleCodePaste}>
+                {code.map((digit, i) => (
+                  <input
+                    key={i}
+                    ref={(el) => { inputRefs.current[i] = el; }}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleCodeChange(i, e.target.value)}
+                    onKeyDown={(e) => handleCodeKeyDown(i, e)}
+                    className="h-14 w-12 rounded-xl bg-white/[0.04] text-center text-xl font-semibold text-foreground ring-1 ring-border/50 outline-none transition-all focus:ring-2 focus:ring-primary/50 focus:bg-white/[0.06]"
+                  />
+                ))}
+              </div>
+
+              <div className="flex flex-col gap-3 w-full">
+                <button
+                  onClick={handleVerifyCode}
+                  disabled={verifying}
+                  className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-glow)] transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_0_1px_oklch(1_0_0/6%),0_0_30px_-8px_oklch(0.74_0.15_222/50%)] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:shadow-[var(--shadow-glow)]"
+                >
+                  {verifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />}
+                  {verifying ? "Verifying..." : "Verify code"}
+                </button>
+
+                <button
+                  onClick={handleSendAgain}
+                  className="text-xs text-primary/70 hover:text-primary transition-colors"
+                >
+                  Send again
+                </button>
+              </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
@@ -107,7 +192,7 @@ function ForgotPasswordPage() {
                 className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-glow)] transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_0_1px_oklch(1_0_0/6%),0_0_30px_-8px_oklch(0.74_0.15_222/50%)] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:shadow-[var(--shadow-glow)]"
               >
                 {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mail className="h-4 w-4" />}
-                {isLoading ? "Sending..." : "Send reset link"}
+                {isLoading ? "Sending..." : "Send reset code"}
               </button>
             </form>
           )}
