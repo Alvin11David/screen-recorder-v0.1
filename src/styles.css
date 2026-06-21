@@ -49,7 +49,61 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-:root,
+:root {
+  --radius: 0.625rem;
+  --background: oklch(0.97 0.005 260);
+  --foreground: oklch(0.16 0.025 264);
+  --card: oklch(0.93 0.01 260 / 60%);
+  --card-foreground: oklch(0.16 0.025 264);
+  --popover: oklch(0.95 0.01 260);
+  --popover-foreground: oklch(0.16 0.025 264);
+  --primary: oklch(0.55 0.15 260);
+  --primary-foreground: oklch(0.98 0.005 250);
+  --secondary: oklch(0.88 0.015 260 / 60%);
+  --secondary-foreground: oklch(0.25 0.03 264);
+  --muted: oklch(0.9 0.01 260);
+  --muted-foreground: oklch(0.5 0.03 256);
+  --accent: oklch(0.65 0.16 200);
+  --accent-foreground: oklch(0.16 0.03 264);
+  --destructive: oklch(0.55 0.22 25);
+  --destructive-foreground: oklch(0.98 0.01 20);
+  --border: oklch(0 0 0 / 10%);
+  --input: oklch(0 0 0 / 8%);
+  --ring: oklch(0.55 0.15 260);
+  --chart-1: oklch(0.55 0.15 260);
+  --chart-2: oklch(0.65 0.16 200);
+  --chart-3: oklch(0.65 0.2 80);
+  --chart-4: oklch(0.55 0.25 300);
+  --chart-5: oklch(0.55 0.2 20);
+  --sidebar: oklch(0.93 0.01 260);
+  --sidebar-foreground: oklch(0.16 0.025 264);
+  --sidebar-primary: oklch(0.55 0.15 260);
+  --sidebar-primary-foreground: oklch(0.98 0.005 250);
+  --sidebar-accent: oklch(0.88 0.015 260);
+  --sidebar-accent-foreground: oklch(0.16 0.025 264);
+  --sidebar-border: oklch(0 0 0 / 10%);
+  --sidebar-ring: oklch(0.55 0.15 260);
+
+  --glass-bg: oklch(0.93 0.01 260 / 55%);
+  --glass-border: oklch(0 0 0 / 8%);
+  --gradient-bg: radial-gradient(
+      120% 120% at 15% 0%,
+      oklch(0.7 0.05 240 / 30%) 0%,
+      transparent 55%
+    ),
+    radial-gradient(100% 100% at 100% 100%, oklch(0.65 0.08 200 / 25%) 0%, transparent 55%),
+    linear-gradient(160deg, oklch(0.96 0.01 260) 0%, oklch(0.94 0.01 270) 100%);
+  --gradient-primary: linear-gradient(135deg, oklch(0.55 0.15 260), oklch(0.5 0.16 240));
+  --gradient-accent: linear-gradient(135deg, oklch(0.65 0.16 200), oklch(0.55 0.15 260));
+  --gradient-destructive: linear-gradient(135deg, oklch(0.55 0.22 25), oklch(0.5 0.2 15));
+  --shadow-glow: 0 0 0 1px oklch(0 0 0 / 6%), 0 20px 50px -20px oklch(0.55 0.15 260 / 35%);
+  --shadow-elegant: 0 24px 60px -24px oklch(0 0 0 / 15%);
+  --shadow-glass: 0 8px 32px oklch(0 0 0 / 8%), 0 0 0 1px oklch(0 0 0 / 6%);
+  --shadow-glow-strong: 0 0 0 1px oklch(0 0 0 / 6%), 0 0 30px oklch(0.55 0.15 260 / 20%),
+    0 20px 60px -20px oklch(0.55 0.15 260 / 35%);
+  --shadow-inner-glow: inset 0 1px 0 oklch(1 1 1 / 30%);
+}
+
 .dark {
   --radius: 0.625rem;
   --background: oklch(0.16 0.025 264);
