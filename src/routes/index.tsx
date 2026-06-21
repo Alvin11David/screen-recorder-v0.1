@@ -1,12 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Video, ShieldCheck, Sparkles, AlertCircle } from "lucide-react";
+import { Video, ShieldCheck, Sparkles, AlertCircle, LogIn, User } from "lucide-react";
 import { ShaderAnimation } from "@/components/ui/shader-lines";
 import { RecordingPreview } from "@/components/recorder/RecordingPreview";
 import { SourceSelect } from "@/components/recorder/SourceSelect";
 import { ControlPanel } from "@/components/recorder/ControlPanel";
 import { RecordingInfo } from "@/components/recorder/RecordingInfo";
 import { useScreenRecorder, type CaptureSurface } from "@/hooks/use-screen-recorder";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/")({
   head: () => ({
