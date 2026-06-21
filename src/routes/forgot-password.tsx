@@ -31,6 +31,7 @@ function ForgotPasswordPage() {
 
   return (
     <AuthLayout
+      background="liquid-metal"
       title={sent ? "Check your inbox" : "Reset your password"}
       subtitle={
         sent
