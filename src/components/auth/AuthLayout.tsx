@@ -41,6 +41,6 @@ export function AuthLayout({ title, subtitle, children, footer }: Props) {
           {footer}
         </p>
       </div>
-    </AnimatedShaderHero>
+    </LiquidMetalBackground>
   );
 }
