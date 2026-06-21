@@ -6,6 +6,7 @@ import { RecordingPreview } from "@/components/recorder/RecordingPreview";
 import { SourceSelect } from "@/components/recorder/SourceSelect";
 import { ControlPanel } from "@/components/recorder/ControlPanel";
 import { RecordingInfo } from "@/components/recorder/RecordingInfo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useScreenRecorder, type CaptureSurface } from "@/hooks/use-screen-recorder";
 
 export const Route = createFileRoute("/")({
