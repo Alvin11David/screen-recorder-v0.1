@@ -27,13 +27,13 @@ export function SourceSelect({ value, onChange, disabled }: Props) {
             onClick={() => onChange(id)}
             className={cn(
               "group relative flex flex-col gap-2.5 rounded-xl p-4 text-left transition-all duration-300",
-              "bg-secondary/30 backdrop-blur-sm",
+              "bg-background/40 backdrop-blur-sm",
               "border border-border/50",
-              "hover:border-primary/30 hover:bg-secondary/50 hover:-translate-y-0.5",
-              "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:border-border/50",
+              "hover:border-primary/40 hover:bg-white/[0.04] hover:-translate-y-0.5 hover:shadow-lg",
+              "disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:border-border/50 disabled:hover:shadow-none",
               active && [
-                "border-primary/60 bg-primary/[0.08]",
-                "shadow-[0_0_0_1px_oklch(0.74_0.15_222/0.3),0_0_30px_oklch(0.74_0.15_222/0.1)]",
+                "border-primary/50 bg-primary/[0.08]",
+                "shadow-[0_0_0_1px_oklch(0.74_0.15_222/0.3),0_0_30px_oklch(0.74_0.15_222/0.12)]",
               ],
             )}
           >
@@ -46,7 +46,7 @@ export function SourceSelect({ value, onChange, disabled }: Props) {
                 "group-hover:scale-105",
                 active
                   ? "bg-gradient-primary text-primary-foreground shadow-[0_0_20px_oklch(0.74_0.15_222/0.3)]"
-                  : "bg-secondary/60 text-primary group-hover:bg-secondary",
+                  : "bg-white/[0.06] text-primary group-hover:bg-white/[0.1]",
               )}
             >
               <Icon className="h-5 w-5" strokeWidth={1.75} />
