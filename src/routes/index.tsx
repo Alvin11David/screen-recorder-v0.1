@@ -52,6 +52,9 @@ function Index() {
       <ShaderAnimation className="pointer-events-none fixed inset-0 -z-10 h-screen w-screen opacity-40" />
 
       <div className="mx-auto flex max-w-5xl flex-col gap-10 px-4 py-12 md:py-16">
+        <div className="flex justify-end">
+          <ThemeToggle />
+        </div>
         <header className="flex flex-col items-center gap-6 text-center">
           <span className="glass-panel inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium text-muted-foreground animate-in fade-in slide-in-from-top-4 duration-700">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
