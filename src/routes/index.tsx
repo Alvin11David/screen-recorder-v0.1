@@ -30,6 +30,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const [source, setSource] = useState<CaptureSurface>("monitor");
+  const { isAuthenticated, user, logout } = useAuth();
   const {
     status,
     elapsed,
@@ -52,6 +53,30 @@ function Index() {
       <ShaderAnimation className="pointer-events-none fixed inset-0 -z-10 h-screen w-screen opacity-30" />
 
       <div className="mx-auto flex max-w-5xl flex-col gap-10 px-4 py-12 md:py-16">
+        <div className="flex items-center justify-end gap-3">
+          {isAuthenticated ? (
+            <div className="flex items-center gap-3">
+              <span className="flex items-center gap-2 rounded-full bg-white/[0.04] px-3.5 py-1.5 text-xs text-muted-foreground ring-1 ring-border/50 backdrop-blur-sm">
+                <User className="h-3.5 w-3.5" />
+                {user?.name}
+              </span>
+              <button
+                onClick={logout}
+                className="rounded-lg bg-white/[0.04] px-3 py-1.5 text-xs text-muted-foreground ring-1 ring-border/50 transition-all hover:bg-white/[0.08] hover:text-foreground backdrop-blur-sm"
+              >
+                Sign out
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-white/[0.04] px-3.5 py-1.5 text-xs text-muted-foreground ring-1 ring-border/50 transition-all hover:bg-white/[0.08] hover:text-foreground backdrop-blur-sm"
+            >
+              <LogIn className="h-3.5 w-3.5" />
+              Sign in
+            </Link>
+          )}
+        </div>
         <header className="flex flex-col items-center gap-6 text-center">
           <span className="glass-deep inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium text-muted-foreground">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
