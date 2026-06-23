@@ -72,7 +72,7 @@ export const exchangeGitHubCode = createServerFn({ method: "POST" })
     }
 
     return {
-      email,
+      email: email!,
       name: userData.name || (userData.login as string),
       avatar: userData.avatar_url as string,
       githubUsername: userData.login as string,
