@@ -57,25 +57,23 @@ public class AuthService {
 
         String githubId = userData.get("id").toString();
         String login = (String) userData.get("login");
-        String name = (String) userData.get("name");
+        String rawName = (String) userData.get("name");
         String avatarUrl = (String) userData.get("avatar_url");
-        String email = (String) userData.get("email");
+        String rawEmail = (String) userData.get("email");
 
-        if (name == null || name.isBlank()) name = login;
+        String resolvedName = (rawName == null || rawName.isBlank()) ? login : rawName;
 
-        if (email == null || email.isBlank()) {
-            email = fetchPrimaryGitHubEmail(accessToken);
+        if (rawEmail == null || rawEmail.isBlank()) {
+            rawEmail = fetchPrimaryGitHubEmail(accessToken);
         }
 
-        if (email == null || email.isBlank()) {
-            email = login + "@github.com";
-        }
+        String resolvedEmail = (rawEmail == null || rawEmail.isBlank()) ? login + "@github.com" : rawEmail;
 
-        String finalEmail = email;
-        var user = userRepository.findByEmail(finalEmail).orElseGet(() -> {
+        String email = resolvedEmail;
+        var user = userRepository.findByEmail(email).orElseGet(() -> {
             var newUser = new User();
-            newUser.setName(name);
-            newUser.setEmail(finalEmail);
+            newUser.setName(resolvedName);
+            newUser.setEmail(email);
             newUser.setPassword(passwordEncoder.encode(githubId));
             newUser.setAvatar(avatarUrl);
             newUser.setGithubUsername(login);
