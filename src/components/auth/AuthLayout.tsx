@@ -46,7 +46,7 @@ export function AuthLayout({ title, subtitle, children, footer, background = "sh
           {children}
         </div>
 
-        <p className="text-xs text-muted-foreground/50 hero-fade-in-up" style={{ animationDelay: "0.4s" }}>
+        <p className="text-xs text-muted-foreground/70 hero-fade-in-up" style={{ animationDelay: "0.4s" }}>
           {footer}
         </p>
       </div>
