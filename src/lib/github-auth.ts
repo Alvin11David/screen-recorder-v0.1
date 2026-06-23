@@ -30,6 +30,7 @@ export interface GitHubUser {
   name: string;
   avatar: string;
   githubUsername: string;
+  token: string;
 }
 
 export const exchangeGitHubCode = createServerFn({ method: "POST" })
@@ -55,5 +56,6 @@ export const exchangeGitHubCode = createServerFn({ method: "POST" })
       name: data.name,
       avatar: data.avatar || "",
       githubUsername: data.name,
+      token: data.token,
     };
   });
