@@ -49,6 +49,17 @@ export function SocialLoginButtons({ onSuccess }: Props) {
 
   const handleClick = async (provider: (typeof PROVIDERS)[number]) => {
     setError(null);
+
+    if (provider.id === "github") {
+      try {
+        const url = getGitHubAuthUrl(window.location.origin);
+        window.location.href = url;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to initiate GitHub sign in.");
+      }
+      return;
+    }
+
     const err = await loginWithOAuth(provider.id);
     if (err) setError(err);
     else onSuccess?.();
