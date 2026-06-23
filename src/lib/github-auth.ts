@@ -36,45 +36,24 @@ export const exchangeGitHubCode = createServerFn({ method: "POST" })
   .validator((d: unknown) => d as string)
   .handler(async (ctx): Promise<GitHubUser> => {
     const code = ctx.data;
-    const clientId = process.env.GITHUB_CLIENT_ID;
-    const clientSecret = process.env.GITHUB_CLIENT_SECRET;
+    const apiBase = process.env.API_URL || "http://localhost:8080";
 
-    if (!clientId || !clientSecret) {
-      throw new Error("Missing GitHub OAuth server credentials");
-    }
-
-    const tokenRes = await fetch("https://github.com/login/oauth/access_token", {
+    const res = await fetch(`${apiBase}/api/auth/github/callback`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ client_id: clientId, client_secret: clientSecret, code }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code }),
     });
 
-    const tokenData = await tokenRes.json() as Record<string, string>;
-
-    if (!tokenData.access_token) {
-      throw new Error(tokenData.error_description || "Failed to get GitHub access token");
+    if (!res.ok) {
+      const data = await res.json() as Record<string, string>;
+      throw new Error(data.error || "GitHub authentication failed");
     }
 
-    const userRes = await fetch("https://api.github.com/user", {
-      headers: { Authorization: `Bearer ${tokenData.access_token}`, Accept: "application/json" },
-    });
-
-    const userData = (await userRes.json()) as Record<string, any>;
-
-    let email = userData.email as string | undefined;
-    if (!email) {
-      const emailRes = await fetch("https://api.github.com/user/emails", {
-        headers: { Authorization: `Bearer ${tokenData.access_token}`, Accept: "application/json" },
-      });
-      const emails = (await emailRes.json()) as Array<Record<string, any>>;
-      const primary = emails.find((e) => e.primary);
-      email = primary?.email || `${userData.login}@github.com`;
-    }
-
+    const data = await res.json() as Record<string, string>;
     return {
-      email: email!,
-      name: userData.name || (userData.login as string),
-      avatar: userData.avatar_url as string,
-      githubUsername: userData.login as string,
+      email: data.email,
+      name: data.name,
+      avatar: data.avatar || "",
+      githubUsername: data.name,
     };
   });
