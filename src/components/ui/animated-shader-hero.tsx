@@ -133,15 +133,13 @@ void main(){gl_Position=position;}`;
   }, []);
 
   return (
-    <div className={`relative w-full h-screen bg-black ${className}`}>
-      <div className="absolute inset-0 overflow-hidden">
-        <canvas
-          ref={canvasRef}
-          className="absolute inset-0 w-full h-full touch-none"
-          style={{ background: "black" }}
-        />
-      </div>
-      <div className="relative z-10 w-full h-full overflow-y-auto">
+    <div className={`relative w-full h-screen overflow-hidden bg-black ${className}`}>
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full touch-none"
+        style={{ background: "black" }}
+      />
+      <div className="absolute inset-0 z-10 overflow-y-auto">
         <div className="flex min-h-full items-center justify-center">
           {children}
         </div>
