@@ -41,7 +41,7 @@ function GitHubCallbackPage() {
 
     (async () => {
       try {
-        const user = await exchangeGitHubCode(code);
+        const user = await exchangeGitHubCode({ data: code });
         if (cancelled) return;
         localStorage.setItem("sc-auth-user", JSON.stringify(user));
         setStatus("success");
