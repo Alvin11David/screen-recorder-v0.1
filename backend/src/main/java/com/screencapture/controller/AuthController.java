@@ -46,13 +46,6 @@ public class AuthController {
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest req) {
         authService.sendResetLink(req);
-        return ResponseEntity.ok(new java.util.Map.Entry<>("message", "If that email is registered, a reset link has been sent.") {
-            private final String key = "message";
-            private final String value = "If that email is registered, a reset link has been sent.";
-            @Override
-            public String getKey() { return key; }
-            @Override
-            public String getValue() { return value; }
-        });
+        return ResponseEntity.ok(java.util.Map.of("message", "If that email is registered, a reset link has been sent."));
     }
 }
