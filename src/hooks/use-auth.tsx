@@ -23,6 +23,13 @@ interface AuthContextType extends AuthState {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 const STORAGE_KEY = "sc-auth-user";
+const TOKEN_KEY = "sc-auth-token";
+
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
+function apiUrl(path: string) {
+  return `${API_BASE}${path}`;
+}
 
 function loadUser(): User | null {
   if (typeof window === "undefined") return null;
@@ -41,49 +48,74 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoading: false,
   });
 
-  const login = useCallback(async (email: string, _password: string): Promise<string | null> => {
-    setState((s) => ({ ...s, isLoading: true }));
-    await new Promise((r) => setTimeout(r, 800));
-    const user: User = { email, name: email.split("@")[0] };
+  const setUser = (user: User, token: string) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+    localStorage.setItem(TOKEN_KEY, token);
     setState({ user, isAuthenticated: true, isLoading: false });
-    return null;
+  };
+
+  const login = useCallback(async (email: string, password: string): Promise<string | null> => {
+    setState((s) => ({ ...s, isLoading: true }));
+    try {
+      const res = await fetch(apiUrl("/api/auth/login"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) return data.error || "Login failed";
+      setUser({ email: data.email, name: data.name, avatar: data.avatar }, data.token);
+      return null;
+    } catch {
+      return "Network error — is the backend running?";
+    }
   }, []);
 
-  const register = useCallback(
-    async (name: string, email: string, _password: string): Promise<string | null> => {
-      setState((s) => ({ ...s, isLoading: true }));
-      await new Promise((r) => setTimeout(r, 800));
-      const user: User = { email, name };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-      setState({ user, isAuthenticated: true, isLoading: false });
+  const register = useCallback(async (name: string, email: string, password: string): Promise<string | null> => {
+    setState((s) => ({ ...s, isLoading: true }));
+    try {
+      const res = await fetch(apiUrl("/api/auth/register"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) return data.error || "Registration failed";
+      setUser({ email: data.email, name: data.name, avatar: data.avatar }, data.token);
       return null;
-    },
-    [],
-  );
+    } catch {
+      return "Network error — is the backend running?";
+    }
+  }, []);
 
   const logout = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(TOKEN_KEY);
     setState({ user: null, isAuthenticated: false, isLoading: false });
   }, []);
 
-  const loginWithOAuth = useCallback(
-    async (_provider: "google" | "github" | "microsoft"): Promise<string | null> => {
-      setState((s) => ({ ...s, isLoading: true }));
-      await new Promise((r) => setTimeout(r, 1200));
-      const user: User = { email: "user@example.com", name: "User" };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-      setState({ user, isAuthenticated: true, isLoading: false });
-      return null;
-    },
-    [],
-  );
-
-  const sendResetLink = useCallback(async (_email: string): Promise<string | null> => {
-    setState((s) => ({ ...s, isLoading: true }));
-    await new Promise((r) => setTimeout(r, 1000));
-    setState((s) => ({ ...s, isLoading: false }));
+  const loginWithOAuth = useCallback(async (_provider: "google" | "github" | "microsoft"): Promise<string | null> => {
     return null;
+  }, []);
+
+  const sendResetLink = useCallback(async (email: string): Promise<string | null> => {
+    setState((s) => ({ ...s, isLoading: true }));
+    try {
+      const res = await fetch(apiUrl("/api/auth/forgot-password"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        return data.error || "Failed to send reset link";
+      }
+      return null;
+    } catch {
+      return "Network error — is the backend running?";
+    } finally {
+      setState((s) => ({ ...s, isLoading: false }));
+    }
   }, []);
 
   return (
