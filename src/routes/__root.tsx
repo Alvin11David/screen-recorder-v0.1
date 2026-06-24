@@ -153,6 +153,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <ServiceWorkerRegister />
+        <PwaInstallPrompt />
         <Outlet />
       </AuthProvider>
     </QueryClientProvider>
