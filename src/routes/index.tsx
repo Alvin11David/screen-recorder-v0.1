@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Video, ShieldCheck, Sparkles, AlertCircle, User,
-  Monitor, AppWindow, Globe, Mic, CircleDot, Square, Pause, Play,
+  Monitor, AppWindow, Globe, Mic, Camera, CircleDot, Square, Pause, Play,
   Clock, HardDrive, MonitorPlay, Calendar, Download, RotateCcw, Check,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
