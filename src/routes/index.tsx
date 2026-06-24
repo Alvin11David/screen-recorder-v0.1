@@ -5,7 +5,6 @@ import {
   Video, ShieldCheck, Sparkles, AlertCircle, User,
   Monitor, AppWindow, Globe, Mic, CircleDot, Square, Pause, Play,
   Clock, HardDrive, MonitorPlay, Calendar, Download, RotateCcw, Check,
-  Maximize2, Minimize2, MousePointer2,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
