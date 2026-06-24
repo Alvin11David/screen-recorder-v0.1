@@ -1,7 +1,22 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export type RecorderStatus = "idle" | "recording" | "paused";
+export type RecorderStatus = "idle" | "countdown" | "recording" | "paused";
 export type CaptureSurface = "monitor" | "window" | "browser";
+
+export type QualityPreset = {
+  label: string;
+  short: string;
+  width: number;
+  height: number;
+  bitrateMultiplier: number;
+};
+
+export const QUALITY_PRESETS: QualityPreset[] = [
+  { label: "720p HD", short: "720p", width: 1280, height: 720, bitrateMultiplier: 0.12 },
+  { label: "1080p Full HD", short: "1080p", width: 1920, height: 1080, bitrateMultiplier: 0.15 },
+  { label: "1440p QHD", short: "1440p", width: 2560, height: 1440, bitrateMultiplier: 0.18 },
+  { label: "4K Ultra HD", short: "4K", width: 3840, height: 2160, bitrateMultiplier: 0.18 },
+];
 
 export interface RecordingResult {
   url: string;
@@ -33,10 +48,12 @@ const pickMimeType = (): string => {
 export function useScreenRecorder() {
   const [status, setStatus] = useState<RecorderStatus>("idle");
   const [elapsed, setElapsed] = useState(0);
+  const [countdown, setCountdown] = useState(0);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [result, setResult] = useState<RecordingResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [includeAudio, setIncludeAudio] = useState(true);
+  const [quality, setQuality] = useState<QualityPreset>(QUALITY_PRESETS[1]);
 
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -60,11 +77,12 @@ export function useScreenRecorder() {
     }, 250);
   }, []);
 
-  const startRecording = useCallback(
-    async (surface: CaptureSurface = "monitor") => {
+  const beginCapture = useCallback(
+    async (surface: CaptureSurface) => {
       setError(null);
       if (typeof navigator === "undefined" || !navigator.mediaDevices?.getDisplayMedia) {
         setError("Screen recording isn't supported in this browser.");
+        setStatus("idle");
         return;
       }
 
@@ -72,9 +90,9 @@ export function useScreenRecorder() {
         const constraints: DisplayMediaStreamOptions & { displaySurface?: string } = {
           displaySurface: surface,
           video: {
-            frameRate: { ideal: 60, max: 60 },
-            width: { ideal: 3840 },
-            height: { ideal: 2160 },
+            frameRate: { ideal: 60 },
+            width: { ideal: quality.width },
+            height: { ideal: quality.height },
           } as MediaTrackConstraints,
           audio: includeAudio
             ? { echoCancellation: false, noiseSuppression: false, sampleRate: 44100 }
@@ -84,13 +102,12 @@ export function useScreenRecorder() {
 
         const [videoTrack] = displayStream.getVideoTracks();
         const settings = videoTrack.getSettings();
-        const width = settings.width ?? 0;
-        const height = settings.height ?? 0;
+        const width = settings.width ?? quality.width;
+        const height = settings.height ?? quality.height;
         trackSettingsRef.current = { width, height };
 
-        // Scale bitrate to resolution for high quality, capped at 50 Mbps.
-        const pixels = (width || 1920) * (height || 1080);
-        const bitrate = Math.min(Math.round(pixels * 0.18) + 8_000_000, 50_000_000);
+        const pixels = width * height;
+        const bitrate = Math.min(Math.round(pixels * quality.bitrateMultiplier) + 8_000_000, 50_000_000);
 
         const mimeType = pickMimeType();
         const recorder = new MediaRecorder(displayStream, {
@@ -104,7 +121,7 @@ export function useScreenRecorder() {
           if (event.data && event.data.size > 0) chunksRef.current.push(event.data);
         };
 
-        recorder.onstop = () => {
+        const handleStop = () => {
           const blob = new Blob(chunksRef.current, { type: mimeType });
           const url = URL.createObjectURL(blob);
           setResult({
@@ -124,17 +141,7 @@ export function useScreenRecorder() {
           triggerDownload(blob);
         };
 
-        function triggerDownload(blob: Blob) {
-          const suggestedName = `screencapture-pro_${new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19)}.webm`;
-          const a = document.createElement("a");
-          a.href = URL.createObjectURL(blob);
-          a.download = suggestedName;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-        }
-
-        // User stops sharing via browser UI.
+        recorder.onstop = handleStop;
         videoTrack.addEventListener("ended", () => {
           if (recorderRef.current && recorderRef.current.state !== "inactive") {
             accumulatedRef.current += (Date.now() - startTimeRef.current) / 1000;
@@ -160,8 +167,31 @@ export function useScreenRecorder() {
         setStatus("idle");
       }
     },
-    [includeAudio, startTimer],
+    [includeAudio, quality, startTimer],
   );
+
+  const startRecording = useCallback(
+    (surface: CaptureSurface = "monitor") => {
+      setCountdown(3);
+      setStatus("countdown");
+      const interval = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            beginCapture(surface);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    },
+    [beginCapture],
+  );
+
+  const cancelCountdown = useCallback(() => {
+    setStatus("idle");
+    setCountdown(0);
+  }, []);
 
   const pauseRecording = useCallback(() => {
     const recorder = recorderRef.current;
@@ -212,15 +242,29 @@ export function useScreenRecorder() {
   return {
     status,
     elapsed,
+    countdown,
     stream,
     result,
     error,
     includeAudio,
     setIncludeAudio,
+    quality,
+    setQuality,
     startRecording,
+    cancelCountdown,
     pauseRecording,
     resumeRecording,
     stopRecording,
     reset,
   };
+}
+
+function triggerDownload(blob: Blob) {
+  const suggestedName = `screencapture-pro_${new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19)}.webm`;
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = suggestedName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
 }
