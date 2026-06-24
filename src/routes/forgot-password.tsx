@@ -127,7 +127,56 @@ function ForgotPasswordPage() {
             </p>
           </div>
 
-          {sent ? (
+          {codeVerified ? (
+            <div className="flex flex-col items-center gap-5 py-2 animate-in fade-in duration-300">
+              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/10 ring-1 ring-emerald-500/30">
+                <KeyRound className="h-7 w-7 text-emerald-500" />
+              </span>
+              <p className="text-sm text-emerald-500 font-medium">Code verified</p>
+
+              {resetError && (
+                <div className="flex items-start gap-2.5 rounded-xl bg-destructive/10 p-3.5 text-sm ring-1 ring-destructive/20 w-full">
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+                  <p className="text-destructive-foreground/90 leading-snug">{resetError}</p>
+                </div>
+              )}
+
+              <div className="flex flex-col gap-1.5 w-full">
+                <label htmlFor="new-password" className="text-xs font-medium text-muted-foreground/70 tracking-wider uppercase">
+                  New password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 pointer-events-none" />
+                  <input
+                    id="new-password"
+                    type={showPassword ? "text" : "password"}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="At least 6 characters"
+                    autoComplete="new-password"
+                    className="input-base h-12 pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-muted-foreground transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <Lock className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                onClick={handleResetPassword}
+                disabled={resetting}
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-glow)] transition-all duration-300 hover:brightness-110 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {resetting ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />}
+                {resetting ? "Resetting..." : "Reset password"}
+              </button>
+            </div>
+          ) : sent ? (
             <div className="flex flex-col items-center gap-6 py-2 animate-in fade-in duration-300">
               <span className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-primary/20 ring-1 ring-primary/30 shadow-[0_0_30px_-8px_oklch(0.74_0.15_222/40%)]">
                 <KeyRound className="h-7 w-7 text-primary" />
