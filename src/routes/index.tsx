@@ -5,18 +5,49 @@ import {
   Video, ShieldCheck, Sparkles, AlertCircle, User,
   Monitor, AppWindow, Globe, Mic, CircleDot, Square, Pause, Play,
   Clock, HardDrive, MonitorPlay, Calendar, Download, RotateCcw, Check,
+  Maximize2, Minimize2, MousePointer2,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import { useScreenRecorder, type CaptureSurface, type RecordingResult } from "@/hooks/use-screen-recorder";
+import {
+  useScreenRecorder, type CaptureSurface, type RecordingResult,
+  QUALITY_PRESETS, type QualityPreset,
+} from "@/hooks/use-screen-recorder";
 import { formatTimer, formatBytes, formatResolution } from "@/lib/recording-utils";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
+import { ClickFX } from "@/components/recorder/ClickFX";
+import { CursorFX } from "@/components/recorder/CursorFX";
+import { CountdownOverlay } from "@/components/recorder/CountdownOverlay";
 
-const SOURCES: { id: CaptureSurface; label: string; icon: typeof Monitor }[] = [
-  { id: "monitor", label: "Entire Screen", icon: Monitor },
-  { id: "window", label: "Specific Window", icon: AppWindow },
-  { id: "browser", label: "Browser Tab", icon: Globe },
+const SOURCES: {
+  id: CaptureSurface;
+  label: string;
+  icon: typeof Monitor;
+  description: string;
+  tip: string;
+}[] = [
+  {
+    id: "monitor",
+    label: "Entire Screen",
+    icon: Monitor,
+    description: "Capture everything visible — all monitors, windows, and the desktop.",
+    tip: "Best for multi-app walkthroughs and full presentations.",
+  },
+  {
+    id: "window",
+    label: "Specific Window",
+    icon: AppWindow,
+    description: "Record a single application window. Other content stays hidden.",
+    tip: "Clean recordings — ideal for software demos and tutorials.",
+  },
+  {
+    id: "browser",
+    label: "Browser Tab",
+    icon: Globe,
+    description: "Capture only one browser tab. Switch tabs freely while recording.",
+    tip: "Most private — notifications and other apps stay out of view.",
+  },
 ];
 
 export const Route = createFileRoute("/")({
@@ -128,7 +159,7 @@ function RecordingPreview({
           </div>
           <div className="text-center">
             <p className="text-base font-medium text-white/50">Your preview appears here</p>
-            <p className="mt-1 text-sm text-white/30">Select a source and start recording</p>
+            <p className="mt-1 text-sm text-white/30">Select a source and quality, then start recording</p>
           </div>
         </div>
       )}
@@ -145,8 +176,8 @@ function SourceCards({
   disabled?: boolean;
 }) {
   return (
-    <div className="grid grid-cols-3 gap-3">
-      {SOURCES.map(({ id, label, icon: Icon }) => {
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+      {SOURCES.map(({ id, label, icon: Icon, description, tip }) => {
         const active = value === id;
         return (
           <motion.button
@@ -154,13 +185,13 @@ function SourceCards({
             type="button"
             disabled={disabled}
             onClick={() => { onChange(id); onSelect?.(id); }}
-            whileHover={disabled ? {} : { scale: 1.02, y: -2 }}
-            whileTap={disabled ? {} : { scale: 0.98 }}
+            whileHover={disabled ? {} : { scale: 1.015, y: -1 }}
+            whileTap={disabled ? {} : { scale: 0.985 }}
             className={cn(
-              "relative flex flex-col items-center gap-2.5 rounded-xl p-4 transition-all duration-300",
+              "relative flex flex-col items-start gap-2 rounded-xl p-3.5 text-left transition-all duration-300 text-balance",
               "bg-white/[0.03] backdrop-blur-sm border border-white/[0.06]",
               "hover:border-white/[0.12]",
-              "disabled:cursor-not-allowed disabled:opacity-40",
+              "disabled:cursor-not-allowed disabled:opacity-30",
               active && [
                 "bg-white/[0.06] border-white/[0.15]",
                 "shadow-[0_0_30px_-8px_oklch(0.74_0.15_222/0.2)]",
@@ -174,18 +205,24 @@ function SourceCards({
                 transition={{ type: "spring", stiffness: 400, damping: 30 }}
               />
             )}
-            <span className={cn(
-              "flex h-10 w-10 items-center justify-center rounded-lg transition-all duration-300",
-              active
-                ? "bg-gradient-primary text-white shadow-[0_0_20px_oklch(0.74_0.15_222/0.3)]"
-                : "bg-white/[0.04] text-white/40",
-            )}>
-              <Icon className="h-5 w-5" strokeWidth={1.75} />
-            </span>
-            <span className={cn(
-              "font-display text-sm font-semibold transition-colors",
-              active ? "text-white" : "text-white/50",
-            )}>{label}</span>
+            <div className="flex items-center gap-2.5 w-full">
+              <span className={cn(
+                "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-all duration-300",
+                active
+                  ? "bg-gradient-primary text-white shadow-[0_0_16px_oklch(0.74_0.15_222/0.3)]"
+                  : "bg-white/[0.04] text-white/40",
+              )}>
+                <Icon className="h-4.5 w-4.5" strokeWidth={1.75} />
+              </span>
+              <div className="min-w-0">
+                <span className={cn(
+                  "block font-display text-sm font-semibold transition-colors truncate",
+                  active ? "text-white" : "text-white/60",
+                )}>{label}</span>
+                <span className="block text-[11px] text-white/30 mt-0.5 leading-tight">{description}</span>
+              </div>
+            </div>
+            <span className="text-[10px] text-white/20 leading-tight italic">{tip}</span>
           </motion.button>
         );
       })}
@@ -193,8 +230,79 @@ function SourceCards({
   );
 }
 
+function QualitySelector({
+  value, onChange, disabled,
+}: {
+  value: QualityPreset;
+  onChange: (v: QualityPreset) => void;
+  disabled?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => setOpen(!open)}
+        className={cn(
+          "flex items-center gap-2 rounded-xl px-3.5 py-2.5 text-sm ring-1 ring-white/[0.06]",
+          "bg-white/[0.03] backdrop-blur-sm transition-all",
+          "hover:bg-white/[0.06] hover:ring-white/[0.12]",
+          "disabled:cursor-not-allowed disabled:opacity-40",
+        )}
+      >
+        <MonitorPlay className="h-4 w-4 text-white/40" />
+        <span className="text-white/70 font-medium">{value.label}</span>
+        <svg className="w-3 h-3 text-white/30 ml-1" fill="none" viewBox="0 0 12 12">
+          <path d="M3 5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -4, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -4, scale: 0.96 }}
+            transition={{ duration: 0.15 }}
+            className="absolute bottom-full left-0 mb-2 w-48 rounded-xl bg-black/80 p-1.5 ring-1 ring-white/[0.1] backdrop-blur-2xl shadow-2xl z-20"
+          >
+            {QUALITY_PRESETS.map((preset) => (
+              <button
+                key={preset.short}
+                type="button"
+                onClick={() => { onChange(preset); setOpen(false); }}
+                className={cn(
+                  "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-all",
+                  value.short === preset.short
+                    ? "bg-white/[0.08] text-white"
+                    : "text-white/50 hover:text-white/80 hover:bg-white/[0.04]",
+                )}
+              >
+                <span className={cn(
+                  "flex h-6 w-6 items-center justify-center rounded text-[10px] font-bold uppercase",
+                  value.short === preset.short
+                    ? "bg-gradient-primary text-white"
+                    : "bg-white/[0.05] text-white/30",
+                )}>
+                  {preset.short.replace("p", "")}
+                </span>
+                <div className="flex-1">
+                  <span className="block font-medium leading-tight">{preset.label}</span>
+                  <span className="block text-[10px] text-white/30 mt-0.5">{preset.width}×{preset.height}</span>
+                </div>
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 function ControlBar({
   status, includeAudio, onIncludeAudioChange, onStart, onPause, onResume, onStop, source,
+  quality, onQualityChange,
 }: {
   status: string;
   includeAudio: boolean;
@@ -204,11 +312,18 @@ function ControlBar({
   onResume: () => void;
   onStop: () => void;
   source: CaptureSurface;
+  quality: QualityPreset;
+  onQualityChange: (v: QualityPreset) => void;
 }) {
   const idle = status === "idle";
 
   return (
     <div className="flex flex-col items-center gap-4">
+      {idle && (
+        <div className="flex items-center gap-3 mb-1">
+          <QualitySelector value={quality} onChange={onQualityChange} disabled={!idle} />
+        </div>
+      )}
       <div className="flex items-center gap-3">
         {idle && (
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
@@ -362,12 +477,16 @@ function Index() {
   const [source, setSource] = useState<CaptureSurface>("monitor");
   const { isAuthenticated, user, logout } = useAuth();
   const {
-    status, elapsed, stream, result, error,
+    status, elapsed, countdown, stream, result, error,
     includeAudio, setIncludeAudio,
-    startRecording, pauseRecording, resumeRecording, stopRecording, reset,
+    quality, setQuality,
+    startRecording, cancelCountdown,
+    pauseRecording, resumeRecording, stopRecording, reset,
   } = useScreenRecorder();
 
   const isIdle = status === "idle";
+  const showClickFX = status === "recording";
+  const showCursorFX = status === "recording";
 
   const container = {
     hidden: { opacity: 0 },
@@ -391,11 +510,15 @@ function Index() {
         <div className="absolute inset-0 bg-[image:radial-gradient(oklch(1_0_0/0.03)_1px,transparent_1px)] bg-[size:24px_24px]" />
       </div>
 
+      <ClickFX active={showClickFX} />
+      <CursorFX active={showCursorFX} />
+      <CountdownOverlay countdown={countdown} onCancel={cancelCountdown} />
+
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
-        className="mx-auto max-w-3xl px-4 py-6 md:py-10"
+        className="mx-auto max-w-4xl px-4 py-6 md:py-10"
       >
         <motion.div variants={fadeUp} className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2.5">
@@ -472,7 +595,6 @@ function Index() {
               <SourceCards
                 value={source}
                 onChange={setSource}
-                onSelect={startRecording}
                 disabled={!isIdle}
               />
             </motion.div>
@@ -492,6 +614,8 @@ function Index() {
             onResume={resumeRecording}
             onStop={stopRecording}
             source={source}
+            quality={quality}
+            onQualityChange={setQuality}
           />
         </motion.div>
 
