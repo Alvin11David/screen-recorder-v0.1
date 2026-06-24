@@ -120,9 +120,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const verifyResetCode = useCallback(async (email: string, code: string): Promise<string | null> => {
+    setState((s) => ({ ...s, isLoading: true }));
+    try {
+      const res = await fetch(apiUrl("/api/auth/verify-reset-code"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, code }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        return data.error || "Invalid code";
+      }
+      return null;
+    } catch {
+      return "Network error — is the backend running?";
+    } finally {
+      setState((s) => ({ ...s, isLoading: false }));
+    }
+  }, []);
+
+  const resetPassword = useCallback(async (email: string, code: string, newPassword: string): Promise<string | null> => {
+    setState((s) => ({ ...s, isLoading: true }));
+    try {
+      const res = await fetch(apiUrl("/api/auth/reset-password"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, code, newPassword }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        return data.error || "Failed to reset password";
+      }
+      return null;
+    } catch {
+      return "Network error — is the backend running?";
+    } finally {
+      setState((s) => ({ ...s, isLoading: false }));
+    }
+  }, []);
+
   return (
     <AuthContext.Provider
-      value={{ ...state, login, register, logout, loginWithOAuth, sendResetLink }}
+      value={{ ...state, login, register, logout, loginWithOAuth, sendResetLink, verifyResetCode, resetPassword }}
     >
       {children}
     </AuthContext.Provider>
