@@ -18,6 +18,8 @@ interface AuthContextType extends AuthState {
   logout: () => void;
   loginWithOAuth: (provider: "google" | "github" | "microsoft") => Promise<string | null>;
   sendResetLink: (email: string) => Promise<string | null>;
+  verifyResetCode: (email: string, code: string) => Promise<string | null>;
+  resetPassword: (email: string, code: string, newPassword: string) => Promise<string | null>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
