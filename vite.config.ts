@@ -17,7 +17,6 @@ export default defineConfig({
     plugins: [
       VitePWA({
         registerType: "autoUpdate",
-        injectRegister: null,
         workbox: {
           globPatterns: ["**/*.{js,css,html,woff2,woff,ttf}"],
           runtimeCaching: [
