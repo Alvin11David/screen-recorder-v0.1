@@ -5,6 +5,7 @@ import type { CaptureSurface } from "@/hooks/use-screen-recorder";
 interface Props {
   value: CaptureSurface;
   onChange: (value: CaptureSurface) => void;
+  onSelect?: (surface: CaptureSurface) => void;
   disabled?: boolean;
 }
 
