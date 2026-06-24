@@ -46,6 +46,26 @@ public class AuthController {
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest req) {
         authService.sendResetLink(req);
-        return ResponseEntity.ok(java.util.Map.of("message", "If that email is registered, a reset link has been sent."));
+        return ResponseEntity.ok(java.util.Map.of("message", "If that email is registered, a code has been sent."));
+    }
+
+    @PostMapping("/verify-reset-code")
+    public ResponseEntity<?> verifyResetCode(@Valid @RequestBody VerifyResetCodeRequest req) {
+        try {
+            authService.verifyResetCode(req);
+            return ResponseEntity.ok(java.util.Map.of("message", "Code verified"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest req) {
+        try {
+            authService.resetPassword(req);
+            return ResponseEntity.ok(java.util.Map.of("message", "Password has been reset"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+        }
     }
 }
