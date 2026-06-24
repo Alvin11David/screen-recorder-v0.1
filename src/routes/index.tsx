@@ -31,7 +31,7 @@ export const Route = createFileRoute("/")({
 
 function useAudioMeter(stream: MediaStream | null) {
   const [level, setLevel] = useState(0);
-  const raf = useRef<number>();
+  const raf = useRef(0);
 
   useEffect(() => {
     if (!stream) { setLevel(0); return; }
