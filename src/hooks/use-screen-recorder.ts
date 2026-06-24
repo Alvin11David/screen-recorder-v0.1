@@ -106,7 +106,10 @@ export function useScreenRecorder() {
         trackSettingsRef.current = { width, height };
 
         const pixels = width * height;
-        const bitrate = Math.min(Math.round(pixels * quality.bitrateMultiplier) + 8_000_000, 50_000_000);
+        const bitrate = Math.min(
+          Math.max(Math.round(pixels * 7), 5_000_000),
+          50_000_000,
+        );
 
         const mimeType = pickMimeType();
         const recorder = new MediaRecorder(displayStream, {
