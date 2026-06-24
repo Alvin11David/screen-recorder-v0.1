@@ -133,12 +133,25 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function ServiceWorkerRegister() {
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then(() => console.log("SW registered (offline ready)"))
+        .catch(() => {});
+    }
+  }, []);
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <ServiceWorkerRegister />
         <Outlet />
       </AuthProvider>
     </QueryClientProvider>
