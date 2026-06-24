@@ -9,7 +9,7 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import {
   useScreenRecorder, type CaptureSurface, type RecordingResult,
-  QUALITY_PRESETS, type QualityPreset,
+  QUALITY_PRESETS, type QualityPreset, type CameraSettings,
 } from "@/hooks/use-screen-recorder";
 import { formatTimer, formatBytes, formatResolution } from "@/lib/recording-utils";
 import { Button } from "@/components/ui/button";
