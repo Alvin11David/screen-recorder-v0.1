@@ -74,9 +74,20 @@ function ForgotPasswordPage() {
     if (fullCode.length !== 5) { setCodeError("Please enter the full 5-digit code."); return; }
     setVerifying(true);
     setCodeError(null);
-    // Simulate verification — in production this would call an API
-    await new Promise((r) => setTimeout(r, 1000));
+    const err = await verifyResetCode(email, fullCode);
     setVerifying(false);
+    if (err) { setCodeError(err); return; }
+    setCodeVerified(true);
+  };
+
+  const handleResetPassword = async () => {
+    if (newPassword.length < 6) { setResetError("Password must be at least 6 characters."); return; }
+    setResetting(true);
+    setResetError(null);
+    const fullCode = code.join("");
+    const err = await resetPassword(email, fullCode, newPassword);
+    setResetting(false);
+    if (err) { setResetError(err); return; }
     navigate({ to: "/login" });
   };
 
