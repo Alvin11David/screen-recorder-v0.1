@@ -89,7 +89,7 @@ export function useScreenRecorder() {
         const constraints: DisplayMediaStreamOptions & { displaySurface?: string } = {
           displaySurface: surface,
           video: {
-            frameRate: { ideal: 60 },
+            frameRate: { ideal: 60, max: 60 },
             width: { ideal: quality.width },
             height: { ideal: quality.height },
           } as MediaTrackConstraints,
