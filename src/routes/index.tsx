@@ -530,6 +530,14 @@ function Index() {
       <ClickFX active={showClickFX} />
       <CursorFX active={showCursorFX} />
       <CountdownOverlay countdown={countdown} onCancel={cancelCountdown} />
+      <CameraOverlay
+        cameraStream={cameraStream}
+        position={cameraPosition}
+        onPositionChange={setCameraPosition}
+        settings={cameraSettings}
+        onSettingsChange={setCameraSettings}
+        active={includeCamera && (status === "idle" || status === "countdown")}
+      />
 
       <motion.div
         variants={container}
