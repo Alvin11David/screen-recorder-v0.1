@@ -301,12 +301,15 @@ function QualitySelector({
 }
 
 function ControlBar({
-  status, includeAudio, onIncludeAudioChange, onStart, onPause, onResume, onStop, source,
+  status, includeAudio, onIncludeAudioChange, includeCamera, onIncludeCameraChange,
+  onStart, onPause, onResume, onStop, source,
   quality, onQualityChange,
 }: {
   status: string;
   includeAudio: boolean;
   onIncludeAudioChange: (v: boolean) => void;
+  includeCamera: boolean;
+  onIncludeCameraChange: (v: boolean) => void;
   onStart: () => void;
   onPause: () => void;
   onResume: () => void;
