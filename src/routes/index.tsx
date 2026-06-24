@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Video, ShieldCheck, Sparkles, AlertCircle, LogIn, User,
+  Video, ShieldCheck, Sparkles, AlertCircle, User,
   Monitor, AppWindow, Globe, Mic, CircleDot, Square, Pause, Play,
   Clock, HardDrive, MonitorPlay, Calendar, Download, RotateCcw, Check,
 } from "lucide-react";
