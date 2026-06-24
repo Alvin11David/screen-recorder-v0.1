@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useRef } from "react";
-import { Mail, AlertCircle, Loader2, ArrowLeft, Video, KeyRound } from "lucide-react";
+import { Mail, AlertCircle, Loader2, ArrowLeft, Video, KeyRound, Lock } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import AetherFlowHero from "@/components/ui/aether-flow-hero";
 
