@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { ClickFX } from "@/components/recorder/ClickFX";
 import { CursorFX } from "@/components/recorder/CursorFX";
 import { CountdownOverlay } from "@/components/recorder/CountdownOverlay";
+import { CameraOverlay } from "@/components/recorder/CameraOverlay";
 
 const SOURCES: {
   id: CaptureSurface;
