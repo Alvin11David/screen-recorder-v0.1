@@ -171,7 +171,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{ ...state, login, register, logout, loginWithOAuth, sendResetLink, verifyResetCode, resetPassword }}
     >
-      {children}
+      {hydrated ? children : null}
     </AuthContext.Provider>
   );
 }
