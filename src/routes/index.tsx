@@ -211,7 +211,7 @@ function SourceCards({
                   ? "bg-gradient-primary text-white shadow-[0_0_16px_oklch(0.74_0.15_222/0.3)]"
                   : "bg-white/[0.04] text-white/40",
               )}>
-                <Icon className="h-4.5 w-4.5" strokeWidth={1.75} />
+                <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
               </span>
               <div className="min-w-0">
                 <span className={cn(
