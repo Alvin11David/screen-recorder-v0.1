@@ -9,10 +9,12 @@ interface Props {
 export function LiquidMetalBackground({ children, className = "" }: Props) {
   return (
     <div className={`relative min-h-screen overflow-hidden ${className}`}>
-      <LiquidMetal
-        {...liquidMetalPresets[2]}
-        style={{ position: "fixed", inset: 0, zIndex: 0 }}
-      />
+      <div className="absolute inset-0">
+        <LiquidMetal
+          {...liquidMetalPresets[2]}
+          style={{ width: "100%", height: "100%" }}
+        />
+      </div>
       <div className="relative z-10 flex items-center justify-center min-h-screen">
         {children}
       </div>
