@@ -109,7 +109,12 @@ function Index() {
           </div>
 
           {isIdle && !result && (
-            <SourceSelect value={source} onChange={setSource} disabled={!isIdle} />
+            <SourceSelect
+              value={source}
+              onChange={setSource}
+              onSelect={startRecording}
+              disabled={!isIdle}
+            />
           )}
 
           <div className="glass-strong rounded-2xl p-4">
