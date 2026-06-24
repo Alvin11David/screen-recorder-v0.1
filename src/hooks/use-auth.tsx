@@ -44,11 +44,18 @@ function loadUser(): User | null {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const [hydrated, setHydrated] = useState(false);
   const [state, setState] = useState<AuthState>({
-    user: loadUser(),
-    isAuthenticated: loadUser() !== null,
+    user: null,
+    isAuthenticated: false,
     isLoading: false,
   });
+
+  useEffect(() => {
+    const user = loadUser();
+    setState({ user, isAuthenticated: user !== null, isLoading: false });
+    setHydrated(true);
+  }, []);
 
   const setUser = (user: User, token: string) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
