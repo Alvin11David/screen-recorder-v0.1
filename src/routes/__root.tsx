@@ -156,10 +156,8 @@ function OfflineIndicator() {
 
 function ServiceWorkerRegister() {
   useEffect(() => {
-    if ("serviceWorker" in navigator && !window.location.hostname.includes("lovable")) {
-      import("virtual:pwa-register").then(({ registerSW }) => registerSW()).catch(() => {
-        navigator.serviceWorker.register("/sw.js").catch(() => {});
-      });
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
     }
   }, []);
   return null;
