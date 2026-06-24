@@ -135,7 +135,7 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 function OfflineIndicator() {
-  const [offline, setOffline] = useState(!navigator.onLine);
+  const [offline, setOffline] = useState(false);
   useEffect(() => {
     const on = () => setOffline(false);
     const off = () => setOffline(true);
