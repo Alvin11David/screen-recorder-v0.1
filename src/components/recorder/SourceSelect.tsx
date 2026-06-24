@@ -15,7 +15,7 @@ const SOURCES: { id: CaptureSurface; label: string; description: string; icon: t
   { id: "browser", label: "Browser Tab", description: "One browser tab", icon: Globe },
 ];
 
-export function SourceSelect({ value, onChange, disabled }: Props) {
+export function SourceSelect({ value, onChange, onSelect, disabled }: Props) {
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
       {SOURCES.map(({ id, label, description, icon: Icon }) => {
@@ -25,7 +25,7 @@ export function SourceSelect({ value, onChange, disabled }: Props) {
             key={id}
             type="button"
             disabled={disabled}
-            onClick={() => onChange(id)}
+            onClick={() => { onChange(id); onSelect?.(id); }}
             className={cn(
               "group relative flex flex-col gap-2.5 rounded-xl p-4 text-left transition-all duration-300",
               "bg-background/40 backdrop-blur-sm",
