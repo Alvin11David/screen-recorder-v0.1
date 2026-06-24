@@ -52,7 +52,7 @@ function Index() {
     <main className="relative min-h-screen overflow-hidden">
       <LiquidMetalBackground className="fixed inset-0 -z-10 h-screen w-screen opacity-30 pointer-events-none" />
 
-      <div className="relative z-10 mx-auto flex max-w-5xl flex-col gap-10 px-4 py-12 md:py-16">
+      <div className="relative z-10 mx-auto flex max-w-4xl flex-col gap-3 px-4 py-3 md:py-4">
         <div className="flex items-center justify-end gap-3">
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
@@ -77,40 +77,42 @@ function Index() {
             </Link>
           )}
         </div>
-        <header className="flex flex-col items-center gap-6 text-center">
-          <span className="glass-deep inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium text-muted-foreground">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
+        <header className="flex flex-col items-center gap-1 text-center">
+          <span className="glass-deep inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium text-muted-foreground">
+            <Sparkles className="h-3 w-3 text-primary" />
             Browser-native · No installs · No watermarks
           </span>
-          <div className="flex items-center gap-3">
-            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-primary shadow-[var(--shadow-glow)] ring-1 ring-white/10">
-              <Video className="h-7 w-7 text-primary-foreground" />
+          <div className="flex items-center gap-2">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-primary shadow-[var(--shadow-glow)] ring-1 ring-white/10">
+              <Video className="h-5 w-5 text-primary-foreground" />
             </span>
-            <h1 className="font-display text-4xl font-bold tracking-tight md:text-5xl">
+            <h1 className="font-display text-2xl font-bold tracking-tight md:text-3xl">
               ScreenCapture <span className="text-gradient">Pro</span>
             </h1>
           </div>
-          <p className="max-w-xl text-balance text-muted-foreground">
+          <p className="max-w-xl text-balance text-xs text-muted-foreground">
             Record your screen in the highest quality your display supports and save it directly to
             your device — all without leaving the browser.
           </p>
         </header>
 
         {error && (
-          <div className="glass-hover flex items-start gap-3 rounded-xl p-4 text-sm">
+          <div className="glass-hover flex items-start gap-3 rounded-xl p-3 text-sm">
             <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
             <p className="text-foreground">{error}</p>
           </div>
         )}
 
-        <section className="flex flex-col gap-8">
-          <RecordingPreview stream={stream} status={status} elapsed={elapsed} result={result} />
+        <section className="flex flex-col gap-2">
+          <div className="max-h-[35vh] overflow-hidden rounded-2xl">
+            <RecordingPreview stream={stream} status={status} elapsed={elapsed} result={result} />
+          </div>
 
           {isIdle && !result && (
             <SourceSelect value={source} onChange={setSource} disabled={!isIdle} />
           )}
 
-          <div className="glass-strong rounded-2xl p-6 md:p-8">
+          <div className="glass-strong rounded-2xl p-4">
             <ControlPanel
               status={status}
               includeAudio={includeAudio}
