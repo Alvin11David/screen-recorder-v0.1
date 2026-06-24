@@ -121,7 +121,18 @@ export function useScreenRecorder() {
           setStream(null);
           setStatus("idle");
           clearTimer();
+          triggerDownload(blob);
         };
+
+        function triggerDownload(blob: Blob) {
+          const suggestedName = `screencapture-pro_${new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19)}.webm`;
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = suggestedName;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        }
 
         // User stops sharing via browser UI.
         videoTrack.addEventListener("ended", () => {
