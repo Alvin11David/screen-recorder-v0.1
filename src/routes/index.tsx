@@ -368,7 +368,6 @@ function Index() {
   } = useScreenRecorder();
 
   const isIdle = status === "idle";
-  const isLive = status === "recording" || status === "paused";
 
   const container = {
     hidden: { opacity: 0 },
