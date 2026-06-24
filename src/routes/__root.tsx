@@ -134,9 +134,29 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function OfflineIndicator() {
+  const [offline, setOffline] = useState(!navigator.onLine);
+  useEffect(() => {
+    const on = () => setOffline(false);
+    const off = () => setOffline(true);
+    window.addEventListener("online", on);
+    window.addEventListener("offline", off);
+    return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); };
+  }, []);
+  if (!offline) return null;
+  return (
+    <div className="fixed top-0 left-0 right-0 z-[9999] flex items-center justify-center gap-2 bg-yellow-500/20 py-1.5 text-xs text-yellow-300 backdrop-blur-md ring-1 ring-yellow-500/20">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+        <path d="M1 1l14 14M1 9l2-2M13 7l2-2M4 11l2-2M10 7l2-2M7 10l2-2" />
+      </svg>
+      You're offline — recordings still work and are saved locally
+    </div>
+  );
+}
+
 function ServiceWorkerRegister() {
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
+    if ("serviceWorker" in navigator && !window.location.hostname.includes("lovable")) {
       navigator.serviceWorker
         .register("/sw.js")
         .then(() => console.log("SW registered (offline ready)"))
