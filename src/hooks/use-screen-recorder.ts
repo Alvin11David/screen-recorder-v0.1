@@ -17,6 +17,16 @@ export const QUALITY_PRESETS: QualityPreset[] = [
   { label: "4K Ultra HD", short: "4K", width: 3840, height: 2160 },
 ];
 
+export interface CameraSettings {
+  mirrored: boolean;
+  borderColor: string;
+  borderWidth: number;
+  shadowBlur: number;
+  radius: number;
+}
+
+export const DEFAULT_CAMERA_POSITION = { x: 85, y: 85 };
+
 export interface RecordingResult {
   url: string;
   blob: Blob;
@@ -53,6 +63,16 @@ export function useScreenRecorder() {
   const [error, setError] = useState<string | null>(null);
   const [includeAudio, setIncludeAudio] = useState(true);
   const [quality, setQuality] = useState<QualityPreset>(QUALITY_PRESETS[1]);
+  const [includeCamera, setIncludeCamera] = useState(false);
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
+  const [cameraPosition, setCameraPosition] = useState(DEFAULT_CAMERA_POSITION);
+  const [cameraSettings, setCameraSettings] = useState<CameraSettings>({
+    mirrored: true,
+    borderColor: "#ffffff",
+    borderWidth: 3,
+    shadowBlur: 20,
+    radius: 70,
+  });
 
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -60,6 +80,17 @@ export function useScreenRecorder() {
   const accumulatedRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const trackSettingsRef = useRef<{ width: number; height: number }>({ width: 0, height: 0 });
+
+  // Compositing refs (kept stable for the rAF loop)
+  const camPosRef = useRef(cameraPosition);
+  camPosRef.current = cameraPosition;
+  const camSetRef = useRef(cameraSettings);
+  camSetRef.current = cameraSettings;
+  const compositeRunning = useRef(false);
+  const compositeScreenVideo = useRef<HTMLVideoElement | null>(null);
+  const compositeCameraVideo = useRef<HTMLVideoElement | null>(null);
+  const compositeCanvas = useRef<HTMLCanvasElement | null>(null);
+  const compositeAudioCtx = useRef<AudioContext | null>(null);
 
   const clearTimer = () => {
     if (timerRef.current) {
@@ -75,6 +106,45 @@ export function useScreenRecorder() {
       setElapsed(accumulatedRef.current + (Date.now() - startTimeRef.current) / 1000);
     }, 250);
   }, []);
+
+  const stopComposite = useCallback(() => {
+    compositeRunning.current = false;
+    compositeScreenVideo.current?.pause();
+    compositeScreenVideo.current = null;
+    compositeCameraVideo.current?.pause();
+    compositeCameraVideo.current = null;
+    compositeCanvas.current = null;
+    if (compositeAudioCtx.current) {
+      compositeAudioCtx.current.close();
+      compositeAudioCtx.current = null;
+    }
+  }, []);
+
+  // Request / release camera when toggled
+  useEffect(() => {
+    if (!includeCamera) {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach((t) => t.stop());
+        setCameraStream(null);
+      }
+      return;
+    }
+    let cancelled = false;
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((cs) => {
+        if (!cancelled) setCameraStream(cs);
+        else cs.getTracks().forEach((t) => t.stop());
+      })
+      .catch(() => {
+        setIncludeCamera(false);
+        setError("Camera access denied. Please allow camera permissions.");
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [includeCamera]);
 
   const beginCapture = useCallback(
     async (surface: CaptureSurface) => {
@@ -112,7 +182,111 @@ export function useScreenRecorder() {
         );
 
         const mimeType = pickMimeType();
-        const recorder = new MediaRecorder(displayStream, {
+        let recordingStream: MediaStream;
+
+        // ── Camera compositing ──────────────────────────────────────────
+        if (includeCamera && cameraStream) {
+          const screenVideo = document.createElement("video");
+          screenVideo.srcObject = displayStream;
+          screenVideo.muted = true;
+          screenVideo.playsInline = true;
+          await screenVideo.play();
+
+          const camVideo = document.createElement("video");
+          camVideo.srcObject = cameraStream;
+          camVideo.muted = true;
+          camVideo.playsInline = true;
+          await camVideo.play();
+
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d")!;
+
+          compositeScreenVideo.current = screenVideo;
+          compositeCameraVideo.current = camVideo;
+          compositeCanvas.current = canvas;
+          compositeRunning.current = true;
+
+          const frame = () => {
+            if (!compositeRunning.current) return;
+            ctx.clearRect(0, 0, width, height);
+
+            // Screen layer
+            ctx.drawImage(screenVideo, 0, 0, width, height);
+
+            // Camera PIP layer
+            const pos = camPosRef.current;
+            const set = camSetRef.current;
+            const cx = (pos.x / 100) * width;
+            const cy = (pos.y / 100) * height;
+            const r = set.radius;
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.clip();
+
+            const src = camVideo;
+            const sw = r * 2;
+            const sh = r * 2;
+
+            if (set.mirrored) {
+              ctx.save();
+              ctx.translate(cx, 0);
+              ctx.scale(-1, 1);
+              ctx.drawImage(src, -(cx - r), cy - r, sw, sh);
+              ctx.restore();
+            } else {
+              ctx.drawImage(src, cx - r, cy - r, sw, sh);
+            }
+            ctx.restore();
+
+            // Border ring
+            ctx.save();
+            ctx.shadowColor = "rgba(255,255,255,0.25)";
+            ctx.shadowBlur = set.shadowBlur;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.strokeStyle = set.borderColor;
+            ctx.lineWidth = set.borderWidth;
+            ctx.stroke();
+            ctx.restore();
+
+            requestAnimationFrame(frame);
+          };
+          requestAnimationFrame(frame);
+
+          const canvasStream = canvas.captureStream(60);
+
+          // Mix audio
+          const audioCtx = new AudioContext();
+          compositeAudioCtx.current = audioCtx;
+          const dest = audioCtx.createMediaStreamDestination();
+
+          if (includeAudio && displayStream.getAudioTracks().length > 0) {
+            const srcNode = audioCtx.createMediaStreamSource(displayStream);
+            srcNode.connect(dest);
+          }
+          if (cameraStream.getAudioTracks().length > 0) {
+            const srcNode = audioCtx.createMediaStreamSource(cameraStream);
+            srcNode.connect(dest);
+          }
+
+          recordingStream = new MediaStream([
+            ...canvasStream.getVideoTracks(),
+            ...dest.stream.getAudioTracks(),
+          ]);
+
+          // Show composited preview
+          setStream(recordingStream);
+        } else {
+          recordingStream = displayStream;
+          setStream(displayStream);
+        }
+
+        // ── MediaRecorder ───────────────────────────────────────────────
+        const recorder = new MediaRecorder(recordingStream, {
           mimeType,
           videoBitsPerSecond: bitrate,
           audioBitsPerSecond: 128_000,
@@ -140,10 +314,13 @@ export function useScreenRecorder() {
           setStream(null);
           setStatus("idle");
           clearTimer();
+          stopComposite();
           triggerDownload(blob);
         };
 
         recorder.onstop = handleStop;
+
+        // User stops sharing via browser UI
         videoTrack.addEventListener("ended", () => {
           if (recorderRef.current && recorderRef.current.state !== "inactive") {
             accumulatedRef.current += (Date.now() - startTimeRef.current) / 1000;
@@ -156,7 +333,6 @@ export function useScreenRecorder() {
         setElapsed(0);
         setResult(null);
         recorder.start(1000);
-        setStream(displayStream);
         setStatus("recording");
         startTimer();
       } catch (err) {
@@ -169,7 +345,7 @@ export function useScreenRecorder() {
         setStatus("idle");
       }
     },
-    [includeAudio, quality, startTimer],
+    [includeAudio, quality, includeCamera, cameraStream, startTimer, stopComposite],
   );
 
   const startRecording = useCallback(
@@ -237,6 +413,8 @@ export function useScreenRecorder() {
       clearTimer();
       recorderRef.current?.state !== "inactive" && recorderRef.current?.stop();
       stream?.getTracks().forEach((t) => t.stop());
+      cameraStream?.getTracks().forEach((t) => t.stop());
+      stopComposite();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -252,6 +430,13 @@ export function useScreenRecorder() {
     setIncludeAudio,
     quality,
     setQuality,
+    includeCamera,
+    setIncludeCamera,
+    cameraStream,
+    cameraPosition,
+    setCameraPosition,
+    cameraSettings,
+    setCameraSettings,
     startRecording,
     cancelCountdown,
     pauseRecording,
