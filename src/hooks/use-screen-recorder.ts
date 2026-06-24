@@ -8,14 +8,13 @@ export type QualityPreset = {
   short: string;
   width: number;
   height: number;
-  bitrateMultiplier: number;
 };
 
 export const QUALITY_PRESETS: QualityPreset[] = [
-  { label: "720p HD", short: "720p", width: 1280, height: 720, bitrateMultiplier: 0.12 },
-  { label: "1080p Full HD", short: "1080p", width: 1920, height: 1080, bitrateMultiplier: 0.15 },
-  { label: "1440p QHD", short: "1440p", width: 2560, height: 1440, bitrateMultiplier: 0.18 },
-  { label: "4K Ultra HD", short: "4K", width: 3840, height: 2160, bitrateMultiplier: 0.18 },
+  { label: "720p HD", short: "720p", width: 1280, height: 720 },
+  { label: "1080p Full HD", short: "1080p", width: 1920, height: 1080 },
+  { label: "1440p QHD", short: "1440p", width: 2560, height: 1440 },
+  { label: "4K Ultra HD", short: "4K", width: 3840, height: 2160 },
 ];
 
 export interface RecordingResult {
