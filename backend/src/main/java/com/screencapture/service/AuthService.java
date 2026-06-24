@@ -14,11 +14,13 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final PasswordResetService passwordResetService;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, PasswordResetService passwordResetService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.passwordResetService = passwordResetService;
     }
 
     public AuthResponse register(RegisterRequest req) {
@@ -86,8 +88,24 @@ public class AuthService {
 
     public void sendResetLink(ForgotPasswordRequest req) {
         if (!userRepository.existsByEmail(req.getEmail())) return;
-        // In production, send an email with a reset link.
-        // For now, this is a no-op — the frontend will show a success message.
+        passwordResetService.generateAndStoreCode(req.getEmail());
+    }
+
+    public void verifyResetCode(VerifyResetCodeRequest req) {
+        if (!passwordResetService.verifyCode(req.getEmail(), req.getCode())) {
+            throw new IllegalArgumentException("Invalid or expired code");
+        }
+    }
+
+    public void resetPassword(ResetPasswordRequest req) {
+        if (!passwordResetService.verifyCode(req.getEmail(), req.getCode())) {
+            throw new IllegalArgumentException("Invalid or expired code");
+        }
+        var user = userRepository.findByEmail(req.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        user.setPassword(passwordEncoder.encode(req.getNewPassword()));
+        userRepository.save(user);
+        passwordResetService.consumeCode(req.getEmail());
     }
 
     @SuppressWarnings("unchecked")
