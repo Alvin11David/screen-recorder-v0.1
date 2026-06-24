@@ -493,6 +493,9 @@ function Index() {
   const {
     status, elapsed, countdown, stream, result, error,
     includeAudio, setIncludeAudio,
+    includeCamera, setIncludeCamera,
+    cameraStream, cameraPosition, setCameraPosition,
+    cameraSettings, setCameraSettings,
     quality, setQuality,
     startRecording, cancelCountdown,
     pauseRecording, resumeRecording, stopRecording, reset,
