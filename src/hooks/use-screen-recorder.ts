@@ -499,6 +499,7 @@ export function useScreenRecorder() {
           ctx.stroke();
           ctx.restore();
 
+          overlayAnnotations(ctx, rect.width, rect.height);
           requestAnimationFrame(frame);
         };
         requestAnimationFrame(frame);
