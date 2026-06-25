@@ -706,6 +706,8 @@ export function useScreenRecorder() {
     const canvasH = cellH * rows;
     trackSettingsRef.current = { width: canvasW, height: canvasH };
 
+    if (annotationsEnabledRef.current) setupAnnotationCanvas(canvasW, canvasH);
+
     const mimeType = pickMimeType();
     const bitrate = Math.min(Math.max(Math.round(canvasW * canvasH * 7), 5_000_000), 50_000_000);
 
