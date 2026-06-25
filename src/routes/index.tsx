@@ -774,6 +774,7 @@ function TrustMetrics() {
 
 function Index() {
   const [source, setSource] = useState<CaptureSurface>("monitor");
+  const [whiteboardActive, setWhiteboardActive] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const {
     status,
@@ -814,8 +815,8 @@ function Index() {
   } = useScreenRecorder();
 
   const isIdle = status === "idle";
-  const showClickFX = status === "recording";
-  const showCursorFX = status === "recording";
+  const showClickFX = status === "recording" || whiteboardActive;
+  const showCursorFX = status === "recording" || whiteboardActive;
 
   const container = {
     hidden: { opacity: 0 },
