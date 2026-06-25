@@ -783,6 +783,7 @@ function TrustMetrics() {
 function Index() {
   const [source, setSource] = useState<CaptureSurface>("monitor");
   const [whiteboardActive, setWhiteboardActive] = useState(false);
+  const [editorBlob, setEditorBlob] = useState<Blob | null>(null);
   const { isAuthenticated, user, logout } = useAuth();
   const {
     status,
@@ -1129,7 +1130,7 @@ function Index() {
               transition={{ duration: 0.5 }}
               className="mt-4"
             >
-              <RecordingResultPanel result={result} onReset={reset} />
+              <RecordingResultPanel result={result} onReset={reset} onEdit={() => setEditorBlob(result.blob)} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -1146,6 +1147,11 @@ function Index() {
           Recordings never leave your device — everything is processed locally.
         </motion.div>
       </motion.div>
+
+      {/* ── Video Editor ── */}
+      {editorBlob && (
+        <VideoEditor blob={editorBlob} onClose={() => setEditorBlob(null)} />
+      )}
     </main>
   );
 }
