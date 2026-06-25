@@ -827,6 +827,11 @@ function Index() {
             source={source}
             quality={quality}
             onQualityChange={setQuality}
+            annotationsEnabled={annotationsEnabled}
+            onAnnotationsChange={(v) => {
+              setAnnotationsEnabled(v);
+              if (v) setupAnnotationCanvas(1920, 1080);
+            }}
           />
         </motion.div>
 
