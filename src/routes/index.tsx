@@ -611,6 +611,25 @@ function ControlBar({
               Annotate
             </span>
           </motion.label>
+          <motion.label
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={cn(
+              "flex cursor-pointer items-center gap-2.5 rounded-full px-4 py-2 text-xs ring-1 backdrop-blur-sm transition-all",
+              whiteboardActive
+                ? "bg-primary/15 ring-primary/30 hover:bg-primary/20 hover:ring-primary/40"
+                : "bg-white/[0.03] ring-white/[0.06] hover:bg-white/[0.06] hover:ring-white/[0.12]",
+            )}
+          >
+            <Switch checked={whiteboardActive} onCheckedChange={onWhiteboardChange} />
+            <span className={cn(
+              "select-none flex items-center gap-1.5",
+              whiteboardActive ? "text-primary/80" : "text-white/50",
+            )}>
+              <Monitor className="h-3 w-3" />
+              Whiteboard
+            </span>
+          </motion.label>
         </div>
       )}
     </div>
