@@ -29,6 +29,7 @@ import {
   Lock,
   Hash,
   Expand,
+  Film,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
