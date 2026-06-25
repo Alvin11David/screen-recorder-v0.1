@@ -683,6 +683,15 @@ function Index() {
         <CropOverlay stream={stream} onConfirm={confirmCrop} onCancel={cancelCrop} />
       )}
 
+      {status === "multi-setup" && (
+        <MultiMonitorSetup
+          streams={multiStreams}
+          onAddMonitor={addMonitorStream}
+          onStart={startMultiRecording}
+          onCancel={cancelMultiSetup}
+        />
+      )}
+
       <motion.div
         variants={container}
         initial="hidden"
