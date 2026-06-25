@@ -1105,6 +1105,8 @@ function Index() {
               setAnnotationsEnabled(v);
               if (v) setupAnnotationCanvas(1920, 1080);
             }}
+            whiteboardActive={whiteboardActive}
+            onWhiteboardChange={setWhiteboardActive}
           />
         </motion.div>
 
