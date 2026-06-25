@@ -25,12 +25,10 @@ import {
   Download,
   RotateCcw,
   Check,
-  ArrowRight,
   Zap,
   Lock,
   Hash,
   Expand,
-  Sun,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -142,6 +140,14 @@ const FEATURES = [
   { icon: Hash, label: "No data leaves" },
 ] as const;
 
+const PARTICLES = Array.from({ length: 25 }, (_, i) => ({
+  left: `${((i * 3.7 + 1.2) % 100).toFixed(1)}%`,
+  top: `${((i * 7.3 + 5.1) % 100).toFixed(1)}%`,
+  delay: `${((i * 0.7) % 5).toFixed(1)}s`,
+  size: 1 + (i % 3) * 0.5,
+  duration: `${(3 + (i % 5) * 0.5).toFixed(1)}s`,
+}));
+
 function RecordingPreview({
   stream,
   status,
@@ -195,6 +201,10 @@ function RecordingPreview({
               playsInline
               className="h-full w-full object-contain bg-black/40"
             />
+            <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden rounded-2xl">
+              <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(255,255,255,0.006)_2px,rgba(255,255,255,0.006)_4px)]" />
+              <div className="absolute left-4 right-4 h-px bg-gradient-to-r from-transparent via-primary/25 to-transparent animate-line-scan" />
+            </div>
             {livePlayFailed && (
               <button
                 onClick={retryPlay}
@@ -251,10 +261,12 @@ function RecordingPreview({
           </>
         )}
         {!isLive && !result && (
-          <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-black/30">
-            <div className="rounded-2xl bg-white/[0.03] p-5 ring-1 ring-white/[0.06]">
-              <Monitor className="h-8 w-8 text-white/25" strokeWidth={1.5} />
-            </div>
+          <div className="flex h-full w-full flex-col items-center justify-center gap-4 bg-black/30">
+            <span className="relative flex h-16 w-16 items-center justify-center">
+              <span className="absolute h-full w-full rounded-2xl bg-primary/10 animate-ping opacity-40" />
+              <span className="absolute h-12 w-12 rounded-xl bg-primary/15 blur-sm" />
+              <Monitor className="h-7 w-7 text-white/30" strokeWidth={1.5} />
+            </span>
             <div className="text-center">
               <p className="text-base font-medium text-white/45">Your preview appears here</p>
               <p className="mt-1 text-sm text-white/25">
@@ -289,71 +301,89 @@ function SourceCards({
   onSelect?: (v: CaptureSurface) => void;
   disabled?: boolean;
 }) {
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    if (disabled) return;
+    const el = e.currentTarget;
+    const rect = el.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    el.style.transform = `perspective(600px) rotateX(${(y - 0.5) * -12}deg) rotateY(${(x - 0.5) * 12}deg) scale3d(1.02,1.02,1.02)`;
+  }, [disabled]);
+
+  const handleMouseLeave = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    if (disabled) return;
+    e.currentTarget.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)';
+  }, [disabled]);
+
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
       {SOURCES.map(({ id, label, icon: Icon, description, tip }, idx) => {
         const active = value === id;
         return (
-          <motion.button
+          <motion.div
             key={id}
-            type="button"
-            disabled={disabled}
-            onClick={() => {
-              onChange(id);
-              onSelect?.(id);
-            }}
-            whileHover={disabled ? {} : { scale: 1.02, y: -2 }}
-            whileTap={disabled ? {} : { scale: 0.97 }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.06, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-            className={cn(
-              "relative flex flex-col items-start gap-2.5 rounded-xl p-4 text-left transition-all duration-300 text-balance overflow-hidden",
-              "bg-white/[0.03] backdrop-blur-sm border border-white/[0.06]",
-              "hover:border-white/[0.15] hover:bg-white/[0.05]",
-              "disabled:cursor-not-allowed disabled:opacity-30",
-              active && [
-                "bg-white/[0.06] border-primary/30",
-                "shadow-[0_0_30px_-8px_oklch(0.74_0.15_222/0.25)]",
-              ],
-            )}
+            className="perspective-[600px]"
           >
-            {active && (
-              <motion.div
-                layoutId="source-glow"
-                className="absolute inset-0 -z-10 rounded-xl bg-gradient-to-b from-primary/[0.08] to-transparent"
-                transition={{ type: "spring", stiffness: 400, damping: 30 }}
-              />
-            )}
-            <div className="flex items-center gap-3 w-full">
-              <span
-                className={cn(
-                  "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300",
-                  active
-                    ? "bg-gradient-primary text-white shadow-[0_0_20px_-4px_oklch(0.74_0.15_222/0.35)] ring-1 ring-white/10"
-                    : "bg-white/[0.04] text-white/35 ring-1 ring-white/[0.04]",
-                )}
-              >
-                <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
-              </span>
-              <div className="min-w-0">
+            <button
+              type="button"
+              disabled={disabled}
+              onClick={() => {
+                onChange(id);
+                onSelect?.(id);
+              }}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+              className={cn(
+                "relative flex flex-col items-start gap-2.5 rounded-xl p-4 text-left w-full transition-all duration-200 ease-out text-balance overflow-hidden",
+                "bg-white/[0.03] backdrop-blur-sm border border-white/[0.06]",
+                "hover:border-white/[0.18] hover:bg-white/[0.06]",
+                "disabled:cursor-not-allowed disabled:opacity-30",
+                active && [
+                  "bg-white/[0.06] border-primary/30",
+                  "shadow-[0_0_30px_-8px_oklch(0.74_0.15_222/0.25)]",
+                ],
+              )}
+            >
+              {active && (
+                <motion.div
+                  layoutId="source-glow"
+                  className="absolute inset-0 -z-10 rounded-xl bg-gradient-to-b from-primary/[0.08] to-transparent"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
+              <div className="flex items-center gap-3 w-full">
                 <span
                   className={cn(
-                    "block font-display text-sm font-semibold transition-colors truncate",
-                    active ? "text-white" : "text-white/55",
+                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300",
+                    active
+                      ? "bg-gradient-primary text-white shadow-[0_0_20px_-4px_oklch(0.74_0.15_222/0.35)] ring-1 ring-white/10"
+                      : "bg-white/[0.04] text-white/35 ring-1 ring-white/[0.04]",
                   )}
                 >
-                  {label}
+                  <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
                 </span>
-                <span className="block text-[10px] text-white/25 mt-0.5 leading-tight hidden md:block">
-                  {description}
-                </span>
+                <div className="min-w-0">
+                  <span
+                    className={cn(
+                      "block font-display text-sm font-semibold transition-colors truncate",
+                      active ? "text-white" : "text-white/55",
+                    )}
+                  >
+                    {label}
+                  </span>
+                  <span className="block text-[10px] text-white/25 mt-0.5 leading-tight hidden md:block">
+                    {description}
+                  </span>
+                </div>
               </div>
-            </div>
-            <span className="text-[10px] text-white/15 leading-tight italic hidden sm:block">
-              {tip}
-            </span>
-          </motion.button>
+              <span className="text-[10px] text-white/15 leading-tight italic hidden sm:block">
+                {tip}
+              </span>
+            </button>
+          </motion.div>
         );
       })}
     </div>
@@ -488,16 +518,19 @@ function ControlBar({
       <div className="flex items-center gap-3">
         {idle && (
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-            <Button
-              variant="hero"
-              size="xl"
-              onClick={onStart}
-              className="min-w-56 group relative overflow-hidden text-base"
-            >
-              <span className="absolute inset-0 -z-10 translate-y-full bg-white/10 transition-transform duration-500 group-hover:translate-y-0" />
-              <CircleDot className="h-5 w-5" />
-              Start Recording
-            </Button>
+            <div className="relative">
+              <div className="absolute -inset-3 rounded-[20px] bg-gradient-to-r from-primary/15 via-accent/15 to-primary/15 blur-2xl opacity-50 animate-pulse" />
+              <Button
+                variant="hero"
+                size="xl"
+                onClick={onStart}
+                className="min-w-56 group relative overflow-hidden text-base"
+              >
+                <span className="absolute inset-0 -z-10 translate-y-full bg-white/10 transition-transform duration-500 group-hover:translate-y-0" />
+                <CircleDot className="h-5 w-5" />
+                Start Recording
+              </Button>
+            </div>
           </motion.div>
         )}
         {status === "recording" && (
@@ -689,6 +722,32 @@ function RecordingResultPanel({
   );
 }
 
+function TrustMetrics() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 1.2, duration: 0.6 }}
+      className="mt-14 text-center"
+    >
+      <div className="flex items-center justify-center gap-8 sm:gap-12 flex-wrap">
+        {[
+          { value: "Zero", label: "installs" },
+          { value: "100%", label: "private" },
+          { value: "No", label: "watermark" },
+          { value: "4K", label: "quality" },
+        ].map(({ value, label }) => (
+          <div key={label} className="text-center">
+            <p className="font-display text-xl font-bold text-white/50">{value}</p>
+            <p className="text-[11px] text-white/20 mt-0.5">{label}</p>
+          </div>
+        ))}
+      </div>
+      <div className="mt-8 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+    </motion.div>
+  );
+}
+
 function Index() {
   const [source, setSource] = useState<CaptureSurface>("monitor");
   const { isAuthenticated, user, logout } = useAuth();
@@ -751,23 +810,57 @@ function Index() {
     <main className="relative min-h-screen overflow-x-hidden">
       {/* ── Background layer ── */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
-        {/* Existing gradient spotlights */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,oklch(0.74_0.15_222/0.15),transparent)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_20%_80%,oklch(0.72_0.16_200/0.1),transparent)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_80%_80%,oklch(0.74_0.15_222/0.08),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_30%_at_50%_50%,oklch(0.7_0.14_250/0.06),transparent)]" />
         <div className="absolute inset-0 bg-[image:radial-gradient(oklch(1_0_0/0.03)_1px,transparent_1px)] bg-[size:24px_24px]" />
 
         {/* Floating decorative orbs */}
-        <div className="absolute -top-48 -left-48 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-primary/10 to-accent/5 blur-[120px] animate-float-1 animate-blob-pulse" />
+        <div className="absolute -top-48 -left-48 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-primary/10 to-accent/5 blur-[120px] animate-float-1 animate-blob-pulse will-change-transform" />
         <div
-          className="absolute -bottom-64 -right-48 w-[500px] h-[500px] rounded-full bg-gradient-to-tl from-blue-500/8 to-purple-500/8 blur-[100px] animate-float-2 animate-blob-pulse"
+          className="absolute -bottom-64 -right-48 w-[500px] h-[500px] rounded-full bg-gradient-to-tl from-blue-500/8 to-purple-500/8 blur-[100px] animate-float-2 animate-blob-pulse will-change-transform"
           style={{ animationDelay: "-3s" }}
         />
         <div
-          className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-accent/8 to-primary/5 blur-[100px] animate-float-3 animate-blob-pulse"
+          className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-accent/8 to-primary/5 blur-[100px] animate-float-3 animate-blob-pulse will-change-transform"
           style={{ animationDelay: "-6s" }}
         />
+        <div
+          className="absolute top-1/4 -right-32 w-[350px] h-[350px] rounded-full bg-gradient-to-bl from-violet-500/6 to-transparent blur-[90px] animate-drift animate-blob-pulse will-change-transform"
+          style={{ animationDelay: "-2s" }}
+        />
+        <div
+          className="absolute bottom-1/4 -left-32 w-[300px] h-[300px] rounded-full bg-gradient-to-tr from-teal-500/6 to-transparent blur-[80px] animate-drift animate-blob-pulse will-change-transform"
+          style={{ animationDelay: "-5s" }}
+        />
+
+        {/* Floating particles */}
+        {PARTICLES.map((p, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-white/8 animate-twinkle"
+            style={{
+              left: p.left,
+              top: p.top,
+              width: `${p.size}px`,
+              height: `${p.size}px`,
+              animationDelay: p.delay,
+              animationDuration: p.duration,
+            }}
+          />
+        ))}
       </div>
+
+      {/* ── Noise texture overlay ── */}
+      <div
+        className="fixed inset-0 pointer-events-none z-50 opacity-[0.025]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+          backgroundSize: "180px 180px",
+          backgroundRepeat: "repeat",
+        }}
+      />
 
       {/* ── Overlays ── */}
       <ClickFX active={showClickFX} />
@@ -864,12 +957,26 @@ function Index() {
           </motion.span>
 
           <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25, duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
             className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1] mb-4"
           >
-            Record your screen
+            <span className="relative inline-block mb-2">
+              <span className="absolute -inset-x-16 -inset-y-8 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 blur-[80px]" />
+              {"Record your screen".split(" ").map((word, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  transition={{
+                    delay: 0.25 + i * 0.15,
+                    duration: 0.7,
+                    ease: [0.25, 0.1, 0.25, 1],
+                  }}
+                  className="inline-block mr-[0.3em] last:mr-0"
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </span>
             <br />
             <span className="text-gradient bg-[length:200%_auto] hero-animate-gradient inline-block pb-1">
               in stunning quality
@@ -879,7 +986,7 @@ function Index() {
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
+            transition={{ delay: 0.55, duration: 0.6 }}
             className="text-sm sm:text-base text-white/40 max-w-xl mx-auto leading-relaxed mb-6"
           >
             Capture your display in HD, Full HD or 4K directly from the browser.
@@ -891,17 +998,20 @@ function Index() {
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
+            transition={{ delay: 0.65, duration: 0.6 }}
             className="flex items-center justify-center gap-2 flex-wrap"
           >
-            {FEATURES.map(({ icon: Icon, label }) => (
-              <span
+            {FEATURES.map(({ icon: Icon, label }, fi) => (
+              <motion.span
                 key={label}
-                className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.03] px-3 py-1.5 text-[11px] text-white/35 ring-1 ring-white/[0.06] backdrop-blur-sm"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.7 + fi * 0.08, duration: 0.4 }}
+                className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.03] px-3 py-1.5 text-[11px] text-white/35 ring-1 ring-white/[0.06] backdrop-blur-sm transition-all hover:bg-white/[0.06] hover:text-white/50 hover:ring-white/[0.12]"
               >
                 <Icon className="h-3 w-3 text-primary/40" />
                 {label}
-              </span>
+              </motion.span>
             ))}
           </motion.div>
         </motion.div>
@@ -982,10 +1092,13 @@ function Index() {
           )}
         </AnimatePresence>
 
+        {/* ── Trust metrics ── */}
+        <TrustMetrics />
+
         {/* ── Footer ── */}
         <motion.div
           variants={fadeUp}
-          className="flex items-center justify-center gap-2 mt-10 text-xs text-white/15"
+          className="flex items-center justify-center gap-2 mt-8 text-xs text-white/15"
         >
           <ShieldCheck className="h-3.5 w-3.5 text-white/10" />
           Recordings never leave your device — everything is processed locally.
