@@ -841,19 +841,18 @@ export function useScreenRecorder() {
   const startRecording = useCallback(
     (surface: CaptureSurface = "monitor") => {
       setError(null);
-      setCountdown(3);
+      let cd = 3;
+      setCountdown(cd);
       setStatus("countdown");
       if (countdownRef.current) clearInterval(countdownRef.current);
       countdownRef.current = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            if (countdownRef.current) clearInterval(countdownRef.current);
-            countdownRef.current = null;
-            beginCapture(surface);
-            return 0;
-          }
-          return prev - 1;
-        });
+        cd -= 1;
+        setCountdown(cd);
+        if (cd <= 0) {
+          if (countdownRef.current) clearInterval(countdownRef.current);
+          countdownRef.current = null;
+          beginCapture(surface);
+        }
       }, 1000);
     },
     [beginCapture],
