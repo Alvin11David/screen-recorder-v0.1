@@ -408,6 +408,8 @@ function ControlBar({
   source: CaptureSurface;
   quality: QualityPreset;
   onQualityChange: (v: QualityPreset) => void;
+  annotationsEnabled: boolean;
+  onAnnotationsChange: (v: boolean) => void;
 }) {
   const idle = status === "idle";
 
