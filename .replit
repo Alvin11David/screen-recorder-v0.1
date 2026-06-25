@@ -53,3 +53,8 @@ externalPort = 80
 [[ports]]
 localPort = 8080
 externalPort = 8080
+
+[deployment]
+deploymentTarget = "autoscale"
+run = ["bash", "-c", "JAVA_HOME=/nix/store/c8hr2f0b0dm685yx1dkp6bw24bpx495n-graalvm19-ce-22.3.1 java -jar backend/build/libs/screen-capture-backend-0.0.1.jar & node .output/server/index.mjs"]
+build = ["bash", "-c", "bun install && JAVA_HOME=/nix/store/c8hr2f0b0dm685yx1dkp6bw24bpx495n-graalvm19-ce-22.3.1 gradle -p backend build -x test && bun run build"]
