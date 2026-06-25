@@ -1,7 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export type RecorderStatus = "idle" | "countdown" | "recording" | "paused";
+export type RecorderStatus = "idle" | "countdown" | "crop" | "recording" | "paused";
 export type CaptureSurface = "monitor" | "window" | "browser";
+
+export interface CropRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 
 export type QualityPreset = {
   label: string;
@@ -80,6 +87,7 @@ export function useScreenRecorder() {
   const accumulatedRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const trackSettingsRef = useRef<{ width: number; height: number }>({ width: 0, height: 0 });
+  const pendingStreamRef = useRef<MediaStream | null>(null);
 
   // Compositing refs (kept stable for the rAF loop)
   const camPosRef = useRef(cameraPosition);
@@ -91,6 +99,8 @@ export function useScreenRecorder() {
   const compositeCameraVideo = useRef<HTMLVideoElement | null>(null);
   const compositeCanvas = useRef<HTMLCanvasElement | null>(null);
   const compositeAudioCtx = useRef<AudioContext | null>(null);
+
+  const [cropRect, setCropRect] = useState<CropRect | null>(null);
 
   const clearTimer = () => {
     if (timerRef.current) {
@@ -174,6 +184,14 @@ export function useScreenRecorder() {
         const width = settings.width ?? quality.width;
         const height = settings.height ?? quality.height;
         trackSettingsRef.current = { width, height };
+
+        // ── Crop mode for entire-screen capture ───────────────────────
+        if (surface === "monitor") {
+          pendingStreamRef.current = displayStream;
+          setStream(displayStream);
+          setStatus("crop");
+          return;
+        }
 
         const pixels = width * height;
         const bitrate = Math.min(
@@ -348,6 +366,194 @@ export function useScreenRecorder() {
     [includeAudio, quality, includeCamera, cameraStream, startTimer, stopComposite],
   );
 
+  const confirmCrop = useCallback(
+    async (rect: CropRect) => {
+      const displayStream = pendingStreamRef.current;
+      if (!displayStream) return;
+
+      setCropRect(rect);
+      setStatus("idle");
+
+      const [videoTrack] = displayStream.getVideoTracks();
+      const settings = videoTrack.getSettings();
+      trackSettingsRef.current = { width: rect.width, height: rect.height };
+
+      const mimeType = pickMimeType();
+      const pixels = rect.width * rect.height;
+      const bitrate = Math.min(Math.max(Math.round(pixels * 7), 5_000_000), 50_000_000);
+
+      const screenVideo = document.createElement("video");
+      screenVideo.srcObject = displayStream;
+      screenVideo.muted = true;
+      screenVideo.playsInline = true;
+      await screenVideo.play();
+
+      const canvas = document.createElement("canvas");
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      const ctx = canvas.getContext("2d")!;
+
+      compositeScreenVideo.current = screenVideo;
+      compositeCanvas.current = canvas;
+      compositeRunning.current = true;
+
+      let recordingStream: MediaStream;
+
+      if (includeCamera && cameraStream) {
+        const camVideo = document.createElement("video");
+        camVideo.srcObject = cameraStream;
+        camVideo.muted = true;
+        camVideo.playsInline = true;
+        await camVideo.play();
+        compositeCameraVideo.current = camVideo;
+
+        const frame = () => {
+          if (!compositeRunning.current) return;
+          ctx.clearRect(0, 0, rect.width, rect.height);
+          ctx.drawImage(screenVideo, rect.x, rect.y, rect.width, rect.height, 0, 0, rect.width, rect.height);
+
+          const pos = camPosRef.current;
+          const set = camSetRef.current;
+          const cx = (pos.x / 100) * rect.width;
+          const cy = (pos.y / 100) * rect.height;
+          const r = set.radius;
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.clip();
+          if (set.mirrored) {
+            ctx.save();
+            ctx.translate(cx, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(camVideo, -(cx - r), cy - r, r * 2, r * 2);
+            ctx.restore();
+          } else {
+            ctx.drawImage(camVideo, cx - r, cy - r, r * 2, r * 2);
+          }
+          ctx.restore();
+
+          ctx.save();
+          ctx.shadowColor = "rgba(255,255,255,0.25)";
+          ctx.shadowBlur = set.shadowBlur;
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.strokeStyle = set.borderColor;
+          ctx.lineWidth = set.borderWidth;
+          ctx.stroke();
+          ctx.restore();
+
+          requestAnimationFrame(frame);
+        };
+        requestAnimationFrame(frame);
+
+        const canvasStream = canvas.captureStream(60);
+
+        const audioCtx = new AudioContext();
+        compositeAudioCtx.current = audioCtx;
+        const dest = audioCtx.createMediaStreamDestination();
+        if (includeAudio && displayStream.getAudioTracks().length > 0) {
+          const srcNode = audioCtx.createMediaStreamSource(displayStream);
+          srcNode.connect(dest);
+        }
+        if (cameraStream.getAudioTracks().length > 0) {
+          const srcNode = audioCtx.createMediaStreamSource(cameraStream);
+          srcNode.connect(dest);
+        }
+
+        recordingStream = new MediaStream([
+          ...canvasStream.getVideoTracks(),
+          ...dest.stream.getAudioTracks(),
+        ]);
+      } else {
+        const frame = () => {
+          if (!compositeRunning.current) return;
+          ctx.drawImage(screenVideo, rect.x, rect.y, rect.width, rect.height, 0, 0, rect.width, rect.height);
+          requestAnimationFrame(frame);
+        };
+        requestAnimationFrame(frame);
+
+        const canvasStream = canvas.captureStream(60);
+
+        const audioCtx = new AudioContext();
+        compositeAudioCtx.current = audioCtx;
+        const dest = audioCtx.createMediaStreamDestination();
+        if (includeAudio && displayStream.getAudioTracks().length > 0) {
+          const srcNode = audioCtx.createMediaStreamSource(displayStream);
+          srcNode.connect(dest);
+        }
+
+        recordingStream = new MediaStream([
+          ...canvasStream.getVideoTracks(),
+          ...dest.stream.getAudioTracks(),
+        ]);
+      }
+
+      setStream(recordingStream);
+
+      const recorder = new MediaRecorder(recordingStream, {
+        mimeType,
+        videoBitsPerSecond: bitrate,
+        audioBitsPerSecond: 128_000,
+      });
+
+      chunksRef.current = [];
+      recorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) chunksRef.current.push(event.data);
+      };
+
+      const handleStop = () => {
+        const blob = new Blob(chunksRef.current, { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        setResult({
+          url,
+          blob,
+          durationSeconds: accumulatedRef.current,
+          width: trackSettingsRef.current.width,
+          height: trackSettingsRef.current.height,
+          sizeBytes: blob.size,
+          createdAt: new Date(),
+          mimeType,
+        });
+        displayStream.getTracks().forEach((t) => t.stop());
+        setStream(null);
+        setStatus("idle");
+        clearTimer();
+        stopComposite();
+        triggerDownload(blob);
+      };
+
+      recorder.onstop = handleStop;
+
+      videoTrack.addEventListener("ended", () => {
+        if (recorderRef.current && recorderRef.current.state !== "inactive") {
+          accumulatedRef.current += (Date.now() - startTimeRef.current) / 1000;
+          recorderRef.current.stop();
+        }
+      });
+
+      recorderRef.current = recorder;
+      accumulatedRef.current = 0;
+      setElapsed(0);
+      setResult(null);
+      recorder.start(1000);
+      setStatus("recording");
+      startTimer();
+    },
+    [includeAudio, includeCamera, cameraStream, startTimer, stopComposite],
+  );
+
+  const cancelCrop = useCallback(() => {
+    const stream = pendingStreamRef.current;
+    if (stream) {
+      stream.getTracks().forEach((t) => t.stop());
+    }
+    pendingStreamRef.current = null;
+    setStream(null);
+    setCropRect(null);
+    setStatus("idle");
+  }, []);
+
   const startRecording = useCallback(
     (surface: CaptureSurface = "monitor") => {
       setCountdown(3);
@@ -405,6 +611,7 @@ export function useScreenRecorder() {
     if (result?.url) URL.revokeObjectURL(result.url);
     setResult(null);
     setElapsed(0);
+    setCropRect(null);
     accumulatedRef.current = 0;
   }, [result]);
 
@@ -414,6 +621,7 @@ export function useScreenRecorder() {
       recorderRef.current?.state !== "inactive" && recorderRef.current?.stop();
       stream?.getTracks().forEach((t) => t.stop());
       cameraStream?.getTracks().forEach((t) => t.stop());
+      pendingStreamRef.current?.getTracks().forEach((t) => t.stop());
       stopComposite();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -426,6 +634,7 @@ export function useScreenRecorder() {
     stream,
     result,
     error,
+    cropRect,
     includeAudio,
     setIncludeAudio,
     quality,
@@ -439,6 +648,8 @@ export function useScreenRecorder() {
     setCameraSettings,
     startRecording,
     cancelCountdown,
+    confirmCrop,
+    cancelCrop,
     pauseRecording,
     resumeRecording,
     stopRecording,
