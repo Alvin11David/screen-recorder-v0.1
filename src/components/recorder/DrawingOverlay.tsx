@@ -10,10 +10,25 @@ import {
   Square,
   Circle,
   ArrowUpRight,
+  Type,
+  Diamond,
+  Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type Tool = "pen" | "highlighter" | "eraser" | "line" | "arrow" | "rect" | "circle";
+type Tool =
+  | "pen"
+  | "highlighter"
+  | "eraser"
+  | "line"
+  | "arrow"
+  | "rect"
+  | "circle"
+  | "fill-rect"
+  | "fill-circle"
+  | "diamond"
+  | "star"
+  | "text";
 
 const COLORS = [
   "#ffffff",
