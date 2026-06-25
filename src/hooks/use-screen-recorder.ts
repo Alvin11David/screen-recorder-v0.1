@@ -582,6 +582,173 @@ export function useScreenRecorder() {
     setStatus("idle");
   }, []);
 
+  const addMonitorStream = useCallback(async () => {
+    try {
+      const newStream = await navigator.mediaDevices.getDisplayMedia({
+        video: { frameRate: { ideal: 60, max: 60 } },
+        audio: includeAudio
+          ? { echoCancellation: false, noiseSuppression: false, sampleRate: 44100 }
+          : false,
+      } as DisplayMediaStreamOptions);
+      const updated = [...multiStreamsRef.current, newStream];
+      multiStreamsRef.current = updated;
+      setMultiStreams(updated);
+    } catch {
+      // user dismissed the picker — do nothing
+    }
+  }, [includeAudio]);
+
+  const startMultiRecording = useCallback(async () => {
+    const streams = multiStreamsRef.current;
+    if (streams.length === 0) return;
+
+    setStatus("idle");
+
+    // Determine layout
+    const n = streams.length;
+    const cols = n <= 2 ? n : Math.ceil(Math.sqrt(n));
+    const rows = Math.ceil(n / cols);
+
+    // Pick the largest resolution for the canvas
+    const settings = streams.map((s) => {
+      const t = s.getVideoTracks()[0];
+      const ts = t.getSettings();
+      return { w: ts.width ?? 1920, h: ts.height ?? 1080, track: t };
+    });
+    const cellW = Math.max(...settings.map((s) => s.w), 1920);
+    const cellH = Math.max(...settings.map((s) => s.h), 1080);
+
+    const canvasW = cellW * cols;
+    const canvasH = cellH * rows;
+    trackSettingsRef.current = { width: canvasW, height: canvasH };
+
+    const mimeType = pickMimeType();
+    const bitrate = Math.min(Math.max(Math.round(canvasW * canvasH * 7), 5_000_000), 50_000_000);
+
+    // Create video elements for each stream
+    const videos = await Promise.all(
+      streams.map(async (s) => {
+        const v = document.createElement("video");
+        v.srcObject = s;
+        v.muted = true;
+        v.playsInline = true;
+        await v.play();
+        return v;
+      }),
+    );
+
+    const canvas = document.createElement("canvas");
+    canvas.width = canvasW;
+    canvas.height = canvasH;
+    const ctx = canvas.getContext("2d")!;
+
+    compositeCanvas.current = canvas;
+    compositeRunning.current = true;
+
+    const frame = () => {
+      if (!compositeRunning.current) return;
+      ctx.clearRect(0, 0, canvasW, canvasH);
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, canvasW, canvasH);
+      for (let i = 0; i < videos.length; i++) {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        ctx.drawImage(
+          videos[i],
+          0, 0, settings[i].w, settings[i].h,
+          col * cellW, row * cellH, cellW, cellH,
+        );
+      }
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+
+    const canvasStream = canvas.captureStream(60);
+
+    // Mix audio from all streams
+    const audioCtx = new AudioContext();
+    compositeAudioCtx.current = audioCtx;
+    const dest = audioCtx.createMediaStreamDestination();
+    if (includeAudio) {
+      for (const s of streams) {
+        if (s.getAudioTracks().length > 0) {
+          const srcNode = audioCtx.createMediaStreamSource(s);
+          srcNode.connect(dest);
+        }
+      }
+    }
+    const recordingStream = new MediaStream([
+      ...canvasStream.getVideoTracks(),
+      ...dest.stream.getAudioTracks(),
+    ]);
+
+    setStream(recordingStream);
+    setMultiStreams([]);
+    multiStreamsRef.current = [];
+    pendingStreamRef.current = null;
+
+    // ── MediaRecorder ──
+    const recorder = new MediaRecorder(recordingStream, {
+      mimeType,
+      videoBitsPerSecond: bitrate,
+      audioBitsPerSecond: 128_000,
+    });
+
+    chunksRef.current = [];
+    recorder.ondataavailable = (event) => {
+      if (event.data && event.data.size > 0) chunksRef.current.push(event.data);
+    };
+
+    const handleStop = () => {
+      const blob = new Blob(chunksRef.current, { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      setResult({
+        url, blob,
+        durationSeconds: accumulatedRef.current,
+        width: trackSettingsRef.current.width,
+        height: trackSettingsRef.current.height,
+        sizeBytes: blob.size,
+        createdAt: new Date(),
+        mimeType,
+      });
+      for (const s of streams) s.getTracks().forEach((t) => t.stop());
+      for (const v of videos) v.pause();
+      setStream(null);
+      setStatus("idle");
+      clearTimer();
+      stopComposite();
+      triggerDownload(blob);
+    };
+
+    recorder.onstop = handleStop;
+
+    for (const t of streams.map((s) => s.getVideoTracks()[0])) {
+      if (!t) continue;
+      t.addEventListener("ended", () => {
+        if (recorderRef.current && recorderRef.current.state !== "inactive") {
+          accumulatedRef.current += (Date.now() - startTimeRef.current) / 1000;
+          recorderRef.current.stop();
+        }
+      });
+    }
+
+    recorderRef.current = recorder;
+    accumulatedRef.current = 0;
+    setElapsed(0);
+    setResult(null);
+    recorder.start(1000);
+    setStatus("recording");
+    startTimer();
+  }, [includeAudio, startTimer, stopComposite]);
+
+  const cancelMultiSetup = useCallback(() => {
+    for (const s of multiStreamsRef.current) s.getTracks().forEach((t) => t.stop());
+    multiStreamsRef.current = [];
+    setMultiStreams([]);
+    setStream(null);
+    setStatus("idle");
+  }, []);
+
   const startRecording = useCallback(
     (surface: CaptureSurface = "monitor") => {
       setCountdown(3);
