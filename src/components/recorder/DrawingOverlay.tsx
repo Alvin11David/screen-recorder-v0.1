@@ -185,12 +185,29 @@ export function DrawingOverlay({
     (e: React.PointerEvent) => {
       if (!enabled) return;
       e.preventDefault();
+
+      const t = toolRef.current;
+
+      // ── Text tool opens an inline input ──
+      if (t === "text") {
+        const el = containerRef.current;
+        if (!el) return;
+        const r = el.getBoundingClientRect();
+        setTextInput({
+          x: toRecording(e.clientX, e.clientY).x,
+          y: toRecording(e.clientX, e.clientY).y,
+          displayX: e.clientX - r.left,
+          displayY: e.clientY - r.top,
+          value: "",
+        });
+        return;
+      }
+
       drawing.current = true;
       const pos = toRecording(e.clientX, e.clientY);
       startPos.current = pos;
       lastPos.current = pos;
 
-      const t = toolRef.current;
       if (t === "pen" || t === "highlighter" || t === "eraser") {
         saveSnapshot();
         drawOnAnnotation((ctx) => {
