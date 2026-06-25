@@ -615,6 +615,51 @@ export function DrawingOverlay({
           </button>
         </div>
       </div>
+
+      {/* Text input overlay */}
+      {textInput && (
+        <div
+          className="fixed inset-0 z-[9998] pointer-events-auto"
+          onPointerDown={() => {
+            if (textInput.value.trim()) {
+              commitText(textInput.value, textInput.x, textInput.y);
+            }
+            setTextInput(null);
+          }}
+        >
+          <textarea
+            autoFocus
+            value={textInput.value}
+            onChange={(e) =>
+              setTextInput({ ...textInput, value: e.target.value })
+            }
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                commitText(textInput.value, textInput.x, textInput.y);
+                setTextInput(null);
+              }
+              if (e.key === "Escape") {
+                setTextInput(null);
+              }
+            }}
+            onPointerDown={(e) => e.stopPropagation()}
+            className="absolute bg-black/80 text-white rounded-lg border border-white/20 p-2 shadow-2xl outline-none resize-none overflow-hidden"
+            style={{
+              left: textInput.displayX,
+              top: textInput.displayY,
+              minWidth: 120,
+              minHeight: 36,
+              fontSize: Math.max(12, size * 2.5),
+              lineHeight: 1.4,
+              fontFamily: "sans-serif",
+              color: color,
+            }}
+            rows={1}
+            placeholder="Type here..."
+          />
+        </div>
+      )}
     </div>
   );
 }
