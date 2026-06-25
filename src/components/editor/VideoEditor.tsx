@@ -417,6 +417,8 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
               { id: "trim" as Tab, icon: Scissors, label: "Trim" },
               { id: "merge" as Tab, icon: Layers, label: "Merge" },
               { id: "crop" as Tab, icon: Crop, label: "Crop / Resize" },
+              { id: "captions" as Tab, icon: Subtitles, label: "Captions" },
+              { id: "music" as Tab, icon: Music, label: "Music" },
             ].map(({ id, icon: Icon, label }) => (
               <button
                 key={id}
