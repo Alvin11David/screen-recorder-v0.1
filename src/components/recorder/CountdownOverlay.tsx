@@ -23,13 +23,13 @@ export function CountdownOverlay({
 
   useEffect(() => {
     let t: ReturnType<typeof setTimeout>;
-    if (countdown === 0 && phase === "countdown") {
+    if (countdown === 0 && phase === "countdown" && (status === "countdown" || status === "recording")) {
       setPhase("go");
       setShowCancel(false);
       t = setTimeout(() => setPhase(null), 600);
     }
     return () => clearTimeout(t);
-  }, [countdown, phase]);
+  }, [countdown, phase, status]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

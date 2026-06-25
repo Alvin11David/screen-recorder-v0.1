@@ -656,7 +656,7 @@ function Index() {
 
       <ClickFX active={showClickFX} />
       <CursorFX active={showCursorFX} />
-      <CountdownOverlay countdown={countdown} onCancel={cancelCountdown} />
+      <CountdownOverlay countdown={countdown} onCancel={cancelCountdown} status={status} />
       <CameraOverlay
         cameraStream={cameraStream}
         position={cameraPosition}
