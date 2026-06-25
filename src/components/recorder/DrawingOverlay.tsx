@@ -212,19 +212,9 @@ export function DrawingOverlay({
         const y2 = pos.y * sy;
 
         dctx.save();
-        if (t === "eraser") {
-          dctx.globalCompositeOperation = "destination-out";
-          dctx.strokeStyle = "rgba(0,0,0,1)";
-          dctx.lineWidth = sizeRef.current * 8 * sx;
-        } else if (t === "highlighter") {
-          dctx.strokeStyle = colorRef.current;
-          dctx.globalAlpha = 0.3;
-          dctx.lineWidth = sizeRef.current * 4 * sx;
-        } else {
-          dctx.strokeStyle = colorRef.current;
-          dctx.globalAlpha = 1;
-          dctx.lineWidth = sizeRef.current * sx;
-        }
+        dctx.strokeStyle = colorRef.current;
+        dctx.globalAlpha = 1;
+        dctx.lineWidth = sizeRef.current * sx;
         dctx.lineCap = "round";
         dctx.lineJoin = "round";
 
