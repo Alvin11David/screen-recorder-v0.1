@@ -86,6 +86,7 @@ export function useScreenRecorder() {
   const startTimeRef = useRef(0);
   const accumulatedRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const trackSettingsRef = useRef<{ width: number; height: number }>({ width: 0, height: 0 });
   const pendingStreamRef = useRef<MediaStream | null>(null);
   const multiStreamsRef = useRef<MediaStream[]>([]);
