@@ -160,14 +160,11 @@ export function useScreenRecorder() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }, []);
 
-  const overlayAnnotations = useCallback(
-    (ctx: CanvasRenderingContext2D, w: number, h: number) => {
-      const ac = annotationCanvasRef.current;
-      if (!ac || !annotationsEnabledRef.current) return;
-      ctx.drawImage(ac, 0, 0, w, h);
-    },
-    [],
-  );
+  const overlayAnnotations = useCallback((ctx: CanvasRenderingContext2D, w: number, h: number) => {
+    const ac = annotationCanvasRef.current;
+    if (!ac || !annotationsEnabledRef.current) return;
+    ctx.drawImage(ac, 0, 0, w, h);
+  }, []);
 
   // Request / release camera when toggled
   useEffect(() => {

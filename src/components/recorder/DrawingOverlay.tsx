@@ -136,25 +136,22 @@ export function DrawingOverlay({
     [annotationCanvasRef],
   );
 
-  const getCtxProps = useCallback(
-    (ctx: CanvasRenderingContext2D) => {
-      const t = toolRef.current;
-      if (t === "eraser") {
-        ctx.globalCompositeOperation = "destination-out";
-        ctx.strokeStyle = "rgba(0,0,0,1)";
-        ctx.lineWidth = sizeRef.current * 8;
-      } else if (t === "highlighter") {
-        ctx.strokeStyle = colorRef.current;
-        ctx.globalAlpha = 0.3;
-        ctx.lineWidth = sizeRef.current * 4;
-      } else {
-        ctx.strokeStyle = colorRef.current;
-        ctx.globalAlpha = 1;
-        ctx.lineWidth = sizeRef.current;
-      }
-    },
-    [],
-  );
+  const getCtxProps = useCallback((ctx: CanvasRenderingContext2D) => {
+    const t = toolRef.current;
+    if (t === "eraser") {
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.strokeStyle = "rgba(0,0,0,1)";
+      ctx.lineWidth = sizeRef.current * 8;
+    } else if (t === "highlighter") {
+      ctx.strokeStyle = colorRef.current;
+      ctx.globalAlpha = 0.3;
+      ctx.lineWidth = sizeRef.current * 4;
+    } else {
+      ctx.strokeStyle = colorRef.current;
+      ctx.globalAlpha = 1;
+      ctx.lineWidth = sizeRef.current;
+    }
+  }, []);
 
   // ── Mouse handlers ──
   const handlePointerDown = useCallback(
@@ -270,7 +267,15 @@ export function DrawingOverlay({
 
       lastPos.current = pos;
     },
-    [toRecording, drawOnAnnotation, getCtxProps, syncDisplay, annotationCanvasRef, recordingWidth, recordingHeight],
+    [
+      toRecording,
+      drawOnAnnotation,
+      getCtxProps,
+      syncDisplay,
+      annotationCanvasRef,
+      recordingWidth,
+      recordingHeight,
+    ],
   );
 
   const handlePointerUp = useCallback(
@@ -279,11 +284,7 @@ export function DrawingOverlay({
       drawing.current = false;
       const t = toolRef.current;
 
-      if (
-        t === "pen" ||
-        t === "highlighter" ||
-        t === "eraser"
-      ) {
+      if (t === "pen" || t === "highlighter" || t === "eraser") {
         // stroke already committed
         return;
       }
