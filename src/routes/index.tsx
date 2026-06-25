@@ -25,6 +25,12 @@ import {
   Download,
   RotateCcw,
   Check,
+  ArrowRight,
+  Zap,
+  Lock,
+  Hash,
+  Expand,
+  Sun,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -129,6 +135,13 @@ function useAudioMeter(stream: MediaStream | null) {
   return level;
 }
 
+const FEATURES = [
+  { icon: Zap, label: "HD / Full HD / 4K" },
+  { icon: Lock, label: "100% local" },
+  { icon: ShieldCheck, label: "No watermark" },
+  { icon: Hash, label: "No data leaves" },
+] as const;
+
 function RecordingPreview({
   stream,
   status,
@@ -161,88 +174,106 @@ function RecordingPreview({
   }, []);
 
   return (
-    <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-black/40 ring-1 ring-white/[0.06] shadow-2xl">
-      {isLive && (
-        <>
-          <video ref={liveRef} muted playsInline className="h-full w-full object-contain" />
-          {livePlayFailed && (
-            <button
-              onClick={retryPlay}
-              className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity"
-            >
-              <div className="flex items-center gap-2 rounded-full bg-white/10 px-5 py-3 ring-1 ring-white/20 hover:bg-white/20 transition-all">
-                <Play className="h-5 w-5 text-white" />
-                <span className="text-sm font-medium text-white">Click to enable preview</span>
-              </div>
-            </button>
-          )}
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
-          <div className="absolute top-4 left-4 flex items-center gap-3">
-            <div className="flex items-center gap-2 rounded-full bg-black/60 px-3.5 py-2 backdrop-blur-xl ring-1 ring-white/[0.08]">
-              <span className="relative flex h-3 w-3">
-                {status === "recording" && (
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
-                )}
-                <span
-                  className={cn(
-                    "relative inline-flex h-3 w-3 rounded-full",
-                    status === "recording" ? "bg-red-500" : "bg-yellow-400",
+    <div className="glass-deep relative aspect-video w-full overflow-hidden rounded-2xl shadow-elegant group">
+      <div className="absolute inset-0 rounded-2xl ring-1 ring-white/[0.06]" />
+      <div className="flex items-center gap-1.5 absolute top-0 left-0 right-0 z-20 px-4 h-9">
+        <div className="flex items-center gap-1.5">
+          <div className="h-2.5 w-2.5 rounded-full bg-red-500/70 ring-1 ring-red-500/30" />
+          <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/70 ring-1 ring-yellow-500/30" />
+          <div className="h-2.5 w-2.5 rounded-full bg-green-500/70 ring-1 ring-green-500/30" />
+        </div>
+        <span className="ml-2 text-[10px] font-mono text-white/15 tracking-wider uppercase">
+          preview
+        </span>
+      </div>
+      <div className="h-full w-full pt-9">
+        {isLive && (
+          <>
+            <video
+              ref={liveRef}
+              muted
+              playsInline
+              className="h-full w-full object-contain bg-black/40"
+            />
+            {livePlayFailed && (
+              <button
+                onClick={retryPlay}
+                className="absolute inset-0 z-10 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity"
+              >
+                <div className="flex items-center gap-2 rounded-full bg-white/10 px-5 py-3 ring-1 ring-white/20 hover:bg-white/20 transition-all">
+                  <Play className="h-5 w-5 text-white" />
+                  <span className="text-sm font-medium text-white">Click to enable preview</span>
+                </div>
+              </button>
+            )}
+            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+            <div className="absolute top-4 left-4 flex items-center gap-3 z-20">
+              <div className="flex items-center gap-2 rounded-full bg-black/60 px-3.5 py-1.5 backdrop-blur-xl ring-1 ring-white/[0.08]">
+                <span className="relative flex h-2.5 w-2.5">
+                  {status === "recording" && (
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
                   )}
-                />
-              </span>
-              <span className="text-xs font-semibold uppercase tracking-widest text-white/80">
-                {status === "recording" ? "REC" : "PAUSED"}
-              </span>
+                  <span
+                    className={cn(
+                      "relative inline-flex h-2.5 w-2.5 rounded-full",
+                      status === "recording" ? "bg-red-500" : "bg-yellow-400",
+                    )}
+                  />
+                </span>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/80">
+                  {status === "recording" ? "REC" : "PAUSED"}
+                </span>
+              </div>
+              <div className="rounded-full bg-black/60 px-3.5 py-1.5 backdrop-blur-xl ring-1 ring-white/[0.08]">
+                <span className="font-mono text-sm tabular-nums text-white/90">
+                  {formatTimer(elapsed)}
+                </span>
+              </div>
             </div>
-            <div className="rounded-full bg-black/60 px-3.5 py-2 backdrop-blur-xl ring-1 ring-white/[0.08]">
-              <span className="font-mono text-sm tabular-nums text-white/90">
-                {formatTimer(elapsed)}
-              </span>
-            </div>
-          </div>
-          {status === "recording" && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-4">
-              <div className="flex items-center gap-2 rounded-full bg-black/60 px-4 py-2.5 backdrop-blur-xl ring-1 ring-white/[0.08]">
-                <div className="flex items-center gap-1.5">
-                  {Array.from({ length: 20 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="w-[3px] rounded-full bg-white/60 transition-all duration-75"
-                      style={{
-                        height: `${Math.max(3, audioLevel * 40 * (0.3 + 0.7 * (i / 20)))}px`,
-                        opacity: Math.max(0.2, audioLevel * (0.3 + 0.7 * (i / 20))),
-                      }}
-                    />
-                  ))}
+            {status === "recording" && (
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-4 z-20">
+                <div className="flex items-center gap-2 rounded-full bg-black/60 px-4 py-2 backdrop-blur-xl ring-1 ring-white/[0.08]">
+                  <div className="flex items-center gap-[3px]">
+                    {Array.from({ length: 16 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="w-[3px] rounded-full bg-white/60 transition-all duration-75"
+                        style={{
+                          height: `${Math.max(3, audioLevel * 36 * (0.3 + 0.7 * (i / 16)))}px`,
+                          opacity: Math.max(0.2, audioLevel * (0.3 + 0.7 * (i / 16))),
+                        }}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
+            )}
+          </>
+        )}
+        {!isLive && !result && (
+          <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-black/30">
+            <div className="rounded-2xl bg-white/[0.03] p-5 ring-1 ring-white/[0.06]">
+              <Monitor className="h-8 w-8 text-white/25" strokeWidth={1.5} />
             </div>
-          )}
-        </>
-      )}
-      {!isLive && result && (
-        <video
-          src={result.url}
-          autoPlay
-          muted
-          playsInline
-          controls
-          className="h-full w-full object-contain"
-        />
-      )}
-      {!isLive && !result && (
-        <div className="flex h-full w-full flex-col items-center justify-center gap-4">
-          <div className="rounded-2xl bg-white/[0.03] p-5 ring-1 ring-white/[0.06]">
-            <Monitor className="h-8 w-8 text-white/30" strokeWidth={1.5} />
+            <div className="text-center">
+              <p className="text-base font-medium text-white/45">Your preview appears here</p>
+              <p className="mt-1 text-sm text-white/25">
+                Select a source and quality, then start recording
+              </p>
+            </div>
           </div>
-          <div className="text-center">
-            <p className="text-base font-medium text-white/50">Your preview appears here</p>
-            <p className="mt-1 text-sm text-white/30">
-              Select a source and quality, then start recording
-            </p>
-          </div>
-        </div>
-      )}
+        )}
+        {!isLive && result && (
+          <video
+            src={result.url}
+            autoPlay
+            muted
+            playsInline
+            controls
+            className="h-full w-full object-contain bg-black/40"
+          />
+        )}
+      </div>
     </div>
   );
 }
@@ -259,8 +290,8 @@ function SourceCards({
   disabled?: boolean;
 }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-      {SOURCES.map(({ id, label, icon: Icon, description, tip }) => {
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+      {SOURCES.map(({ id, label, icon: Icon, description, tip }, idx) => {
         const active = value === id;
         return (
           <motion.button
@@ -271,33 +302,36 @@ function SourceCards({
               onChange(id);
               onSelect?.(id);
             }}
-            whileHover={disabled ? {} : { scale: 1.015, y: -1 }}
-            whileTap={disabled ? {} : { scale: 0.985 }}
+            whileHover={disabled ? {} : { scale: 1.02, y: -2 }}
+            whileTap={disabled ? {} : { scale: 0.97 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.06, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
             className={cn(
-              "relative flex flex-col items-start gap-2 rounded-xl p-3.5 text-left transition-all duration-300 text-balance",
+              "relative flex flex-col items-start gap-2.5 rounded-xl p-4 text-left transition-all duration-300 text-balance overflow-hidden",
               "bg-white/[0.03] backdrop-blur-sm border border-white/[0.06]",
-              "hover:border-white/[0.12]",
+              "hover:border-white/[0.15] hover:bg-white/[0.05]",
               "disabled:cursor-not-allowed disabled:opacity-30",
               active && [
-                "bg-white/[0.06] border-white/[0.15]",
-                "shadow-[0_0_30px_-8px_oklch(0.74_0.15_222/0.2)]",
+                "bg-white/[0.06] border-primary/30",
+                "shadow-[0_0_30px_-8px_oklch(0.74_0.15_222/0.25)]",
               ],
             )}
           >
             {active && (
               <motion.div
                 layoutId="source-glow"
-                className="absolute inset-0 -z-10 rounded-xl bg-gradient-to-b from-white/[0.06] to-transparent"
+                className="absolute inset-0 -z-10 rounded-xl bg-gradient-to-b from-primary/[0.08] to-transparent"
                 transition={{ type: "spring", stiffness: 400, damping: 30 }}
               />
             )}
-            <div className="flex items-center gap-2.5 w-full">
+            <div className="flex items-center gap-3 w-full">
               <span
                 className={cn(
-                  "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-all duration-300",
+                  "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300",
                   active
-                    ? "bg-gradient-primary text-white shadow-[0_0_16px_oklch(0.74_0.15_222/0.3)]"
-                    : "bg-white/[0.04] text-white/40",
+                    ? "bg-gradient-primary text-white shadow-[0_0_20px_-4px_oklch(0.74_0.15_222/0.35)] ring-1 ring-white/10"
+                    : "bg-white/[0.04] text-white/35 ring-1 ring-white/[0.04]",
                 )}
               >
                 <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
@@ -306,17 +340,19 @@ function SourceCards({
                 <span
                   className={cn(
                     "block font-display text-sm font-semibold transition-colors truncate",
-                    active ? "text-white" : "text-white/60",
+                    active ? "text-white" : "text-white/55",
                   )}
                 >
                   {label}
                 </span>
-                <span className="block text-[11px] text-white/30 mt-0.5 leading-tight">
+                <span className="block text-[10px] text-white/25 mt-0.5 leading-tight hidden md:block">
                   {description}
                 </span>
               </div>
             </div>
-            <span className="text-[10px] text-white/20 leading-tight italic">{tip}</span>
+            <span className="text-[10px] text-white/15 leading-tight italic hidden sm:block">
+              {tip}
+            </span>
           </motion.button>
         );
       })}
@@ -342,15 +378,15 @@ function QualitySelector({
         disabled={disabled}
         onClick={() => setOpen(!open)}
         className={cn(
-          "flex items-center gap-2 rounded-xl px-3.5 py-2.5 text-sm ring-1 ring-white/[0.06]",
+          "flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm ring-1 ring-white/[0.06]",
           "bg-white/[0.03] backdrop-blur-sm transition-all",
           "hover:bg-white/[0.06] hover:ring-white/[0.12]",
           "disabled:cursor-not-allowed disabled:opacity-40",
         )}
       >
-        <MonitorPlay className="h-4 w-4 text-white/40" />
-        <span className="text-white/70 font-medium">{value.label}</span>
-        <svg className="w-3 h-3 text-white/30 ml-1" fill="none" viewBox="0 0 12 12">
+        <Expand className="h-3.5 w-3.5 text-white/35" />
+        <span className="text-white/65 font-medium">{value.label}</span>
+        <svg className="w-3 h-3 text-white/25 ml-0.5" fill="none" viewBox="0 0 12 12">
           <path
             d="M3 5l3 3 3-3"
             stroke="currentColor"
@@ -445,7 +481,7 @@ function ControlBar({
   return (
     <div className="flex flex-col items-center gap-4">
       {idle && (
-        <div className="flex items-center gap-3 mb-1">
+        <div className="flex items-center gap-2 mb-1">
           <QualitySelector value={quality} onChange={onQualityChange} disabled={!idle} />
         </div>
       )}
@@ -503,33 +539,39 @@ function ControlBar({
         )}
       </div>
       {idle && (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 flex-wrap justify-center">
           <motion.label
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex cursor-pointer items-center gap-3 rounded-full bg-white/[0.03] px-5 py-2.5 text-sm ring-1 ring-white/[0.06] backdrop-blur-sm transition-all hover:bg-white/[0.06] hover:ring-white/[0.12]"
+            className="flex cursor-pointer items-center gap-2.5 rounded-full bg-white/[0.03] px-4 py-2 text-xs ring-1 ring-white/[0.06] backdrop-blur-sm transition-all hover:bg-white/[0.06] hover:ring-white/[0.12]"
           >
             <Switch checked={includeAudio} onCheckedChange={onIncludeAudioChange} />
-            <span className="text-white/50 select-none">System audio</span>
-            <Mic className="h-3.5 w-3.5 text-white/30" />
+            <span className="text-white/50 select-none flex items-center gap-1.5">
+              <Mic className="h-3 w-3" />
+              Audio
+            </span>
           </motion.label>
           <motion.label
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex cursor-pointer items-center gap-3 rounded-full bg-white/[0.03] px-5 py-2.5 text-sm ring-1 ring-white/[0.06] backdrop-blur-sm transition-all hover:bg-white/[0.06] hover:ring-white/[0.12]"
+            className="flex cursor-pointer items-center gap-2.5 rounded-full bg-white/[0.03] px-4 py-2 text-xs ring-1 ring-white/[0.06] backdrop-blur-sm transition-all hover:bg-white/[0.06] hover:ring-white/[0.12]"
           >
             <Switch checked={includeCamera} onCheckedChange={onIncludeCameraChange} />
-            <span className="text-white/50 select-none">Webcam</span>
-            <Camera className="h-3.5 w-3.5 text-white/30" />
+            <span className="text-white/50 select-none flex items-center gap-1.5">
+              <Camera className="h-3 w-3" />
+              Webcam
+            </span>
           </motion.label>
           <motion.label
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex cursor-pointer items-center gap-3 rounded-full bg-white/[0.03] px-5 py-2.5 text-sm ring-1 ring-white/[0.06] backdrop-blur-sm transition-all hover:bg-white/[0.06] hover:ring-white/[0.12]"
+            className="flex cursor-pointer items-center gap-2.5 rounded-full bg-white/[0.03] px-4 py-2 text-xs ring-1 ring-white/[0.06] backdrop-blur-sm transition-all hover:bg-white/[0.06] hover:ring-white/[0.12]"
           >
             <Switch checked={annotationsEnabled} onCheckedChange={onAnnotationsChange} />
-            <span className="text-white/50 select-none">Annotate</span>
-            <Pencil className="h-3.5 w-3.5 text-white/30" />
+            <span className="text-white/50 select-none flex items-center gap-1.5">
+              <Pencil className="h-3 w-3" />
+              Annotate
+            </span>
           </motion.label>
         </div>
       )}
@@ -599,7 +641,7 @@ function RecordingResultPanel({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl bg-white/[0.04] ring-1 ring-white/[0.06] p-6 backdrop-blur-sm"
+      className="glass-deep rounded-2xl p-6 shadow-elegant"
     >
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
@@ -614,7 +656,7 @@ function RecordingResultPanel({
       </div>
       <div className="grid grid-cols-2 gap-2 lg:grid-cols-4 mb-5">
         {stats.map(({ icon: Icon, label, value }) => (
-          <div key={label} className="rounded-xl bg-white/[0.02] p-3.5 ring-1 ring-white/[0.04]">
+          <div key={label} className="glass rounded-xl p-3.5">
             <div className="flex items-center gap-1.5 text-white/30 mb-1">
               <Icon className="h-3.5 w-3.5" />
               <span className="text-[10px] uppercase tracking-widest">{label}</span>
@@ -706,14 +748,22 @@ function Index() {
   };
 
   return (
-    <main className="relative min-h-screen">
-      <div className="fixed inset-0 -z-10">
+    <main className="relative min-h-screen overflow-x-hidden">
+      {/* ── Background layer ── */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        {/* Existing gradient spotlights */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,oklch(0.74_0.15_222/0.15),transparent)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_20%_80%,oklch(0.72_0.16_200/0.1),transparent)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_80%_80%,oklch(0.74_0.15_222/0.08),transparent)]" />
         <div className="absolute inset-0 bg-[image:radial-gradient(oklch(1_0_0/0.03)_1px,transparent_1px)] bg-[size:24px_24px]" />
+
+        {/* Floating decorative orbs */}
+        <div className="absolute -top-48 -left-48 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-primary/10 to-accent/5 blur-[120px] animate-float-1 animate-blob-pulse" />
+        <div className="absolute -bottom-64 -right-48 w-[500px] h-[500px] rounded-full bg-gradient-to-tl from-blue-500/8 to-purple-500/8 blur-[100px] animate-float-2 animate-blob-pulse" style={{ animationDelay: "-3s" }} />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-accent/8 to-primary/5 blur-[100px] animate-float-3 animate-blob-pulse" style={{ animationDelay: "-6s" }} />
       </div>
 
+      {/* ── Overlays ── */}
       <ClickFX active={showClickFX} />
       <CursorFX active={showCursorFX} />
       <CountdownOverlay countdown={countdown} onCancel={cancelCountdown} status={status} />
@@ -749,13 +799,15 @@ function Index() {
         />
       )}
 
+      {/* ── Main content ── */}
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
-        className="mx-auto max-w-4xl px-4 py-6 md:py-10"
+        className="mx-auto max-w-5xl px-4 py-6 md:py-12"
       >
-        <motion.div variants={fadeUp} className="flex items-center justify-between mb-6">
+        {/* ── Header ── */}
+        <motion.div variants={fadeUp} className="flex items-center justify-between mb-8 md:mb-12">
           <div className="flex items-center gap-2.5">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-primary shadow-[0_0_20px_-4px_oklch(0.74_0.15_222/0.3)]">
               <Video className="h-4 w-4 text-white" />
@@ -764,8 +816,8 @@ function Index() {
               ScreenCapture <span className="text-gradient">Pro</span>
             </span>
           </div>
-          <div className="flex items-center gap-2.5">
-            <span className="rounded-full bg-white/[0.03] px-3 py-1 text-[11px] text-white/30 ring-1 ring-white/[0.06] flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
+            <span className="hidden md:flex items-center gap-1.5 rounded-full bg-white/[0.03] px-3 py-1 text-[11px] text-white/30 ring-1 ring-white/[0.06]">
               <Sparkles className="h-3 w-3 text-white/20" />
               No installs
             </span>
@@ -793,18 +845,62 @@ function Index() {
           </div>
         </motion.div>
 
-        <motion.div variants={fadeUp} className="text-center mb-6">
-          <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight text-white mb-2">
+        {/* ── Hero ── */}
+        <motion.div variants={fadeUp} className="text-center mb-8 md:mb-10">
+          <motion.span
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.5 }}
+            className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.04] px-3.5 py-1.5 text-[11px] font-medium text-white/40 ring-1 ring-white/[0.06] backdrop-blur-sm mb-5"
+          >
+            <Sparkles className="h-3 w-3 text-primary/60" />
+            Browser-based &middot; No installs &middot; 100% private
+          </motion.span>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25, duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
+            className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1] mb-4"
+          >
             Record your screen
             <br />
-            <span className="text-gradient">in stunning quality</span>
-          </h1>
-          <p className="text-sm text-white/40 max-w-lg mx-auto">
-            Capture your display in HD, Full HD or 4K directly from the browser. No installs, no
-            watermarks, no data leaving your machine.
-          </p>
+            <span className="text-gradient bg-[length:200%_auto] hero-animate-gradient inline-block pb-1">
+              in stunning quality
+            </span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="text-sm sm:text-base text-white/40 max-w-xl mx-auto leading-relaxed mb-6"
+          >
+            Capture your display in HD, Full HD or 4K directly from the browser.
+            <br className="hidden sm:block" />
+            No installs, no watermarks, no data leaving your machine.
+          </motion.p>
+
+          {/* Feature pills */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.6 }}
+            className="flex items-center justify-center gap-2 flex-wrap"
+          >
+            {FEATURES.map(({ icon: Icon, label }) => (
+              <span
+                key={label}
+                className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.03] px-3 py-1.5 text-[11px] text-white/35 ring-1 ring-white/[0.06] backdrop-blur-sm"
+              >
+                <Icon className="h-3 w-3 text-primary/40" />
+                {label}
+              </span>
+            ))}
+          </motion.div>
         </motion.div>
 
+        {/* ── Error ── */}
         <AnimatePresence mode="wait">
           {error && (
             <motion.div
@@ -820,10 +916,12 @@ function Index() {
           )}
         </AnimatePresence>
 
-        <motion.div variants={fadeUp} className="mb-3">
+        {/* ── Preview ── */}
+        <motion.div variants={fadeUp} className="mb-4">
           <RecordingPreview stream={stream} status={status} elapsed={elapsed} result={result} />
         </motion.div>
 
+        {/* ── Source cards ── */}
         <AnimatePresence mode="wait">
           {isIdle && !result && (
             <motion.div
@@ -832,16 +930,17 @@ function Index() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
               transition={{ duration: 0.4 }}
-              className="mb-3"
+              className="mb-4"
             >
               <SourceCards value={source} onChange={setSource} disabled={!isIdle} />
             </motion.div>
           )}
         </AnimatePresence>
 
+        {/* ── Controls ── */}
         <motion.div
           variants={fadeUp}
-          className="rounded-2xl bg-white/[0.03] ring-1 ring-white/[0.06] p-5 backdrop-blur-sm"
+          className="glass rounded-2xl p-5 shadow-elegant"
         >
           <ControlBar
             status={status}
@@ -864,6 +963,7 @@ function Index() {
           />
         </motion.div>
 
+        {/* ── Result ── */}
         <AnimatePresence>
           {result && (
             <motion.div
@@ -872,18 +972,19 @@ function Index() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5 }}
-              className="mt-3"
+              className="mt-4"
             >
               <RecordingResultPanel result={result} onReset={reset} />
             </motion.div>
           )}
         </AnimatePresence>
 
+        {/* ── Footer ── */}
         <motion.div
           variants={fadeUp}
-          className="flex items-center justify-center gap-2 mt-8 text-xs text-white/20"
+          className="flex items-center justify-center gap-2 mt-10 text-xs text-white/15"
         >
-          <ShieldCheck className="h-3.5 w-3.5 text-white/15" />
+          <ShieldCheck className="h-3.5 w-3.5 text-white/10" />
           Recordings never leave your device — everything is processed locally.
         </motion.div>
       </motion.div>
