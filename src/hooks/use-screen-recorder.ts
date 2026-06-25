@@ -462,6 +462,8 @@ export function useScreenRecorder() {
       setCropRect(rect);
       setStatus("idle");
 
+      if (annotationsEnabledRef.current) setupAnnotationCanvas(rect.width, rect.height);
+
       const [videoTrack] = displayStream.getVideoTracks();
       const settings = videoTrack.getSettings();
       trackSettingsRef.current = { width: rect.width, height: rect.height };
