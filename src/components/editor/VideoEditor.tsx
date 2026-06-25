@@ -251,12 +251,45 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
     a.remove();
   };
 
+  // ── Captions ──
+  const addCaption = () => {
+    if (!newCaptionText.trim()) return;
+    const id = crypto.randomUUID();
+    setCaptions((prev) => [
+      ...prev,
+      { id, start: newCaptionStart, end: newCaptionEnd, text: newCaptionText.trim() },
+    ]);
+    setNewCaptionText("");
+  };
+
+  const removeCaption = (id: string) => {
+    setCaptions((prev) => prev.filter((c) => c.id !== id));
+    if (editingCaptionId === id) setEditingCaptionId(null);
+  };
+
+  const updateCaption = (id: string, updates: Partial<CaptionEntry>) => {
+    setCaptions((prev) => prev.map((c) => (c.id === id ? { ...c, ...updates } : c)));
+  };
+
+  // ── Music ──
+  const handleMusicFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith("audio/")) {
+      setMusicBlob(file);
+    }
+    e.target.value = "";
+  };
+
   const resetEditor = () => {
     setResultBlob(null);
     setResultUrl("");
     setTrimStart(0);
     setTrimEnd(duration);
     setMergeClips([blob]);
+    setSpeed(1);
+    setCaptions([]);
+    setMusicBlob(null);
+    setMusicVolume(0.5);
   };
 
   return (
