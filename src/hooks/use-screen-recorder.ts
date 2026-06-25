@@ -344,6 +344,46 @@ export function useScreenRecorder() {
 
           // Show composited preview
           setStream(recordingStream);
+        } else if (annotationsEnabledRef.current) {
+          const screenVideo = document.createElement("video");
+          screenVideo.srcObject = displayStream;
+          screenVideo.muted = true;
+          screenVideo.playsInline = true;
+          await screenVideo.play();
+
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d")!;
+
+          compositeScreenVideo.current = screenVideo;
+          compositeCanvas.current = canvas;
+          compositeRunning.current = true;
+
+          const frame = () => {
+            if (!compositeRunning.current) return;
+            ctx.clearRect(0, 0, width, height);
+            ctx.drawImage(screenVideo, 0, 0, width, height);
+            overlayAnnotations(ctx, width, height);
+            requestAnimationFrame(frame);
+          };
+          requestAnimationFrame(frame);
+
+          const canvasStream = canvas.captureStream(60);
+
+          const audioCtx = new AudioContext();
+          compositeAudioCtx.current = audioCtx;
+          const dest = audioCtx.createMediaStreamDestination();
+          if (includeAudio && displayStream.getAudioTracks().length > 0) {
+            const srcNode = audioCtx.createMediaStreamSource(displayStream);
+            srcNode.connect(dest);
+          }
+
+          recordingStream = new MediaStream([
+            ...canvasStream.getVideoTracks(),
+            ...dest.stream.getAudioTracks(),
+          ]);
+          setStream(recordingStream);
         } else {
           recordingStream = displayStream;
           setStream(displayStream);
