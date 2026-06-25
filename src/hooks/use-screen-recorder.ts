@@ -104,6 +104,12 @@ export function useScreenRecorder() {
   const [cropRect, setCropRect] = useState<CropRect | null>(null);
   const [multiStreams, setMultiStreams] = useState<MediaStream[]>([]);
 
+  const annotationCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const annotationCtxRef = useRef<CanvasRenderingContext2D | null>(null);
+  const [annotationsEnabled, setAnnotationsEnabled] = useState(false);
+  const annotationsEnabledRef = useRef(false);
+  annotationsEnabledRef.current = annotationsEnabled;
+
   const clearTimer = () => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
