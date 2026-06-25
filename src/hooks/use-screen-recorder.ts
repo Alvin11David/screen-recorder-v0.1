@@ -705,6 +705,7 @@ export function useScreenRecorder() {
           cellH,
         );
       }
+      overlayAnnotations(ctx, canvasW, canvasH);
       requestAnimationFrame(frame);
     };
     requestAnimationFrame(frame);
