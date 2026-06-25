@@ -23,7 +23,11 @@ export function CountdownOverlay({
 
   useEffect(() => {
     let t: ReturnType<typeof setTimeout>;
-    if (countdown === 0 && phase === "countdown" && (status === "countdown" || status === "recording")) {
+    if (
+      countdown === 0 &&
+      phase === "countdown" &&
+      (status === "countdown" || status === "recording")
+    ) {
       setPhase("go");
       setShowCancel(false);
       t = setTimeout(() => setPhase(null), 600);
