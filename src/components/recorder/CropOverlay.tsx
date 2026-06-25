@@ -1,13 +1,6 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Check,
-  X,
-  Move,
-  Crop,
-  MousePointer2,
-  Keyboard,
-} from "lucide-react";
+import { Check, X, Move, Crop, MousePointer2, Keyboard } from "lucide-react";
 import type { CropRect } from "@/hooks/use-screen-recorder";
 
 interface CropOverlayProps {
@@ -91,8 +84,14 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
     if (y < 0) y = 0;
     if (x + width > bounds.w) x = bounds.w - width;
     if (y + height > bounds.h) y = bounds.h - height;
-    if (x < 0) { x = 0; width = bounds.w; }
-    if (y < 0) { y = 0; height = bounds.h; }
+    if (x < 0) {
+      x = 0;
+      width = bounds.w;
+    }
+    if (y < 0) {
+      y = 0;
+      height = bounds.h;
+    }
     return { x, y, width, height };
   }, []);
 
@@ -103,12 +102,7 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
       // Check if we clicked inside an existing selection (for moving)
       if (selection && !activeHandle) {
         const s = selection;
-        if (
-          pos.x >= s.x &&
-          pos.x <= s.x + s.width &&
-          pos.y >= s.y &&
-          pos.y <= s.y + s.height
-        ) {
+        if (pos.x >= s.x && pos.x <= s.x + s.width && pos.y >= s.y && pos.y <= s.y + s.height) {
           setIsMoving(true);
           setMoveStart({ x: e.clientX, y: e.clientY, rx: s.x, ry: s.y });
           (e.target as HTMLElement).setPointerCapture(e.pointerId);
@@ -135,17 +129,45 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
         const dy = pos.y - resizeStart.y;
 
         switch (activeHandle) {
-          case "se": w = resizeStart.rect.w + dx; h = resizeStart.rect.h + dy; break;
-          case "sw": x = resizeStart.rect.x + dx; w = resizeStart.rect.w - dx; h = resizeStart.rect.h + dy; break;
-          case "ne": y = resizeStart.rect.y + dy; w = resizeStart.rect.w + dx; h = resizeStart.rect.h - dy; break;
-          case "nw": x = resizeStart.rect.x + dx; y = resizeStart.rect.y + dy; w = resizeStart.rect.w - dx; h = resizeStart.rect.h - dy; break;
-          case "n": y = resizeStart.rect.y + dy; h = resizeStart.rect.h - dy; break;
-          case "s": h = resizeStart.rect.h + dy; break;
-          case "w": x = resizeStart.rect.x + dx; w = resizeStart.rect.w - dx; break;
-          case "e": w = resizeStart.rect.w + dx; break;
+          case "se":
+            w = resizeStart.rect.w + dx;
+            h = resizeStart.rect.h + dy;
+            break;
+          case "sw":
+            x = resizeStart.rect.x + dx;
+            w = resizeStart.rect.w - dx;
+            h = resizeStart.rect.h + dy;
+            break;
+          case "ne":
+            y = resizeStart.rect.y + dy;
+            w = resizeStart.rect.w + dx;
+            h = resizeStart.rect.h - dy;
+            break;
+          case "nw":
+            x = resizeStart.rect.x + dx;
+            y = resizeStart.rect.y + dy;
+            w = resizeStart.rect.w - dx;
+            h = resizeStart.rect.h - dy;
+            break;
+          case "n":
+            y = resizeStart.rect.y + dy;
+            h = resizeStart.rect.h - dy;
+            break;
+          case "s":
+            h = resizeStart.rect.h + dy;
+            break;
+          case "w":
+            x = resizeStart.rect.x + dx;
+            w = resizeStart.rect.w - dx;
+            break;
+          case "e":
+            w = resizeStart.rect.w + dx;
+            break;
         }
 
-        setSelection(constrainRect({ x, y, width: w, height: h }, { w: bounds.width, h: bounds.height }));
+        setSelection(
+          constrainRect({ x, y, width: w, height: h }, { w: bounds.width, h: bounds.height }),
+        );
         return;
       }
 
@@ -157,7 +179,12 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
         const dy = pos.y - startPos.y;
         setSelection(
           constrainRect(
-            { x: moveStart.rx + dx, y: moveStart.ry + dy, width: selection!.width, height: selection!.height },
+            {
+              x: moveStart.rx + dx,
+              y: moveStart.ry + dy,
+              width: selection!.width,
+              height: selection!.height,
+            },
             { w: bounds.width, h: bounds.height },
           ),
         );
@@ -172,12 +199,29 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
       const height = Math.abs(pos.y - dragStart.y);
       setSelection({ x, y, width, height });
     },
-    [isDragging, isMoving, dragStart, moveStart, clientToOverlay, getOverlayRect, activeHandle, resizeStart, selection, constrainRect],
+    [
+      isDragging,
+      isMoving,
+      dragStart,
+      moveStart,
+      clientToOverlay,
+      getOverlayRect,
+      activeHandle,
+      resizeStart,
+      selection,
+      constrainRect,
+    ],
   );
 
   const handlePointerUp = useCallback(() => {
-    if (activeHandle) { setActiveHandle(null); return; }
-    if (isMoving) { setIsMoving(false); return; }
+    if (activeHandle) {
+      setActiveHandle(null);
+      return;
+    }
+    if (isMoving) {
+      setIsMoving(false);
+      return;
+    }
     setIsDragging(false);
     if (selection && (selection.width < MIN_SIZE || selection.height < MIN_SIZE)) {
       setSelection(null);
@@ -217,12 +261,17 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
     });
   };
 
-  const hasValidSelection = selection && selection.width >= MIN_SIZE && selection.height >= MIN_SIZE;
+  const hasValidSelection =
+    selection && selection.width >= MIN_SIZE && selection.height >= MIN_SIZE;
 
   // Compute recorded resolution for display
   const overlayRect = overlayRef.current?.getBoundingClientRect();
-  const recordedW = overlayRect ? Math.round(selection ? selection.width * (videoW / overlayRect.width) : videoW) : videoW;
-  const recordedH = overlayRect ? Math.round(selection ? selection.height * (videoH / overlayRect.height) : videoH) : videoH;
+  const recordedW = overlayRect
+    ? Math.round(selection ? selection.width * (videoW / overlayRect.width) : videoW)
+    : videoW;
+  const recordedH = overlayRect
+    ? Math.round(selection ? selection.height * (videoH / overlayRect.height) : videoH)
+    : videoH;
 
   return (
     <div className="fixed inset-0 z-[9999] flex flex-col bg-black/70 select-none">
@@ -282,7 +331,9 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
                 >
                   Adjust
                 </span>
-                <span className="text-[10px] text-white/25">Drag edges or corners to fine-tune</span>
+                <span className="text-[10px] text-white/25">
+                  Drag edges or corners to fine-tune
+                </span>
               </div>
             </div>
           </div>
@@ -392,10 +443,18 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
                         style={{
                           width: dir === "e" || dir === "w" ? HANDLE_SIZE + 16 : HANDLE_SIZE - 4,
                           height: dir === "n" || dir === "s" ? HANDLE_SIZE + 16 : HANDLE_SIZE - 4,
-                          ...(dir === "n" ? { top: -2, left: "50%", transform: "translateX(-50%)" } : {}),
-                          ...(dir === "s" ? { bottom: -2, left: "50%", transform: "translateX(-50%)" } : {}),
-                          ...(dir === "e" ? { right: -2, top: "50%", transform: "translateY(-50%)" } : {}),
-                          ...(dir === "w" ? { left: -2, top: "50%", transform: "translateY(-50%)" } : {}),
+                          ...(dir === "n"
+                            ? { top: -2, left: "50%", transform: "translateX(-50%)" }
+                            : {}),
+                          ...(dir === "s"
+                            ? { bottom: -2, left: "50%", transform: "translateX(-50%)" }
+                            : {}),
+                          ...(dir === "e"
+                            ? { right: -2, top: "50%", transform: "translateY(-50%)" }
+                            : {}),
+                          ...(dir === "w"
+                            ? { left: -2, top: "50%", transform: "translateY(-50%)" }
+                            : {}),
                         }}
                       >
                         <div
@@ -429,7 +488,9 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
                     <MousePointer2 className="h-6 w-6 text-white/60" />
                   </div>
                   <div className="text-center">
-                    <p className="text-sm font-medium text-white/80">Click & drag to select an area</p>
+                    <p className="text-sm font-medium text-white/80">
+                      Click & drag to select an area
+                    </p>
                     <p className="mt-1 text-xs text-white/40">
                       Drag the edges or corners to fine-tune
                     </p>
@@ -456,7 +517,8 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
               <div className="flex items-center gap-2 rounded-lg bg-white/[0.04] px-3 py-2 text-xs text-white/40 ring-1 ring-white/[0.06]">
                 <Move className="h-3 w-3" />
                 <span>
-                  {recordedW}×{recordedH} @ {Math.round((recordedW * recordedH * 30) / 1_000_000)} Mbps
+                  {recordedW}×{recordedH} @ {Math.round((recordedW * recordedH * 30) / 1_000_000)}{" "}
+                  Mbps
                 </span>
               </div>
             )}
