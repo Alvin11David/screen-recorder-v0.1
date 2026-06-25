@@ -44,6 +44,7 @@ import { CountdownOverlay } from "@/components/recorder/CountdownOverlay";
 import { CameraOverlay } from "@/components/recorder/CameraOverlay";
 import { CropOverlay } from "@/components/recorder/CropOverlay";
 import { MultiMonitorSetup } from "@/components/recorder/MultiMonitorSetup";
+import { DrawingOverlay } from "@/components/recorder/DrawingOverlay";
 
 const SOURCES: {
   id: CaptureSurface;
