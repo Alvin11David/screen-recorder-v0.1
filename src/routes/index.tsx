@@ -395,6 +395,8 @@ function ControlBar({
   source,
   quality,
   onQualityChange,
+  annotationsEnabled,
+  onAnnotationsChange,
 }: {
   status: string;
   includeAudio: boolean;
