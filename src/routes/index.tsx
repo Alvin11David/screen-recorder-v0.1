@@ -541,6 +541,14 @@ function Index() {
         active={includeCamera && (status === "idle" || status === "countdown")}
       />
 
+      {status === "crop" && stream && (
+        <CropOverlay
+          stream={stream}
+          onConfirm={confirmCrop}
+          onCancel={cancelCrop}
+        />
+      )}
+
       <motion.div
         variants={container}
         initial="hidden"
