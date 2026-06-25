@@ -726,7 +726,7 @@ function RecordingResultPanel({
           </div>
         ))}
       </div>
-      <div className="flex gap-3">
+      <div className="flex gap-3 flex-wrap">
         <Button
           variant="hero"
           size="lg"
@@ -740,6 +740,10 @@ function RecordingResultPanel({
             : saveState === "saving"
               ? "Saving\u2026"
               : "Save Recording"}
+        </Button>
+        <Button variant="glass" size="lg" onClick={onEdit} className="group gap-2">
+          <Film className="h-4 w-4" />
+          Edit Video
         </Button>
         <Button variant="glass" size="lg" onClick={onReset} className="group">
           <RotateCcw className="h-4 w-4" />
