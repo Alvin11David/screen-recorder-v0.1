@@ -251,3 +251,135 @@ export async function mergeClips(
     requestAnimationFrame(tick);
   });
 }
+
+export async function processWithEffects(
+  blob: Blob,
+  options: VideoOptions & ProcessEffectsOptions,
+): Promise<Blob> {
+  const video = await loadVideo(blob);
+  const canvas = document.createElement("canvas");
+  canvas.width = options.width;
+  canvas.height = options.height;
+  const ctx = canvas.getContext("2d")!;
+  const fps = options.fps ?? 30;
+  const speed = options.speed ?? 1;
+  const captionList = options.captions ?? [];
+  const hasMusic = !!options.music;
+
+  return new Promise<Blob>(async (resolve, reject) => {
+    let audioTrack: MediaStreamTrack | null = null;
+    let audioCtx: AudioContext | null = null;
+    let audioEl: HTMLAudioElement | null = null;
+    let cleanupUrls: string[] = [];
+    let audioStarted = false;
+
+    if (hasMusic && options.music) {
+      try {
+        audioCtx = new AudioContext();
+        audioEl = document.createElement("audio");
+        const musicUrl = URL.createObjectURL(options.music.blob);
+        cleanupUrls.push(musicUrl);
+        audioEl.src = musicUrl;
+        audioEl.loop = false;
+        audioEl.playsInline = true;
+        audioEl.volume = 1;
+        const source = audioCtx.createMediaElementSource(audioEl);
+        const gain = audioCtx.createGain();
+        gain.gain.value = options.music.volume;
+        const dest = audioCtx.createMediaStreamDestination();
+        source.connect(gain);
+        gain.connect(dest);
+        audioTrack = dest.stream.getAudioTracks()[0];
+      } catch (err) {
+        console.warn("Music setup failed, continuing without audio", err);
+      }
+    }
+
+    const videoStream = canvas.captureStream(fps);
+    const tracks: MediaStreamTrack[] = videoStream.getVideoTracks();
+    if (audioTrack) tracks.push(audioTrack);
+    const combinedStream = new MediaStream(tracks);
+
+    const mimeType = getSupportedMimeType();
+    const recorder = new MediaRecorder(combinedStream, { mimeType });
+    const chunks: Blob[] = [];
+
+    recorder.ondataavailable = (e) => {
+      if (e.data.size > 0) chunks.push(e.data);
+    };
+    recorder.onstop = () => {
+      const result = new Blob(chunks, { type: "video/webm" });
+      cleanupUrls.forEach((u) => URL.revokeObjectURL(u));
+      URL.revokeObjectURL(video.src);
+      if (audioCtx) audioCtx.close().catch(() => {});
+      resolve(result);
+    };
+    recorder.onerror = () => reject(recorder.error);
+
+    // Position video at trim start
+    if (options.trim) {
+      video.currentTime = options.trim.start;
+      await new Promise<void>((res) => {
+        video.onseeked = () => res();
+        video.onerror = () => res();
+      });
+    }
+
+    recorder.start();
+    const endTime = options.trim?.end ?? video.duration;
+
+    video.playbackRate = speed;
+    await video.play();
+
+    if (audioEl && audioTrack) {
+      audioEl.currentTime = 0;
+      audioEl.play().catch(() => {});
+      audioStarted = true;
+    }
+
+    const tick = () => {
+      if (recorder.state === "inactive") return;
+      if (video.currentTime >= endTime || video.ended) {
+        video.pause();
+        if (audioEl && audioStarted) {
+          audioEl.pause();
+        }
+        if (recorder.state === "recording") recorder.stop();
+        return;
+      }
+
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // Draw captions
+      const ct = video.currentTime;
+      for (const cap of captionList) {
+        if (ct >= cap.start && ct <= cap.end) {
+          const fontSize = Math.max(14, Math.round(canvas.width * 0.035));
+          ctx.font = `bold ${fontSize}px system-ui, -apple-system, sans-serif`;
+          const metrics = ctx.measureText(cap.text);
+          const pad = Math.round(canvas.width * 0.02);
+          const textX = canvas.width / 2;
+          const textY = canvas.height * 0.88;
+          const bw = metrics.width + pad * 2;
+          const bh = fontSize * 1.6;
+          const bx = textX - bw / 2;
+          const by = textY - bh / 2;
+
+          ctx.fillStyle = "rgba(0,0,0,0.65)";
+          ctx.beginPath();
+          ctx.roundRect(bx, by, bw, bh, Math.round(fontSize * 0.4));
+          ctx.fill();
+
+          ctx.fillStyle = "#ffffff";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(cap.text, textX, textY);
+        }
+      }
+
+      requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+  });
+}
