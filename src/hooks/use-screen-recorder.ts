@@ -817,6 +817,7 @@ export function useScreenRecorder() {
       stream?.getTracks().forEach((t) => t.stop());
       cameraStream?.getTracks().forEach((t) => t.stop());
       pendingStreamRef.current?.getTracks().forEach((t) => t.stop());
+      for (const s of multiStreamsRef.current) s.getTracks().forEach((t) => t.stop());
       stopComposite();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
