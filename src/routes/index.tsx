@@ -11,6 +11,7 @@ import {
   MonitorUp,
   AppWindow,
   Globe,
+  Pencil,
   Mic,
   Camera,
   CircleDot,
