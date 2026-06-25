@@ -908,6 +908,7 @@ export function useScreenRecorder() {
 
   useEffect(() => {
     return () => {
+      if (countdownRef.current) clearInterval(countdownRef.current);
       clearTimer();
       recorderRef.current?.state !== "inactive" && recorderRef.current?.stop();
       stream?.getTracks().forEach((t) => t.stop());
