@@ -459,7 +459,7 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
           ) : tab === "trim" ? (
             <div className="space-y-4">
               <p className="text-xs text-white/30">
-                Drag the handles to set the in and out points, then trim.
+                Set in/out points, adjust speed, then apply all effects.
               </p>
 
               {/* Timeline */}
@@ -502,6 +502,31 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
                 <span className="font-mono text-white/40">End: {formatTime(trimEnd)}</span>
               </div>
 
+              {/* Speed slider */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-[10px] uppercase tracking-wider text-white/20">
+                    <Gauge className="h-3 w-3 inline mr-1 -mt-0.5" />
+                    Speed
+                  </label>
+                  <span className="font-mono text-[11px] text-white/40">{speed.toFixed(2)}x</span>
+                </div>
+                <input
+                  type="range"
+                  min={0.25}
+                  max={4}
+                  step={0.05}
+                  value={speed}
+                  onChange={(e) => setSpeed(Number(e.target.value))}
+                  className="w-full h-1 accent-primary/60"
+                />
+                <div className="flex justify-between text-[9px] font-mono text-white/20 mt-0.5">
+                  <span>0.25x</span>
+                  <span>1x</span>
+                  <span>4x</span>
+                </div>
+              </div>
+
               <Button
                 variant="hero"
                 size="lg"
@@ -510,7 +535,7 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
                 className="w-full gap-2"
               >
                 {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Scissors className="h-4 w-4" />}
-                {processing ? "Trimming\u2026" : "Apply Trim"}
+                {processing ? "Processing\u2026" : "Apply Effects"}
               </Button>
             </div>
           ) : tab === "merge" ? (
