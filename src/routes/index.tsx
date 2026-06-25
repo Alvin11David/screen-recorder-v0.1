@@ -8,6 +8,7 @@ import {
   AlertCircle,
   User,
   Monitor,
+  MonitorUp,
   AppWindow,
   Globe,
   Mic,
