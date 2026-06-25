@@ -490,6 +490,21 @@ function ControlBar({
             <span className="text-white/50 select-none">Webcam</span>
             <Camera className="h-3.5 w-3.5 text-white/30" />
           </motion.label>
+          <motion.label
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex cursor-pointer items-center gap-3 rounded-full bg-white/[0.03] px-5 py-2.5 text-sm ring-1 ring-white/[0.06] backdrop-blur-sm transition-all hover:bg-white/[0.06] hover:ring-white/[0.12]"
+          >
+            <Switch
+              checked={annotationsEnabled}
+              onCheckedChange={(v) => {
+                setAnnotationsEnabled(v);
+                if (v) setupAnnotationCanvas(1920, 1080);
+              }}
+            />
+            <span className="text-white/50 select-none">Annotate</span>
+            <Pencil className="h-3.5 w-3.5 text-white/30" />
+          </motion.label>
         </div>
       )}
     </div>
