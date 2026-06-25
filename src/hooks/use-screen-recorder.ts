@@ -88,6 +88,7 @@ export function useScreenRecorder() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const trackSettingsRef = useRef<{ width: number; height: number }>({ width: 0, height: 0 });
   const pendingStreamRef = useRef<MediaStream | null>(null);
+  const multiStreamsRef = useRef<MediaStream[]>([]);
 
   // Compositing refs (kept stable for the rAF loop)
   const camPosRef = useRef(cameraPosition);
