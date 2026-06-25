@@ -492,13 +492,14 @@ function Index() {
   const [source, setSource] = useState<CaptureSurface>("monitor");
   const { isAuthenticated, user, logout } = useAuth();
   const {
-    status, elapsed, countdown, stream, result, error,
+    status, elapsed, countdown, stream, result, error, cropRect,
     includeAudio, setIncludeAudio,
     includeCamera, setIncludeCamera,
     cameraStream, cameraPosition, setCameraPosition,
     cameraSettings, setCameraSettings,
     quality, setQuality,
     startRecording, cancelCountdown,
+    confirmCrop, cancelCrop,
     pauseRecording, resumeRecording, stopRecording, reset,
   } = useScreenRecorder();
 
