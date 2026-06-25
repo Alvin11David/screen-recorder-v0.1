@@ -288,20 +288,68 @@ export function DrawingOverlay({
             break;
           }
           case "rect":
+          case "fill-rect":
             dctx.strokeRect(
               Math.min(x1, x2),
               Math.min(y1, y2),
               Math.abs(x2 - x1),
               Math.abs(y2 - y1),
             );
+            if (t === "fill-rect") {
+              dctx.fillStyle = colorRef.current;
+              dctx.globalAlpha = 0.3;
+              dctx.fillRect(
+                Math.min(x1, x2),
+                Math.min(y1, y2),
+                Math.abs(x2 - x1),
+                Math.abs(y2 - y1),
+              );
+            }
             break;
-          case "circle": {
+          case "circle":
+          case "fill-circle": {
             const cx = (x1 + x2) / 2;
             const cy = (y1 + y2) / 2;
             const rx = Math.abs(x2 - x1) / 2;
             const ry = Math.abs(y2 - y1) / 2;
             dctx.beginPath();
             dctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+            dctx.stroke();
+            if (t === "fill-circle") {
+              dctx.fillStyle = colorRef.current;
+              dctx.globalAlpha = 0.3;
+              dctx.fill();
+            }
+            break;
+          }
+          case "diamond": {
+            dctx.beginPath();
+            dctx.moveTo((x1 + x2) / 2, y1);
+            dctx.lineTo(x2, (y1 + y2) / 2);
+            dctx.lineTo((x1 + x2) / 2, y2);
+            dctx.lineTo(x1, (y1 + y2) / 2);
+            dctx.closePath();
+            dctx.stroke();
+            break;
+          }
+          case "star": {
+            const cx = (x1 + x2) / 2;
+            const cy = (y1 + y2) / 2;
+            const rx = Math.abs(x2 - x1) / 2;
+            const ry = Math.abs(y2 - y1) / 2;
+            const spikes = 5;
+            const outerR = Math.min(rx, ry);
+            const innerR = outerR * 0.4;
+            dctx.beginPath();
+            for (let i = 0; i < spikes * 2; i++) {
+              const r2 = i % 2 === 0 ? outerR : innerR;
+              const a = (Math.PI * i) / spikes - Math.PI / 2;
+              const px = cx + r2 * Math.cos(a);
+              const py = cy + r2 * Math.sin(a);
+              if (i === 0) dctx.moveTo(px, py);
+              else dctx.lineTo(px, py);
+            }
+            dctx.closePath();
             dctx.stroke();
             break;
           }
