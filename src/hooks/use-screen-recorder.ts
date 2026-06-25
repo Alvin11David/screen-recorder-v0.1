@@ -101,6 +101,7 @@ export function useScreenRecorder() {
   const compositeAudioCtx = useRef<AudioContext | null>(null);
 
   const [cropRect, setCropRect] = useState<CropRect | null>(null);
+  const [multiStreams, setMultiStreams] = useState<MediaStream[]>([]);
 
   const clearTimer = () => {
     if (timerRef.current) {
