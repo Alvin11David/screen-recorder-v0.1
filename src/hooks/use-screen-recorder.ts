@@ -942,6 +942,11 @@ export function useScreenRecorder() {
     resumeRecording,
     stopRecording,
     reset,
+    annotationsEnabled,
+    setAnnotationsEnabled,
+    annotationCanvasRef,
+    setupAnnotationCanvas,
+    clearAnnotationCanvas,
   };
 }
 
