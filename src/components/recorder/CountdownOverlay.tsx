@@ -43,6 +43,14 @@ export function CountdownOverlay({
     return () => window.removeEventListener("keydown", onKey);
   }, [onCancel, showCancel]);
 
+  // Clear phase immediately when recording/transition is no longer active
+  useEffect(() => {
+    if (phase && status !== "countdown" && status !== "recording") {
+      setPhase(null);
+      setShowCancel(true);
+    }
+  }, [status, phase]);
+
   return (
     <AnimatePresence>
       {phase && (
