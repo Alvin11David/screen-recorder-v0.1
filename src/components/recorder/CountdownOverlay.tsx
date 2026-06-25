@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import type { RecorderStatus } from "@/hooks/use-screen-recorder";
 
 export function CountdownOverlay({
   countdown,
   onCancel,
+  status,
 }: {
   countdown: number;
   onCancel: () => void;
+  status?: RecorderStatus;
 }) {
   const [phase, setPhase] = useState<"countdown" | "go" | null>(null);
   const [showCancel, setShowCancel] = useState(true);
