@@ -423,20 +423,68 @@ export function DrawingOverlay({
             break;
           }
           case "rect":
+          case "fill-rect":
             ctx.strokeRect(
               Math.min(x1, x2),
               Math.min(y1, y2),
               Math.abs(x2 - x1),
               Math.abs(y2 - y1),
             );
+            if (t === "fill-rect") {
+              ctx.fillStyle = colorRef.current;
+              ctx.globalAlpha = 0.3;
+              ctx.fillRect(
+                Math.min(x1, x2),
+                Math.min(y1, y2),
+                Math.abs(x2 - x1),
+                Math.abs(y2 - y1),
+              );
+            }
             break;
-          case "circle": {
+          case "circle":
+          case "fill-circle": {
             const cx = (x1 + x2) / 2;
             const cy = (y1 + y2) / 2;
             const rx = Math.abs(x2 - x1) / 2;
             const ry = Math.abs(y2 - y1) / 2;
             ctx.beginPath();
             ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            if (t === "fill-circle") {
+              ctx.fillStyle = colorRef.current;
+              ctx.globalAlpha = 0.3;
+              ctx.fill();
+            }
+            break;
+          }
+          case "diamond": {
+            ctx.beginPath();
+            ctx.moveTo((x1 + x2) / 2, y1);
+            ctx.lineTo(x2, (y1 + y2) / 2);
+            ctx.lineTo((x1 + x2) / 2, y2);
+            ctx.lineTo(x1, (y1 + y2) / 2);
+            ctx.closePath();
+            ctx.stroke();
+            break;
+          }
+          case "star": {
+            const cx = (x1 + x2) / 2;
+            const cy = (y1 + y2) / 2;
+            const rx = Math.abs(x2 - x1) / 2;
+            const ry = Math.abs(y2 - y1) / 2;
+            const spikes = 5;
+            const outerR = Math.min(rx, ry);
+            const innerR = outerR * 0.4;
+            ctx.beginPath();
+            for (let i = 0; i < spikes * 2; i++) {
+              const r2 = i % 2 === 0 ? outerR : innerR;
+              const a = (Math.PI * i) / spikes - Math.PI / 2;
+              const px = cx + r2 * Math.cos(a);
+              const py = cy + r2 * Math.sin(a);
+              if (i === 0) ctx.moveTo(px, py);
+              else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
             ctx.stroke();
             break;
           }
