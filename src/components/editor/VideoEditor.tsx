@@ -13,12 +13,23 @@ import {
   Plus,
   RotateCcw,
   Check,
+  Subtitles,
+  Music,
+  Gauge,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { trimVideo, cropVideo, resizeVideo, mergeClips, type CropRect } from "@/lib/video-editor";
+import {
+  trimVideo,
+  cropVideo,
+  resizeVideo,
+  mergeClips,
+  processWithEffects,
+  type CropRect,
+  type CaptionEntry,
+} from "@/lib/video-editor";
 
-type Tab = "trim" | "merge" | "crop";
+type Tab = "trim" | "merge" | "crop" | "captions" | "music";
 
 const ASPECTS = [
   { label: "16:9", w: 16, h: 9 },
