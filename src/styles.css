@@ -449,3 +449,24 @@
 @utility animate-line-scan {
   animation: line-scan 3s linear infinite;
 }
+
+@keyframes preview-scan {
+  0% { top: 9%; opacity: 0; }
+  5% { opacity: 1; }
+  95% { opacity: 1; }
+  100% { top: 95%; opacity: 0; }
+}
+
+@utility animate-preview-scan {
+  position: absolute;
+  animation: preview-scan 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes hud-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@utility animate-hud-pulse {
+  animation: hud-pulse 2s ease-in-out infinite;
+}
