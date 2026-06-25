@@ -2,14 +2,36 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Video, ShieldCheck, Sparkles, AlertCircle, User,
-  Monitor, AppWindow, Globe, Mic, Camera, CircleDot, Square, Pause, Play,
-  Clock, HardDrive, MonitorPlay, Calendar, Download, RotateCcw, Check,
+  Video,
+  ShieldCheck,
+  Sparkles,
+  AlertCircle,
+  User,
+  Monitor,
+  AppWindow,
+  Globe,
+  Mic,
+  Camera,
+  CircleDot,
+  Square,
+  Pause,
+  Play,
+  Clock,
+  HardDrive,
+  MonitorPlay,
+  Calendar,
+  Download,
+  RotateCcw,
+  Check,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
-  useScreenRecorder, type CaptureSurface, type RecordingResult,
-  QUALITY_PRESETS, type QualityPreset, type CameraSettings,
+  useScreenRecorder,
+  type CaptureSurface,
+  type RecordingResult,
+  QUALITY_PRESETS,
+  type QualityPreset,
+  type CameraSettings,
 } from "@/hooks/use-screen-recorder";
 import { formatTimer, formatBytes, formatResolution } from "@/lib/recording-utils";
 import { Button } from "@/components/ui/button";
@@ -55,7 +77,11 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "ScreenCapture Pro — Record Your Screen in 4K" },
-      { name: "description", content: "Capture your screen in HD, Full HD and 4K straight from the browser and save it locally." },
+      {
+        name: "description",
+        content:
+          "Capture your screen in HD, Full HD and 4K straight from the browser and save it locally.",
+      },
     ],
   }),
   component: Index,
@@ -66,7 +92,10 @@ function useAudioMeter(stream: MediaStream | null) {
   const raf = useRef(0);
 
   useEffect(() => {
-    if (!stream) { setLevel(0); return; }
+    if (!stream) {
+      setLevel(0);
+      return;
+    }
     const ctx = new AudioContext();
     const src = ctx.createMediaStreamSource(stream);
     const analyser = ctx.createAnalyser();
@@ -80,14 +109,20 @@ function useAudioMeter(stream: MediaStream | null) {
       raf.current = requestAnimationFrame(tick);
     };
     tick();
-    return () => { cancelAnimationFrame(raf.current!); ctx.close(); };
+    return () => {
+      cancelAnimationFrame(raf.current!);
+      ctx.close();
+    };
   }, [stream]);
 
   return level;
 }
 
 function RecordingPreview({
-  stream, status, elapsed, result,
+  stream,
+  status,
+  elapsed,
+  result,
 }: {
   stream: MediaStream | null;
   status: string;
@@ -117,17 +152,21 @@ function RecordingPreview({
                 {status === "recording" && (
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
                 )}
-                <span className={cn(
-                  "relative inline-flex h-3 w-3 rounded-full",
-                  status === "recording" ? "bg-red-500" : "bg-yellow-400",
-                )} />
+                <span
+                  className={cn(
+                    "relative inline-flex h-3 w-3 rounded-full",
+                    status === "recording" ? "bg-red-500" : "bg-yellow-400",
+                  )}
+                />
               </span>
               <span className="text-xs font-semibold uppercase tracking-widest text-white/80">
                 {status === "recording" ? "REC" : "PAUSED"}
               </span>
             </div>
             <div className="rounded-full bg-black/60 px-3.5 py-2 backdrop-blur-xl ring-1 ring-white/[0.08]">
-              <span className="font-mono text-sm tabular-nums text-white/90">{formatTimer(elapsed)}</span>
+              <span className="font-mono text-sm tabular-nums text-white/90">
+                {formatTimer(elapsed)}
+              </span>
             </div>
           </div>
           {status === "recording" && (
@@ -160,7 +199,9 @@ function RecordingPreview({
           </div>
           <div className="text-center">
             <p className="text-base font-medium text-white/50">Your preview appears here</p>
-            <p className="mt-1 text-sm text-white/30">Select a source and quality, then start recording</p>
+            <p className="mt-1 text-sm text-white/30">
+              Select a source and quality, then start recording
+            </p>
           </div>
         </div>
       )}
@@ -169,7 +210,10 @@ function RecordingPreview({
 }
 
 function SourceCards({
-  value, onChange, onSelect, disabled,
+  value,
+  onChange,
+  onSelect,
+  disabled,
 }: {
   value: CaptureSurface;
   onChange: (v: CaptureSurface) => void;
@@ -185,7 +229,10 @@ function SourceCards({
             key={id}
             type="button"
             disabled={disabled}
-            onClick={() => { onChange(id); onSelect?.(id); }}
+            onClick={() => {
+              onChange(id);
+              onSelect?.(id);
+            }}
             whileHover={disabled ? {} : { scale: 1.015, y: -1 }}
             whileTap={disabled ? {} : { scale: 0.985 }}
             className={cn(
@@ -207,20 +254,28 @@ function SourceCards({
               />
             )}
             <div className="flex items-center gap-2.5 w-full">
-              <span className={cn(
-                "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-all duration-300",
-                active
-                  ? "bg-gradient-primary text-white shadow-[0_0_16px_oklch(0.74_0.15_222/0.3)]"
-                  : "bg-white/[0.04] text-white/40",
-              )}>
+              <span
+                className={cn(
+                  "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-all duration-300",
+                  active
+                    ? "bg-gradient-primary text-white shadow-[0_0_16px_oklch(0.74_0.15_222/0.3)]"
+                    : "bg-white/[0.04] text-white/40",
+                )}
+              >
                 <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
               </span>
               <div className="min-w-0">
-                <span className={cn(
-                  "block font-display text-sm font-semibold transition-colors truncate",
-                  active ? "text-white" : "text-white/60",
-                )}>{label}</span>
-                <span className="block text-[11px] text-white/30 mt-0.5 leading-tight">{description}</span>
+                <span
+                  className={cn(
+                    "block font-display text-sm font-semibold transition-colors truncate",
+                    active ? "text-white" : "text-white/60",
+                  )}
+                >
+                  {label}
+                </span>
+                <span className="block text-[11px] text-white/30 mt-0.5 leading-tight">
+                  {description}
+                </span>
               </div>
             </div>
             <span className="text-[10px] text-white/20 leading-tight italic">{tip}</span>
@@ -232,7 +287,9 @@ function SourceCards({
 }
 
 function QualitySelector({
-  value, onChange, disabled,
+  value,
+  onChange,
+  disabled,
 }: {
   value: QualityPreset;
   onChange: (v: QualityPreset) => void;
@@ -256,7 +313,13 @@ function QualitySelector({
         <MonitorPlay className="h-4 w-4 text-white/40" />
         <span className="text-white/70 font-medium">{value.label}</span>
         <svg className="w-3 h-3 text-white/30 ml-1" fill="none" viewBox="0 0 12 12">
-          <path d="M3 5l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M3 5l3 3 3-3"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       </button>
       <AnimatePresence>
@@ -272,7 +335,10 @@ function QualitySelector({
               <button
                 key={preset.short}
                 type="button"
-                onClick={() => { onChange(preset); setOpen(false); }}
+                onClick={() => {
+                  onChange(preset);
+                  setOpen(false);
+                }}
                 className={cn(
                   "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-all",
                   value.short === preset.short
@@ -280,17 +346,21 @@ function QualitySelector({
                     : "text-white/50 hover:text-white/80 hover:bg-white/[0.04]",
                 )}
               >
-                <span className={cn(
-                  "flex h-6 w-6 items-center justify-center rounded text-[10px] font-bold uppercase",
-                  value.short === preset.short
-                    ? "bg-gradient-primary text-white"
-                    : "bg-white/[0.05] text-white/30",
-                )}>
+                <span
+                  className={cn(
+                    "flex h-6 w-6 items-center justify-center rounded text-[10px] font-bold uppercase",
+                    value.short === preset.short
+                      ? "bg-gradient-primary text-white"
+                      : "bg-white/[0.05] text-white/30",
+                  )}
+                >
                   {preset.short.replace("p", "")}
                 </span>
                 <div className="flex-1">
                   <span className="block font-medium leading-tight">{preset.label}</span>
-                  <span className="block text-[10px] text-white/30 mt-0.5">{preset.width}×{preset.height}</span>
+                  <span className="block text-[10px] text-white/30 mt-0.5">
+                    {preset.width}×{preset.height}
+                  </span>
                 </div>
               </button>
             ))}
@@ -302,9 +372,18 @@ function QualitySelector({
 }
 
 function ControlBar({
-  status, includeAudio, onIncludeAudioChange, includeCamera, onIncludeCameraChange,
-  onStart, onPause, onResume, onStop, source,
-  quality, onQualityChange,
+  status,
+  includeAudio,
+  onIncludeAudioChange,
+  includeCamera,
+  onIncludeCameraChange,
+  onStart,
+  onPause,
+  onResume,
+  onStop,
+  source,
+  quality,
+  onQualityChange,
 }: {
   status: string;
   includeAudio: boolean;
@@ -352,7 +431,12 @@ function ControlBar({
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} layout>
-              <Button variant="destructive" size="lg" onClick={onStop} className="group shadow-[0_0_0_1px_oklch(0.63_0.245_27/0.3),0_0_30px_oklch(0.63_0.245_27/0.1)]">
+              <Button
+                variant="destructive"
+                size="lg"
+                onClick={onStop}
+                className="group shadow-[0_0_0_1px_oklch(0.63_0.245_27/0.3),0_0_30px_oklch(0.63_0.245_27/0.1)]"
+              >
                 <Square className="h-4 w-4 fill-current" />
                 Stop
               </Button>
@@ -402,7 +486,13 @@ function ControlBar({
   );
 }
 
-function RecordingResultPanel({ result, onReset }: { result: RecordingResult; onReset: () => void }) {
+function RecordingResultPanel({
+  result,
+  onReset,
+}: {
+  result: RecordingResult;
+  onReset: () => void;
+}) {
   const [saveState, setSaveState] = useState<"idle" | "saving" | "done">("idle");
 
   const handleSave = async () => {
@@ -421,7 +511,10 @@ function RecordingResultPanel({ result, onReset }: { result: RecordingResult; on
         setSaveState("done");
         return;
       } catch (err) {
-        if ((err as DOMException).name === "AbortError") { setSaveState("idle"); return; }
+        if ((err as DOMException).name === "AbortError") {
+          setSaveState("idle");
+          return;
+        }
       }
     }
     const a = document.createElement("a");
@@ -435,9 +528,20 @@ function RecordingResultPanel({ result, onReset }: { result: RecordingResult; on
 
   const stats = [
     { icon: Clock, label: "Duration", value: formatTimer(result.durationSeconds) },
-    { icon: MonitorPlay, label: "Resolution", value: formatResolution(result.width, result.height) },
+    {
+      icon: MonitorPlay,
+      label: "Resolution",
+      value: formatResolution(result.width, result.height),
+    },
     { icon: HardDrive, label: "Size", value: formatBytes(result.sizeBytes) },
-    { icon: Calendar, label: "Recorded", value: result.createdAt.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) },
+    {
+      icon: Calendar,
+      label: "Recorded",
+      value: result.createdAt.toLocaleString(undefined, {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }),
+    },
   ];
 
   return (
@@ -477,7 +581,11 @@ function RecordingResultPanel({ result, onReset }: { result: RecordingResult; on
           className="group"
         >
           {saveState === "done" ? <Check className="h-4 w-4" /> : <Download className="h-4 w-4" />}
-          {saveState === "done" ? "Saved" : saveState === "saving" ? "Saving\u2026" : "Save Recording"}
+          {saveState === "done"
+            ? "Saved"
+            : saveState === "saving"
+              ? "Saving\u2026"
+              : "Save Recording"}
         </Button>
         <Button variant="glass" size="lg" onClick={onReset} className="group">
           <RotateCcw className="h-4 w-4" />
@@ -492,15 +600,32 @@ function Index() {
   const [source, setSource] = useState<CaptureSurface>("monitor");
   const { isAuthenticated, user, logout } = useAuth();
   const {
-    status, elapsed, countdown, stream, result, error, cropRect,
-    includeAudio, setIncludeAudio,
-    includeCamera, setIncludeCamera,
-    cameraStream, cameraPosition, setCameraPosition,
-    cameraSettings, setCameraSettings,
-    quality, setQuality,
-    startRecording, cancelCountdown,
-    confirmCrop, cancelCrop,
-    pauseRecording, resumeRecording, stopRecording, reset,
+    status,
+    elapsed,
+    countdown,
+    stream,
+    result,
+    error,
+    cropRect,
+    includeAudio,
+    setIncludeAudio,
+    includeCamera,
+    setIncludeCamera,
+    cameraStream,
+    cameraPosition,
+    setCameraPosition,
+    cameraSettings,
+    setCameraSettings,
+    quality,
+    setQuality,
+    startRecording,
+    cancelCountdown,
+    confirmCrop,
+    cancelCrop,
+    pauseRecording,
+    resumeRecording,
+    stopRecording,
+    reset,
   } = useScreenRecorder();
 
   const isIdle = status === "idle";
@@ -542,11 +667,7 @@ function Index() {
       />
 
       {status === "crop" && stream && (
-        <CropOverlay
-          stream={stream}
-          onConfirm={confirmCrop}
-          onCancel={cancelCrop}
-        />
+        <CropOverlay stream={stream} onConfirm={confirmCrop} onCancel={cancelCrop} />
       )}
 
       <motion.div
@@ -575,12 +696,18 @@ function Index() {
                   <User className="h-3 w-3" />
                   {user?.name?.split(" ")[0]}
                 </span>
-                <button onClick={logout} className="rounded-lg bg-white/[0.03] px-2.5 py-1.5 text-xs text-white/30 ring-1 ring-white/[0.06] transition-all hover:bg-white/[0.06] hover:text-white/60">
+                <button
+                  onClick={logout}
+                  className="rounded-lg bg-white/[0.03] px-2.5 py-1.5 text-xs text-white/30 ring-1 ring-white/[0.06] transition-all hover:bg-white/[0.06] hover:text-white/60"
+                >
                   Sign out
                 </button>
               </div>
             ) : (
-              <Link to="/login" className="rounded-lg bg-white/[0.03] px-3 py-1.5 text-xs text-white/40 ring-1 ring-white/[0.06] transition-all hover:bg-white/[0.06] hover:text-white/70">
+              <Link
+                to="/login"
+                className="rounded-lg bg-white/[0.03] px-3 py-1.5 text-xs text-white/40 ring-1 ring-white/[0.06] transition-all hover:bg-white/[0.06] hover:text-white/70"
+              >
                 Sign in
               </Link>
             )}
@@ -589,12 +716,13 @@ function Index() {
 
         <motion.div variants={fadeUp} className="text-center mb-6">
           <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight text-white mb-2">
-            Record your screen<br />
+            Record your screen
+            <br />
             <span className="text-gradient">in stunning quality</span>
           </h1>
           <p className="text-sm text-white/40 max-w-lg mx-auto">
-            Capture your display in HD, Full HD or 4K directly from the browser.
-            No installs, no watermarks, no data leaving your machine.
+            Capture your display in HD, Full HD or 4K directly from the browser. No installs, no
+            watermarks, no data leaving your machine.
           </p>
         </motion.div>
 
@@ -627,11 +755,7 @@ function Index() {
               transition={{ duration: 0.4 }}
               className="mb-3"
             >
-              <SourceCards
-                value={source}
-                onChange={setSource}
-                disabled={!isIdle}
-              />
+              <SourceCards value={source} onChange={setSource} disabled={!isIdle} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -671,7 +795,10 @@ function Index() {
           )}
         </AnimatePresence>
 
-        <motion.div variants={fadeUp} className="flex items-center justify-center gap-2 mt-8 text-xs text-white/20">
+        <motion.div
+          variants={fadeUp}
+          className="flex items-center justify-center gap-2 mt-8 text-xs text-white/20"
+        >
           <ShieldCheck className="h-3.5 w-3.5 text-white/15" />
           Recordings never leave your device — everything is processed locally.
         </motion.div>
