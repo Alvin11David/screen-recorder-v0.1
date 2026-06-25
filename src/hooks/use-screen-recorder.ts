@@ -840,12 +840,15 @@ export function useScreenRecorder() {
 
   const startRecording = useCallback(
     (surface: CaptureSurface = "monitor") => {
+      setError(null);
       setCountdown(3);
       setStatus("countdown");
-      const interval = setInterval(() => {
+      if (countdownRef.current) clearInterval(countdownRef.current);
+      countdownRef.current = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 1) {
-            clearInterval(interval);
+            if (countdownRef.current) clearInterval(countdownRef.current);
+            countdownRef.current = null;
             beginCapture(surface);
             return 0;
           }
@@ -857,6 +860,10 @@ export function useScreenRecorder() {
   );
 
   const cancelCountdown = useCallback(() => {
+    if (countdownRef.current) {
+      clearInterval(countdownRef.current);
+      countdownRef.current = null;
+    }
     setStatus("idle");
     setCountdown(0);
   }, []);
