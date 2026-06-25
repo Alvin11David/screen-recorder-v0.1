@@ -73,6 +73,13 @@ const SOURCES: {
     description: "Capture only one browser tab. Switch tabs freely while recording.",
     tip: "Most private — notifications and other apps stay out of view.",
   },
+  {
+    id: "multi-monitor",
+    label: "All Displays",
+    icon: MonitorUp,
+    description: "Capture multiple monitors side by side in a single recording.",
+    tip: "Great for multi-screen setups and presentations.",
+  },
 ];
 
 export const Route = createFileRoute("/")({
