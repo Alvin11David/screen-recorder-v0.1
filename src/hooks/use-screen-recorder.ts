@@ -138,6 +138,37 @@ export function useScreenRecorder() {
     }
   }, []);
 
+  const setupAnnotationCanvas = useCallback((width: number, height: number) => {
+    let canvas = annotationCanvasRef.current;
+    if (!canvas) {
+      canvas = document.createElement("canvas");
+      annotationCanvasRef.current = canvas;
+    }
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d")!;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    annotationCtxRef.current = ctx;
+  }, []);
+
+  const clearAnnotationCanvas = useCallback(() => {
+    const ctx = annotationCtxRef.current;
+    if (!ctx) return;
+    const canvas = annotationCanvasRef.current;
+    if (!canvas) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }, []);
+
+  const overlayAnnotations = useCallback(
+    (ctx: CanvasRenderingContext2D, w: number, h: number) => {
+      const ac = annotationCanvasRef.current;
+      if (!ac || !annotationsEnabledRef.current) return;
+      ctx.drawImage(ac, 0, 0, w, h);
+    },
+    [],
+  );
+
   // Request / release camera when toggled
   useEffect(() => {
     if (!includeCamera) {
