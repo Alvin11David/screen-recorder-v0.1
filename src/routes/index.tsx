@@ -759,8 +759,14 @@ function Index() {
 
         {/* Floating decorative orbs */}
         <div className="absolute -top-48 -left-48 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-primary/10 to-accent/5 blur-[120px] animate-float-1 animate-blob-pulse" />
-        <div className="absolute -bottom-64 -right-48 w-[500px] h-[500px] rounded-full bg-gradient-to-tl from-blue-500/8 to-purple-500/8 blur-[100px] animate-float-2 animate-blob-pulse" style={{ animationDelay: "-3s" }} />
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-accent/8 to-primary/5 blur-[100px] animate-float-3 animate-blob-pulse" style={{ animationDelay: "-6s" }} />
+        <div
+          className="absolute -bottom-64 -right-48 w-[500px] h-[500px] rounded-full bg-gradient-to-tl from-blue-500/8 to-purple-500/8 blur-[100px] animate-float-2 animate-blob-pulse"
+          style={{ animationDelay: "-3s" }}
+        />
+        <div
+          className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-accent/8 to-primary/5 blur-[100px] animate-float-3 animate-blob-pulse"
+          style={{ animationDelay: "-6s" }}
+        />
       </div>
 
       {/* ── Overlays ── */}
@@ -938,10 +944,7 @@ function Index() {
         </AnimatePresence>
 
         {/* ── Controls ── */}
-        <motion.div
-          variants={fadeUp}
-          className="glass rounded-2xl p-5 shadow-elegant"
-        >
+        <motion.div variants={fadeUp} className="glass rounded-2xl p-5 shadow-elegant">
           <ControlBar
             status={status}
             includeAudio={includeAudio}
