@@ -491,6 +491,8 @@ function ControlBar({
   onQualityChange,
   annotationsEnabled,
   onAnnotationsChange,
+  whiteboardActive,
+  onWhiteboardChange,
 }: {
   status: string;
   includeAudio: boolean;
@@ -506,6 +508,8 @@ function ControlBar({
   onQualityChange: (v: QualityPreset) => void;
   annotationsEnabled: boolean;
   onAnnotationsChange: (v: boolean) => void;
+  whiteboardActive: boolean;
+  onWhiteboardChange: (v: boolean) => void;
 }) {
   const idle = status === "idle";
 
