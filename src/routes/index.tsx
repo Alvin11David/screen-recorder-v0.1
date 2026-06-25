@@ -640,6 +640,11 @@ function Index() {
     resumeRecording,
     stopRecording,
     reset,
+    annotationsEnabled,
+    setAnnotationsEnabled,
+    annotationCanvasRef,
+    setupAnnotationCanvas,
+    clearAnnotationCanvas,
   } = useScreenRecorder();
 
   const isIdle = status === "idle";
