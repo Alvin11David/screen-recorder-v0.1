@@ -605,6 +605,201 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
                 </Button>
               </div>
             </div>
+          ) : tab === "captions" ? (
+            /* ── Captions ── */
+            <div className="space-y-4">
+              <p className="text-xs text-white/30">
+                Add text captions that appear at specific times.
+              </p>
+
+              {/* Existing captions list */}
+              <div className="space-y-1.5 max-h-40 overflow-y-auto">
+                {captions.length === 0 && (
+                  <p className="text-xs text-white/15 text-center py-6">
+                    No captions yet. Add one below.
+                  </p>
+                )}
+                {captions.map((c) => (
+                  <div
+                    key={c.id}
+                    className="flex items-center justify-between rounded-lg bg-white/[0.03] px-3.5 py-2.5 ring-1 ring-white/[0.06]"
+                  >
+                    <div className="flex-1 min-w-0 mr-2">
+                      {editingCaptionId === c.id ? (
+                        <div className="space-y-1">
+                          <input
+                            type="text"
+                            value={c.text}
+                            onChange={(e) => updateCaption(c.id, { text: e.target.value })}
+                            className="w-full rounded bg-white/[0.06] px-2 py-1 text-xs text-white/70 outline-none ring-1 ring-white/[0.06]"
+                          />
+                          <div className="flex gap-2">
+                            <input
+                              type="number"
+                              step={0.1}
+                              min={0}
+                              value={c.start}
+                              onChange={(e) => updateCaption(c.id, { start: Number(e.target.value) })}
+                              className="w-20 rounded bg-white/[0.06] px-2 py-1 text-[10px] font-mono text-white/50 outline-none ring-1 ring-white/[0.06]"
+                            />
+                            <input
+                              type="number"
+                              step={0.1}
+                              min={0}
+                              value={c.end}
+                              onChange={(e) => updateCaption(c.id, { end: Number(e.target.value) })}
+                              className="w-20 rounded bg-white/[0.06] px-2 py-1 text-[10px] font-mono text-white/50 outline-none ring-1 ring-white/[0.06]"
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <span className="text-sm text-white/60 block truncate">{c.text}</span>
+                          <span className="text-[10px] font-mono text-white/20">
+                            {formatTime(c.start)} \u2013 {formatTime(c.end)}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        onClick={() => setEditingCaptionId(editingCaptionId === c.id ? null : c.id)}
+                        className="flex h-7 w-7 items-center justify-center rounded text-white/20 hover:text-primary/60 hover:bg-white/[0.06] transition-all"
+                      >
+                        {editingCaptionId === c.id ? <Check className="h-3 w-3" /> : <Pencil className="h-3 w-3" />}
+                      </button>
+                      <button
+                        onClick={() => removeCaption(c.id)}
+                        className="flex h-7 w-7 items-center justify-center rounded text-white/20 hover:text-red-400 hover:bg-white/[0.06] transition-all"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Add caption form */}
+              <div className="rounded-lg bg-white/[0.02] p-3 ring-1 ring-white/[0.06] space-y-2">
+                <input
+                  type="text"
+                  placeholder="Caption text\u2026"
+                  value={newCaptionText}
+                  onChange={(e) => setNewCaptionText(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") addCaption(); }}
+                  className="w-full rounded-lg bg-white/[0.04] px-3 py-2 text-sm text-white/70 ring-1 ring-white/[0.06] outline-none placeholder:text-white/15"
+                />
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <label className="text-[9px] uppercase tracking-wider text-white/15 mb-0.5 block">
+                      Start
+                    </label>
+                    <input
+                      type="number"
+                      step={0.1}
+                      min={0}
+                      max={duration}
+                      value={newCaptionStart}
+                      onChange={(e) => setNewCaptionStart(Number(e.target.value))}
+                      className="w-full rounded bg-white/[0.04] px-2 py-1 text-[11px] font-mono text-white/50 outline-none ring-1 ring-white/[0.06]"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="text-[9px] uppercase tracking-wider text-white/15 mb-0.5 block">
+                      End
+                    </label>
+                    <input
+                      type="number"
+                      step={0.1}
+                      min={0}
+                      max={duration}
+                      value={newCaptionEnd}
+                      onChange={(e) => setNewCaptionEnd(Number(e.target.value))}
+                      className="w-full rounded bg-white/[0.04] px-2 py-1 text-[11px] font-mono text-white/50 outline-none ring-1 ring-white/[0.06]"
+                    />
+                  </div>
+                  <button
+                    onClick={addCaption}
+                    disabled={!newCaptionText.trim()}
+                    className="self-end flex h-8 w-8 items-center justify-center rounded-lg bg-primary/20 text-primary/70 hover:bg-primary/30 transition-all disabled:opacity-30"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : tab === "music" ? (
+            /* ── Music ── */
+            <div className="space-y-4">
+              <p className="text-xs text-white/30">
+                Add background music to your video. The music plays at normal speed alongside the video.
+              </p>
+
+              {!musicBlob ? (
+                <div
+                  onClick={() => musicInputRef.current?.click()}
+                  className="flex cursor-pointer flex-col items-center gap-3 rounded-xl border-2 border-dashed border-white/[0.08] py-12 hover:border-primary/30 hover:bg-white/[0.02] transition-all"
+                >
+                  <Music className="h-8 w-8 text-white/15" />
+                  <div className="text-center">
+                    <p className="text-sm text-white/40 font-medium">Choose a music file</p>
+                    <p className="text-[10px] text-white/20 mt-0.5">MP3, M4A, WAV, OGG \u2026</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-lg bg-white/[0.03] px-4 py-3.5 ring-1 ring-white/[0.06] space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                        <Music className="h-4 w-4 text-primary/60" />
+                      </span>
+                      <div>
+                        <p className="text-sm text-white/60">
+                          {(musicBlob as File).name || "Background music"}
+                        </p>
+                        <p className="text-[10px] font-mono text-white/20">
+                          {(musicBlob.size / 1024 / 1024).toFixed(1)} MB
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setMusicBlob(null)}
+                      className="flex h-7 w-7 items-center justify-center rounded text-white/20 hover:text-red-400 hover:bg-white/[0.06] transition-all"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-[10px] uppercase tracking-wider text-white/20">
+                        Volume
+                      </label>
+                      <span className="font-mono text-[11px] text-white/30">
+                        {Math.round(musicVolume * 100)}%
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      min={0}
+                      max={1}
+                      step={0.05}
+                      value={musicVolume}
+                      onChange={(e) => setMusicVolume(Number(e.target.value))}
+                      className="w-full h-1 accent-primary/60"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <input
+                ref={musicInputRef}
+                type="file"
+                accept="audio/*"
+                onChange={handleMusicFile}
+                className="hidden"
+              />
+            </div>
           ) : (
             /* ── Crop / Resize ── */
             <div className="space-y-4">
