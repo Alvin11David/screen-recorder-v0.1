@@ -11,6 +11,23 @@ export interface CropRect {
   height: number;
 }
 
+export interface CaptionEntry {
+  id: string;
+  start: number;
+  end: number;
+  text: string;
+}
+
+export interface ProcessEffectsOptions {
+  trim?: { start: number; end: number };
+  speed?: number;
+  captions?: CaptionEntry[];
+  music?: {
+    blob: Blob;
+    volume: number;
+  };
+}
+
 function getSupportedMimeType(): string {
   const types = [
     "video/webm;codecs=vp9",
