@@ -194,6 +194,15 @@ export function useScreenRecorder() {
           return;
         }
 
+        // ── Multi-monitor setup ────────────────────────────────────────
+        if (surface === "multi-monitor") {
+          multiStreamsRef.current = [displayStream];
+          setMultiStreams([displayStream]);
+          setStream(displayStream);
+          setStatus("multi-setup");
+          return;
+        }
+
         const pixels = width * height;
         const bitrate = Math.min(Math.max(Math.round(pixels * 7), 5_000_000), 50_000_000);
 
