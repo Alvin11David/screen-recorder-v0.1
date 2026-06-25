@@ -714,6 +714,16 @@ function Index() {
         />
       )}
 
+      {(status === "recording" || status === "paused") && (
+        <DrawingOverlay
+          enabled={annotationsEnabled}
+          annotationCanvasRef={annotationCanvasRef}
+          recordingWidth={stream?.getVideoTracks()[0]?.getSettings().width ?? 1920}
+          recordingHeight={stream?.getVideoTracks()[0]?.getSettings().height ?? 1080}
+          onClear={clearAnnotationCanvas}
+        />
+      )}
+
       <motion.div
         variants={container}
         initial="hidden"
