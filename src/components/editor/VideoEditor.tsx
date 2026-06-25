@@ -159,16 +159,20 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
     const actualEnd = Math.min(trimEnd, duration);
     if (actualEnd - trimStart < 0.5) return;
     setProcessing(true);
-    setProcessingLabel("Trimming video\u2026");
+    setProcessingLabel("Applying effects\u2026");
     try {
-      const result = await trimVideo(blob, trimStart, actualEnd, {
+      const result = await processWithEffects(blob, {
         width: vidW,
         height: vidH,
         fps: 30,
+        trim: { start: trimStart, end: actualEnd },
+        speed,
+        captions,
+        music: musicBlob ? { blob: musicBlob, volume: musicVolume } : undefined,
       });
       setResultBlob(result);
     } catch (err) {
-      console.error("Trim failed", err);
+      console.error("Processing failed", err);
     } finally {
       setProcessing(false);
     }
