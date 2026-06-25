@@ -142,20 +142,40 @@ function RecordingPreview({
 }) {
   const liveRef = useRef<HTMLVideoElement>(null);
   const isLive = status === "recording" || status === "paused";
+  const [livePlayFailed, setLivePlayFailed] = useState(false);
   const audioLevel = useAudioMeter(isLive ? stream : null);
 
   useEffect(() => {
     if (liveRef.current && stream) {
       liveRef.current.srcObject = stream;
-      liveRef.current.play().catch(() => {});
+      setLivePlayFailed(false);
+      liveRef.current.play().catch(() => setLivePlayFailed(true));
     }
   }, [stream]);
+
+  const retryPlay = useCallback(() => {
+    if (liveRef.current) {
+      setLivePlayFailed(false);
+      liveRef.current.play().catch(() => setLivePlayFailed(true));
+    }
+  }, []);
 
   return (
     <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-black/40 ring-1 ring-white/[0.06] shadow-2xl">
       {isLive && (
         <>
           <video ref={liveRef} muted playsInline className="h-full w-full object-contain" />
+          {livePlayFailed && (
+            <button
+              onClick={retryPlay}
+              className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity"
+            >
+              <div className="flex items-center gap-2 rounded-full bg-white/10 px-5 py-3 ring-1 ring-white/20 hover:bg-white/20 transition-all">
+                <Play className="h-5 w-5 text-white" />
+                <span className="text-sm font-medium text-white">Click to enable preview</span>
+              </div>
+            </button>
+          )}
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
           <div className="absolute top-4 left-4 flex items-center gap-3">
             <div className="flex items-center gap-2 rounded-full bg-black/60 px-3.5 py-2 backdrop-blur-xl ring-1 ring-white/[0.08]">
@@ -201,7 +221,14 @@ function RecordingPreview({
         </>
       )}
       {!isLive && result && (
-        <video src={result.url} controls className="h-full w-full object-contain" />
+        <video
+          src={result.url}
+          autoPlay
+          muted
+          playsInline
+          controls
+          className="h-full w-full object-contain"
+        />
       )}
       {!isLive && !result && (
         <div className="flex h-full w-full flex-col items-center justify-center gap-4">
