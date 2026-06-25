@@ -48,7 +48,12 @@ const TOOLS: { id: Tool; icon: typeof Pencil; label: string }[] = [
   { id: "line", icon: Minus, label: "Line" },
   { id: "arrow", icon: ArrowUpRight, label: "Arrow" },
   { id: "rect", icon: Square, label: "Rectangle" },
+  { id: "fill-rect", icon: Square, label: "Filled Rect" },
   { id: "circle", icon: Circle, label: "Circle" },
+  { id: "fill-circle", icon: Circle, label: "Filled Circle" },
+  { id: "diamond", icon: Diamond, label: "Diamond" },
+  { id: "star", icon: Star, label: "Star" },
+  { id: "text", icon: Type, label: "Text" },
 ];
 
 interface DrawingOverlayProps {
