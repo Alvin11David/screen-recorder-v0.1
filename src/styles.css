@@ -394,3 +394,58 @@
       0 0 20px -6px oklch(0.74 0.15 222 / 25%);
   }
 }
+
+/* ── Premium UI utilities ── */
+
+@utility glass-card {
+  background-color: oklch(0.2 0.025 264 / 45%);
+  backdrop-filter: blur(48px) saturate(140%);
+  border: 1px solid oklch(1 0 0 / 6%);
+  box-shadow: var(--shadow-glass-lg), var(--glass-highlight);
+  transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+@utility text-gradient-accent {
+  background-image: linear-gradient(135deg, oklch(0.72 0.16 200), oklch(0.74 0.15 222));
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(15px, -20px) rotate(2deg); }
+  50% { transform: translate(-10px, 10px) rotate(-1deg); }
+  75% { transform: translate(20px, 5px) rotate(1.5deg); }
+}
+
+@keyframes shimmer-slow {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.8); }
+  50% { opacity: 0.5; transform: scale(1.1); }
+}
+
+@keyframes line-scan {
+  0% { top: -2px; }
+  100% { top: calc(100% + 2px); }
+}
+
+@utility animate-drift {
+  animation: drift 35s ease-in-out infinite;
+}
+
+@utility animate-shimmer-slow {
+  background-size: 200% 100%;
+  animation: shimmer-slow 6s linear infinite;
+}
+
+@utility animate-twinkle {
+  animation: twinkle 4s ease-in-out infinite;
+}
+
+@utility animate-line-scan {
+  animation: line-scan 3s linear infinite;
+}
