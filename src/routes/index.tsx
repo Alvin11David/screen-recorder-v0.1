@@ -42,6 +42,7 @@ import { CursorFX } from "@/components/recorder/CursorFX";
 import { CountdownOverlay } from "@/components/recorder/CountdownOverlay";
 import { CameraOverlay } from "@/components/recorder/CameraOverlay";
 import { CropOverlay } from "@/components/recorder/CropOverlay";
+import { MultiMonitorSetup } from "@/components/recorder/MultiMonitorSetup";
 
 const SOURCES: {
   id: CaptureSurface;
