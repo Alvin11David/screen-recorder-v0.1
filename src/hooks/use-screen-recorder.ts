@@ -655,8 +655,14 @@ export function useScreenRecorder() {
         const row = Math.floor(i / cols);
         ctx.drawImage(
           videos[i],
-          0, 0, settings[i].w, settings[i].h,
-          col * cellW, row * cellH, cellW, cellH,
+          0,
+          0,
+          settings[i].w,
+          settings[i].h,
+          col * cellW,
+          row * cellH,
+          cellW,
+          cellH,
         );
       }
       requestAnimationFrame(frame);
@@ -703,7 +709,8 @@ export function useScreenRecorder() {
       const blob = new Blob(chunksRef.current, { type: mimeType });
       const url = URL.createObjectURL(blob);
       setResult({
-        url, blob,
+        url,
+        blob,
         durationSeconds: accumulatedRef.current,
         width: trackSettingsRef.current.width,
         height: trackSettingsRef.current.height,
