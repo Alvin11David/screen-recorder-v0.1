@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export type RecorderStatus = "idle" | "countdown" | "crop" | "recording" | "paused";
-export type CaptureSurface = "monitor" | "window" | "browser";
+export type RecorderStatus = "idle" | "countdown" | "crop" | "multi-setup" | "recording" | "paused";
+export type CaptureSurface = "monitor" | "window" | "browser" | "multi-monitor";
 
 export interface CropRect {
   x: number;
