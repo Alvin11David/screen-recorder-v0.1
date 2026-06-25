@@ -58,10 +58,26 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
         let { x, y, w, h } = resizeStart.rect;
         const dx = pos.x - resizeStart.x;
         const dy = pos.y - resizeStart.y;
-        if (resizing === "se") { w = Math.max(50, resizeStart.rect.w + dx); h = Math.max(50, resizeStart.rect.h + dy); }
-        if (resizing === "sw") { x = resizeStart.rect.x + dx; w = Math.max(50, resizeStart.rect.w - dx); h = Math.max(50, resizeStart.rect.h + dy); }
-        if (resizing === "ne") { y = resizeStart.rect.y + dy; w = Math.max(50, resizeStart.rect.w + dx); h = Math.max(50, resizeStart.rect.h - dy); }
-        if (resizing === "nw") { x = resizeStart.rect.x + dx; y = resizeStart.rect.y + dy; w = Math.max(50, resizeStart.rect.w - dx); h = Math.max(50, resizeStart.rect.h - dy); }
+        if (resizing === "se") {
+          w = Math.max(50, resizeStart.rect.w + dx);
+          h = Math.max(50, resizeStart.rect.h + dy);
+        }
+        if (resizing === "sw") {
+          x = resizeStart.rect.x + dx;
+          w = Math.max(50, resizeStart.rect.w - dx);
+          h = Math.max(50, resizeStart.rect.h + dy);
+        }
+        if (resizing === "ne") {
+          y = resizeStart.rect.y + dy;
+          w = Math.max(50, resizeStart.rect.w + dx);
+          h = Math.max(50, resizeStart.rect.h - dy);
+        }
+        if (resizing === "nw") {
+          x = resizeStart.rect.x + dx;
+          y = resizeStart.rect.y + dy;
+          w = Math.max(50, resizeStart.rect.w - dx);
+          h = Math.max(50, resizeStart.rect.h - dy);
+        }
         setSelection({ x, y, width: w, height: h });
         return;
       }
@@ -130,9 +146,7 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
       />
       <div className="relative z-10 flex flex-col h-full">
         <div className="flex items-center justify-between px-6 py-4">
-          <span className="text-sm font-medium text-white/70">
-            Select the area to record
-          </span>
+          <span className="text-sm font-medium text-white/70">Select the area to record</span>
           <div className="flex items-center gap-2 text-xs text-white/30">
             <span className="rounded bg-white/[0.06] px-2 py-1">
               {videoW}×{videoH}
@@ -168,7 +182,15 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
                   }}
                 />
                 <div className="absolute -top-8 left-0 rounded bg-white/10 px-2 py-0.5 text-xs text-white/70 backdrop-blur-sm font-mono tabular-nums">
-                  {Math.round(selection.width * (videoW / (overlayRef.current?.getBoundingClientRect().width ?? 1)))} × {Math.round(selection.height * (videoH / (overlayRef.current?.getBoundingClientRect().height ?? 1)))}
+                  {Math.round(
+                    selection.width *
+                      (videoW / (overlayRef.current?.getBoundingClientRect().width ?? 1)),
+                  )}{" "}
+                  ×{" "}
+                  {Math.round(
+                    selection.height *
+                      (videoH / (overlayRef.current?.getBoundingClientRect().height ?? 1)),
+                  )}
                 </div>
                 {!isDragging && (
                   <>

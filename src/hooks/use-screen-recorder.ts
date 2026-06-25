@@ -194,10 +194,7 @@ export function useScreenRecorder() {
         }
 
         const pixels = width * height;
-        const bitrate = Math.min(
-          Math.max(Math.round(pixels * 7), 5_000_000),
-          50_000_000,
-        );
+        const bitrate = Math.min(Math.max(Math.round(pixels * 7), 5_000_000), 50_000_000);
 
         const mimeType = pickMimeType();
         let recordingStream: MediaStream;
@@ -410,7 +407,17 @@ export function useScreenRecorder() {
         const frame = () => {
           if (!compositeRunning.current) return;
           ctx.clearRect(0, 0, rect.width, rect.height);
-          ctx.drawImage(screenVideo, rect.x, rect.y, rect.width, rect.height, 0, 0, rect.width, rect.height);
+          ctx.drawImage(
+            screenVideo,
+            rect.x,
+            rect.y,
+            rect.width,
+            rect.height,
+            0,
+            0,
+            rect.width,
+            rect.height,
+          );
 
           const pos = camPosRef.current;
           const set = camSetRef.current;
@@ -468,7 +475,17 @@ export function useScreenRecorder() {
       } else {
         const frame = () => {
           if (!compositeRunning.current) return;
-          ctx.drawImage(screenVideo, rect.x, rect.y, rect.width, rect.height, 0, 0, rect.width, rect.height);
+          ctx.drawImage(
+            screenVideo,
+            rect.x,
+            rect.y,
+            rect.width,
+            rect.height,
+            0,
+            0,
+            rect.width,
+            rect.height,
+          );
           requestAnimationFrame(frame);
         };
         requestAnimationFrame(frame);
