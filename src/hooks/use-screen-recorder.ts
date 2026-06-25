@@ -224,6 +224,8 @@ export function useScreenRecorder() {
         const height = settings.height ?? quality.height;
         trackSettingsRef.current = { width, height };
 
+        if (annotationsEnabledRef.current) setupAnnotationCanvas(width, height);
+
         // ── Crop mode for entire-screen capture ───────────────────────
         if (surface === "monitor") {
           pendingStreamRef.current = displayStream;
