@@ -628,7 +628,6 @@ export function useScreenRecorder() {
         setStatus("idle");
         clearTimer();
         stopComposite();
-        triggerDownload(blob);
       };
 
       recorder.onstop = handleStop;
