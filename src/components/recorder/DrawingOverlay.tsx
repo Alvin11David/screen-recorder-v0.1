@@ -495,6 +495,29 @@ export function DrawingOverlay({
     [toRecording, saveSnapshot, drawOnAnnotation, getCtxProps, syncDisplay],
   );
 
+  // ── Commit text to annotation canvas ──
+  const commitText = useCallback(
+    (text: string, x: number, y: number) => {
+      if (!text.trim()) return;
+      saveSnapshot();
+      drawOnAnnotation((ctx) => {
+        ctx.save();
+        ctx.font = `${sizeRef.current * 6}px sans-serif`;
+        ctx.fillStyle = colorRef.current;
+        ctx.globalAlpha = 1;
+        ctx.textBaseline = "top";
+        const lines = text.split("\n");
+        const lineH = sizeRef.current * 7;
+        lines.forEach((line, i) => {
+          ctx.fillText(line, x, y + i * lineH);
+        });
+        ctx.restore();
+      });
+      syncDisplay();
+    },
+    [saveSnapshot, drawOnAnnotation, syncDisplay],
+  );
+
   // Synce display on enable
   useEffect(() => {
     if (enabled) syncDisplay();
