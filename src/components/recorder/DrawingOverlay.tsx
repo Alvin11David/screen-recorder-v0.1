@@ -81,6 +81,13 @@ export function DrawingOverlay({
   const [tool, setTool] = useState<Tool>("pen");
   const [color, setColor] = useState(COLORS[0]);
   const [size, setSize] = useState(3);
+  const [textInput, setTextInput] = useState<{
+    x: number;
+    y: number;
+    displayX: number;
+    displayY: number;
+    value: string;
+  } | null>(null);
   const toolRef = useRef(tool);
   toolRef.current = tool;
   const colorRef = useRef(color);
