@@ -52,6 +52,7 @@ import { CameraOverlay } from "@/components/recorder/CameraOverlay";
 import { CropOverlay } from "@/components/recorder/CropOverlay";
 import { MultiMonitorSetup } from "@/components/recorder/MultiMonitorSetup";
 import { DrawingOverlay } from "@/components/recorder/DrawingOverlay";
+import { VideoEditor } from "@/components/editor/VideoEditor";
 
 const SOURCES: {
   id: CaptureSurface;
@@ -640,9 +641,11 @@ function ControlBar({
 function RecordingResultPanel({
   result,
   onReset,
+  onEdit,
 }: {
   result: RecordingResult;
   onReset: () => void;
+  onEdit?: () => void;
 }) {
   const [saveState, setSaveState] = useState<"idle" | "saving" | "done">("idle");
 
