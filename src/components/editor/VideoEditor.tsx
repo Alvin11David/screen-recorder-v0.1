@@ -76,6 +76,21 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
   const [vidW, setVidW] = useState(1920);
   const [vidH, setVidH] = useState(1080);
 
+  // Speed
+  const [speed, setSpeed] = useState(1);
+
+  // Captions
+  const [captions, setCaptions] = useState<CaptionEntry[]>([]);
+  const [newCaptionText, setNewCaptionText] = useState("");
+  const [newCaptionStart, setNewCaptionStart] = useState(0);
+  const [newCaptionEnd, setNewCaptionEnd] = useState(0);
+  const [editingCaptionId, setEditingCaptionId] = useState<string | null>(null);
+
+  // Music
+  const [musicBlob, setMusicBlob] = useState<Blob | null>(null);
+  const [musicVolume, setMusicVolume] = useState(0.5);
+  const musicInputRef = useRef<HTMLInputElement>(null);
+
   // Processing
   const [processing, setProcessing] = useState(false);
   const [processingLabel, setProcessingLabel] = useState("");
