@@ -889,7 +889,14 @@ function Index() {
 
       {/* ── Overlays ── */}
       <ClickFX active={showClickFX} />
-      <CursorFX active={showCursorFX} />
+      <CursorFX
+        active={showCursorFX}
+        whiteboardActive={whiteboardActive}
+        brushSize={4}
+        brushColor="#ffffff"
+        toolName="Pen"
+      />
+      <WhiteboardMode active={whiteboardActive} onClose={() => setWhiteboardActive(false)} />
       <CountdownOverlay countdown={countdown} onCancel={cancelCountdown} status={status} />
       <CameraOverlay
         cameraStream={cameraStream}
