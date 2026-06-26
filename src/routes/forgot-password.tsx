@@ -7,8 +7,8 @@ import AetherFlowHero from "@/components/ui/aether-flow-hero";
 export const Route = createFileRoute("/forgot-password")({
   head: () => ({
     meta: [
-      { title: "Reset password — ScreenCapture Pro" },
-      { name: "description", content: "Reset your ScreenCapture Pro password." },
+      { title: "Reset password — ScreenFlow" },
+      { name: "description", content: "Reset your ScreenFlow password." },
     ],
   }),
   component: ForgotPasswordPage,
@@ -110,7 +110,7 @@ function ForgotPasswordPage() {
             <Video className="h-5 w-5 text-primary-foreground" />
           </span>
           <span className="font-display text-lg font-bold tracking-tight text-white/90 group-hover:text-white transition-colors duration-300">
-            ScreenCapture <span className="text-gradient">Pro</span>
+            ScreenFlow
           </span>
         </Link>
 

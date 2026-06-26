@@ -32,7 +32,7 @@ export function AuthLayout({ title, subtitle, children, footer, background = "sh
             <Video className="h-5 w-5 text-primary-foreground" />
           </span>
           <span className="font-display text-lg font-bold tracking-tight text-white/90 group-hover:text-white transition-colors duration-300">
-            ScreenCapture <span className="text-gradient">Pro</span>
+            ScreenFlow
           </span>
         </Link>
 

@@ -8,8 +8,8 @@ import { SocialLoginButtons } from "@/components/auth/SocialLoginButtons";
 export const Route = createFileRoute("/register")({
   head: () => ({
     meta: [
-      { title: "Create account — ScreenCapture Pro" },
-      { name: "description", content: "Create your ScreenCapture Pro account." },
+      { title: "Create account — ScreenFlow" },
+      { name: "description", content: "Create your ScreenFlow account." },
     ],
   }),
   component: RegisterPage,

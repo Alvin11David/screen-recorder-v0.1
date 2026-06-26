@@ -44,7 +44,7 @@ export function PwaInstallPrompt() {
           <Download className="h-4 w-4" />
         </span>
         <div className="min-w-0">
-          <p className="text-sm font-medium text-white">Install ScreenCapture Pro</p>
+          <p className="text-sm font-medium text-white">Install ScreenFlow</p>
           <p className="text-xs text-white/40">Works offline. No installs needed.</p>
         </div>
         <button

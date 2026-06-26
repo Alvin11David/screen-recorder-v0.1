@@ -4,7 +4,7 @@ import LiquidMetalHero from "@/components/ui/liquid-metal-hero";
 export const Route = createFileRoute("/demo")({
   head: () => ({
     meta: [
-      { title: "Liquid Metal Hero — ScreenCapture Pro" },
+      { title: "Liquid Metal Hero — ScreenFlow" },
       { name: "description", content: "Preview the liquid metal hero animation." },
     ],
   }),
