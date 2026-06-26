@@ -337,7 +337,7 @@ export function useScreenRecorder() {
           };
           requestAnimationFrame(frame);
 
-          const canvasStream = canvas.captureStream(60);
+          const canvasStream = canvas.captureStream(fpsRef.current);
 
           // Mix audio
           const audioCtx = new AudioContext();
@@ -385,7 +385,7 @@ export function useScreenRecorder() {
           };
           requestAnimationFrame(frame);
 
-          const canvasStream = canvas.captureStream(60);
+          const canvasStream = canvas.captureStream(fpsRef.current);
 
           const audioCtx = new AudioContext();
           compositeAudioCtx.current = audioCtx;
@@ -561,7 +561,7 @@ export function useScreenRecorder() {
         };
         requestAnimationFrame(frame);
 
-        const canvasStream = canvas.captureStream(60);
+        const canvasStream = canvas.captureStream(fpsRef.current);
 
         const audioCtx = new AudioContext();
         compositeAudioCtx.current = audioCtx;
@@ -598,7 +598,7 @@ export function useScreenRecorder() {
         };
         requestAnimationFrame(frame);
 
-        const canvasStream = canvas.captureStream(60);
+        const canvasStream = canvas.captureStream(fpsRef.current);
 
         const audioCtx = new AudioContext();
         compositeAudioCtx.current = audioCtx;
@@ -768,7 +768,7 @@ export function useScreenRecorder() {
     };
     requestAnimationFrame(frame);
 
-    const canvasStream = canvas.captureStream(60);
+    const canvasStream = canvas.captureStream(fpsRef.current);
 
     // Mix audio from all streams
     const audioCtx = new AudioContext();

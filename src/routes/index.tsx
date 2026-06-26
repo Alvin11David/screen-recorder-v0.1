@@ -1097,7 +1097,10 @@ function Index() {
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement)?.tagName;
-      const isInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+      const isInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (e.target as HTMLElement)?.isContentEditable;
+
+      // Block ALL shortcuts when user is typing in an input/textarea
+      if (isInput) return;
 
       if (e.altKey) {
         switch (e.key.toLowerCase()) {
@@ -1138,8 +1141,6 @@ function Index() {
         return;
       }
 
-      if (isInput) return;
-
       if (e.key === " ") {
         e.preventDefault();
         if (status === "recording") pauseRecording();
@@ -1174,6 +1175,13 @@ function Index() {
   const cancelSchedule = useCallback(() => {
     if (scheduleTimerRef.current) clearTimeout(scheduleTimerRef.current);
     setScheduleActive(false);
+  }, []);
+
+  // Clean up schedule timer on unmount
+  useEffect(() => {
+    return () => {
+      if (scheduleTimerRef.current) clearTimeout(scheduleTimerRef.current);
+    };
   }, []);
 
   const container = {

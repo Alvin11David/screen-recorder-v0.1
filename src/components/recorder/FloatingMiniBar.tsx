@@ -30,6 +30,13 @@ export function FloatingMiniBar({
   const isPaused = status === "paused";
   const visible = isRecording || isPaused;
 
+  const cleanupDragRef = useRef<(() => void) | null>(null);
+
+  // Clean up drag listeners on unmount
+  useEffect(() => {
+    return () => { cleanupDragRef.current?.(); };
+  }, []);
+
   const handleDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     setDragging(true);
@@ -44,6 +51,11 @@ export function FloatingMiniBar({
     };
     const onUp = () => {
       setDragging(false);
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+      cleanupDragRef.current = null;
+    };
+    cleanupDragRef.current = () => {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
     };
