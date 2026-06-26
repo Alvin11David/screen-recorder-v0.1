@@ -614,6 +614,7 @@ export function useScreenRecorder() {
         const canvasStream = canvas.captureStream(fpsRef.current);
 
         const audioCtx = new AudioContext();
+        if (audioCtx.state === "suspended") audioCtx.resume();
         compositeAudioCtx.current = audioCtx;
         const dest = audioCtx.createMediaStreamDestination();
         if (includeAudio && displayStream.getAudioTracks().length > 0) {
