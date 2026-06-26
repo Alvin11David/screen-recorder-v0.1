@@ -1085,7 +1085,7 @@ function TrustMetrics() {
       {/* Section label */}
       <div className="flex items-center gap-3 mb-5">
         <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/[0.07]" />
-        <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/25">Why ScreenCapture Pro</span>
+        <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/25">Why ScreenFlow</span>
         <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/[0.07]" />
       </div>
 
@@ -1705,119 +1705,162 @@ function Index() {
                     transition={{ duration: 0.3 }}
                     className="overflow-hidden"
                   >
-                    <div className="mt-2 rounded-xl bg-white/[0.02] p-4 ring-1 ring-white/[0.05] space-y-5">
+                    <div className="mt-2 rounded-xl bg-white/[0.02] p-5 ring-1 ring-white/[0.05]">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-                      {/* FPS */}
-                      <div>
-                        <div className="flex items-center gap-2 mb-2.5">
-                          <Gauge className="h-3.5 w-3.5 text-white/25" />
-                          <span className="text-[11px] font-semibold uppercase tracking-wider text-white/25">Frame Rate</span>
-                        </div>
-                        <div className="flex gap-2">
-                          {([30, 60] as const).map((f) => (
-                            <button
-                              key={f}
-                              onClick={() => setFps(f)}
-                              className={cn(
-                                "flex-1 rounded-lg py-2 text-xs font-semibold ring-1 transition-all",
-                                fps === f
-                                  ? "bg-primary/15 text-primary/80 ring-primary/30"
-                                  : "bg-white/[0.03] text-white/35 ring-white/[0.07] hover:bg-white/[0.06] hover:text-white/55",
-                              )}
-                            >
-                              {f} FPS
-                            </button>
-                          ))}
-                        </div>
-                        <p className="mt-1.5 text-[10px] text-white/20">Higher FPS produces smoother recordings but larger files</p>
-                      </div>
-
-                      {/* Noise suppression */}
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-2.5">
-                          {noiseSuppressionEnabled
-                            ? <Volume2 className="h-4 w-4 text-emerald-400/60" />
-                            : <VolumeX className="h-4 w-4 text-white/25" />}
-                          <div>
-                            <p className="text-xs font-medium text-white/50">AI Noise Suppression</p>
-                            <p className="text-[10px] text-white/25">Removes background noise from microphone</p>
+                        {/* ── Frame Rate ── */}
+                        <div className="rounded-xl bg-white/[0.025] p-4 ring-1 ring-white/[0.06] flex flex-col gap-3">
+                          <div className="flex items-center gap-2">
+                            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 ring-1 ring-primary/20">
+                              <Gauge className="h-3.5 w-3.5 text-primary/60" />
+                            </span>
+                            <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">Frame Rate</span>
                           </div>
+                          <div className="flex gap-2">
+                            {([30, 60] as const).map((f) => (
+                              <button
+                                key={f}
+                                onClick={() => setFps(f)}
+                                className={cn(
+                                  "flex-1 rounded-lg py-2.5 text-sm font-bold ring-1 transition-all",
+                                  fps === f
+                                    ? "bg-primary/20 text-primary ring-primary/40 shadow-[0_0_12px_oklch(0.74_0.15_222/0.2)]"
+                                    : "bg-white/[0.03] text-white/40 ring-white/[0.08] hover:bg-white/[0.07] hover:text-white/65",
+                                )}
+                              >
+                                {f} FPS
+                              </button>
+                            ))}
+                          </div>
+                          <p className="text-[11px] text-white/25 leading-snug">
+                            Higher FPS = smoother video, larger file size
+                          </p>
                         </div>
-                        <Switch
-                          checked={noiseSuppressionEnabled}
-                          onCheckedChange={setNoiseSuppressionEnabled}
-                        />
-                      </div>
 
-                      {/* Auto-stop */}
-                      <div>
-                        <div className="flex items-center gap-2 mb-2.5">
-                          <Timer className="h-3.5 w-3.5 text-white/25" />
-                          <span className="text-[11px] font-semibold uppercase tracking-wider text-white/25">Auto-Stop Timer</span>
-                          {autoStopMinutes > 0 && (
-                            <span className="ml-auto text-[11px] font-mono text-amber-400/60">{autoStopMinutes} min</span>
-                          )}
+                        {/* ── AI Noise Suppression ── */}
+                        <div className="rounded-xl bg-white/[0.025] p-4 ring-1 ring-white/[0.06] flex flex-col gap-3">
+                          <div className="flex items-center gap-2">
+                            <span className={cn(
+                              "flex h-7 w-7 items-center justify-center rounded-lg ring-1 transition-all",
+                              noiseSuppressionEnabled
+                                ? "bg-emerald-500/15 ring-emerald-500/30"
+                                : "bg-white/[0.04] ring-white/[0.06]",
+                            )}>
+                              {noiseSuppressionEnabled
+                                ? <Volume2 className="h-3.5 w-3.5 text-emerald-400" />
+                                : <VolumeX className="h-3.5 w-3.5 text-white/35" />}
+                            </span>
+                            <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">AI Noise Filter</span>
+                          </div>
+                          <div className="flex items-center justify-between gap-3 flex-1">
+                            <div>
+                              <p className="text-sm font-medium text-white/60">Noise Suppression</p>
+                              <p className="text-[11px] text-white/30 mt-0.5 leading-snug">
+                                Removes background noise from mic
+                              </p>
+                            </div>
+                            <Switch
+                              checked={noiseSuppressionEnabled}
+                              onCheckedChange={setNoiseSuppressionEnabled}
+                            />
+                          </div>
+                          <p className={cn(
+                            "text-[11px] leading-snug transition-colors",
+                            noiseSuppressionEnabled ? "text-emerald-400/50" : "text-white/20",
+                          )}>
+                            {noiseSuppressionEnabled ? "Active — mic noise filtered" : "Uses browser audio processing"}
+                          </p>
                         </div>
-                        <div className="flex gap-2 flex-wrap">
-                          {[0, 5, 10, 15, 30, 60].map((m) => (
-                            <button
-                              key={m}
-                              onClick={() => setAutoStopMinutes(m)}
-                              className={cn(
-                                "rounded-lg px-3 py-1.5 text-xs font-semibold ring-1 transition-all",
-                                autoStopMinutes === m
-                                  ? "bg-amber-500/15 text-amber-400/80 ring-amber-500/30"
-                                  : "bg-white/[0.03] text-white/35 ring-white/[0.07] hover:bg-white/[0.06]",
-                              )}
-                            >
-                              {m === 0 ? "Off" : `${m}m`}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
 
-                      {/* Scheduled Recording */}
-                      <div>
-                        <div className="flex items-center gap-2 mb-2.5">
-                          <Calendar className="h-3.5 w-3.5 text-white/25" />
-                          <span className="text-[11px] font-semibold uppercase tracking-wider text-white/25">Scheduled Recording</span>
+                        {/* ── Auto-Stop Timer ── */}
+                        <div className="rounded-xl bg-white/[0.025] p-4 ring-1 ring-white/[0.06] flex flex-col gap-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-500/10 ring-1 ring-amber-500/20">
+                                <Timer className="h-3.5 w-3.5 text-amber-400/70" />
+                              </span>
+                              <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">Auto-Stop</span>
+                            </div>
+                            {autoStopMinutes > 0 && (
+                              <span className="rounded-full bg-amber-500/15 px-2.5 py-0.5 text-[11px] font-mono font-semibold text-amber-400/80 ring-1 ring-amber-500/25">
+                                {autoStopMinutes} min
+                              </span>
+                            )}
+                          </div>
+                          <div className="grid grid-cols-3 gap-2">
+                            {[0, 5, 10, 15, 30, 60].map((m) => (
+                              <button
+                                key={m}
+                                onClick={() => setAutoStopMinutes(m)}
+                                className={cn(
+                                  "rounded-lg py-2 text-xs font-semibold ring-1 transition-all",
+                                  autoStopMinutes === m
+                                    ? "bg-amber-500/20 text-amber-400 ring-amber-500/40 shadow-[0_0_10px_oklch(0.75_0.18_60/0.15)]"
+                                    : "bg-white/[0.03] text-white/35 ring-white/[0.07] hover:bg-white/[0.06] hover:text-white/55",
+                                )}
+                              >
+                                {m === 0 ? "Off" : `${m}m`}
+                              </button>
+                            ))}
+                          </div>
+                          <p className="text-[11px] text-white/25 leading-snug">
+                            Recording stops automatically after this duration
+                          </p>
                         </div>
-                        <div className="flex items-center gap-2">
+
+                        {/* ── Scheduled Recording ── */}
+                        <div className="rounded-xl bg-white/[0.025] p-4 ring-1 ring-white/[0.06] flex flex-col gap-3">
+                          <div className="flex items-center gap-2">
+                            <span className={cn(
+                              "flex h-7 w-7 items-center justify-center rounded-lg ring-1 transition-all",
+                              scheduleActive
+                                ? "bg-violet-500/15 ring-violet-500/30"
+                                : "bg-white/[0.04] ring-white/[0.06]",
+                            )}>
+                              <Calendar className={cn("h-3.5 w-3.5", scheduleActive ? "text-violet-400" : "text-white/35")} />
+                            </span>
+                            <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">Schedule</span>
+                            {scheduleActive && (
+                              <span className="ml-auto flex items-center gap-1.5 text-[11px] text-violet-400/70">
+                                <span className="relative flex h-1.5 w-1.5">
+                                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-75" />
+                                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-violet-400" />
+                                </span>
+                                Armed
+                              </span>
+                            )}
+                          </div>
                           <input
                             type="datetime-local"
                             value={scheduledTime}
                             onChange={(e) => setScheduledTime(e.target.value)}
                             disabled={scheduleActive}
-                            className="flex-1 rounded-lg bg-white/[0.04] px-3 py-2 text-xs text-white/60 ring-1 ring-white/[0.08] outline-none transition-all focus:ring-primary/30 disabled:opacity-40"
+                            className="w-full rounded-lg bg-white/[0.04] px-3 py-2.5 text-xs text-white/60 ring-1 ring-white/[0.08] outline-none transition-all focus:ring-primary/30 disabled:opacity-40 disabled:cursor-not-allowed"
                           />
                           {scheduleActive ? (
                             <button
                               onClick={cancelSchedule}
-                              className="rounded-lg bg-red-500/15 px-3 py-2 text-xs font-medium text-red-400/80 ring-1 ring-red-500/25 transition-all hover:bg-red-500/25"
+                              className="w-full rounded-lg bg-red-500/12 py-2.5 text-xs font-semibold text-red-400/80 ring-1 ring-red-500/25 transition-all hover:bg-red-500/20 hover:text-red-300"
                             >
-                              Cancel
+                              Cancel Schedule
                             </button>
                           ) : (
                             <button
                               onClick={handleSchedule}
                               disabled={!scheduledTime}
-                              className="rounded-lg bg-violet-500/15 px-3 py-2 text-xs font-medium text-violet-400/80 ring-1 ring-violet-500/25 transition-all hover:bg-violet-500/25 disabled:opacity-30 disabled:cursor-not-allowed"
+                              className="w-full rounded-lg bg-violet-500/12 py-2.5 text-xs font-semibold text-violet-400/80 ring-1 ring-violet-500/25 transition-all hover:bg-violet-500/20 hover:text-violet-300 disabled:opacity-30 disabled:cursor-not-allowed"
                             >
-                              Schedule
+                              Set Schedule
                             </button>
                           )}
+                          {scheduleActive && (
+                            <p className="text-[11px] text-violet-400/50 leading-snug">
+                              Starts at {new Date(scheduledTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                            </p>
+                          )}
                         </div>
-                        {scheduleActive && (
-                          <p className="mt-1.5 text-[10px] text-violet-400/50 flex items-center gap-1">
-                            <span className="relative flex h-1.5 w-1.5 mr-1">
-                              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-75" />
-                              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-violet-400" />
-                            </span>
-                            Waiting to record at {new Date(scheduledTime).toLocaleTimeString()}
-                          </p>
-                        )}
-                      </div>
 
+                      </div>
                     </div>
                   </motion.div>
                 )}
