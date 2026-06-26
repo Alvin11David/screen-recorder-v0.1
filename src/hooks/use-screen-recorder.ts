@@ -411,12 +411,18 @@ export function useScreenRecorder() {
           compositeCanvas.current = canvas;
           compositeRunning.current = true;
 
-          const frame = () => {
+          const frameInterval = 1000 / fpsRef.current;
+          let lastFrameTime = 0;
+          const frame = (timestamp: number) => {
             if (!compositeRunning.current) return;
-            if (!compositePausedRef.current) {
-              ctx.clearRect(0, 0, width, height);
-              ctx.drawImage(screenVideo, 0, 0, width, height);
-              overlayAnnotations(ctx, width, height);
+            const elapsed = timestamp - lastFrameTime;
+            if (elapsed >= frameInterval) {
+              lastFrameTime = timestamp - (elapsed % frameInterval);
+              if (!compositePausedRef.current) {
+                ctx.clearRect(0, 0, width, height);
+                ctx.drawImage(screenVideo, 0, 0, width, height);
+                overlayAnnotations(ctx, width, height);
+              }
             }
             requestAnimationFrame(frame);
           };
