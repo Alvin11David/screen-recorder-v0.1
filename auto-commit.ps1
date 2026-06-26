@@ -1,4 +1,4 @@
-$repoPath = "C:\Users\User\screen-recorder-v0.1"
+$repoPath = $PSScriptRoot
 $pollIntervalSec = 3
 $debounceSec = 5
 
@@ -14,8 +14,16 @@ $lastCommit = (Get-Date).AddSeconds(-$debounceSec)
 
 while ($true) {
     try {
+        # Check if the path is a valid git repository first
+        if (-not (Test-Path (Join-Path $repoPath ".git"))) {
+            Write-Host "  Error: $repoPath is not a valid Git repository." -ForegroundColor Red
+            Start-Sleep -Seconds $pollIntervalSec
+            continue
+        }
+
         $status = git -C $repoPath status --short 2>&1
-        if (-not [string]::IsNullOrWhiteSpace($status)) {
+        # Prevent errors from creating loop-commits
+        if (-not [string]::IsNullOrWhiteSpace($status) -and -not ($status -match "fatal:")) {
             $now = Get-Date
             if (($now - $lastCommit).TotalSeconds -ge $debounceSec) {
                 $lastCommit = $now
@@ -31,6 +39,8 @@ while ($true) {
                 git -C $repoPath push origin main 2>&1 | Out-Null
                 Write-Host "  Pushed to origin/main" -ForegroundColor Green
             }
+        } elseif ($status -match "fatal:") {
+            Write-Host "  Git Error: $status" -ForegroundColor Red
         }
     } catch {
         Write-Host "  Error: $_" -ForegroundColor Red
