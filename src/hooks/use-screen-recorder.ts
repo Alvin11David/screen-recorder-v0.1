@@ -313,53 +313,59 @@ export function useScreenRecorder() {
           compositeCanvas.current = canvas;
           compositeRunning.current = true;
 
-          const frame = () => {
+          const frameInterval = 1000 / fpsRef.current;
+          let lastFrameTime = 0;
+          const frame = (timestamp: number) => {
             if (!compositeRunning.current) return;
-            if (!compositePausedRef.current) {
-              ctx.clearRect(0, 0, width, height);
+            const elapsed = timestamp - lastFrameTime;
+            if (elapsed >= frameInterval) {
+              lastFrameTime = timestamp - (elapsed % frameInterval);
+              if (!compositePausedRef.current) {
+                ctx.clearRect(0, 0, width, height);
 
-              // Screen layer
-              ctx.drawImage(screenVideo, 0, 0, width, height);
+                // Screen layer
+                ctx.drawImage(screenVideo, 0, 0, width, height);
 
-              // Camera PIP layer
-              const pos = camPosRef.current;
-              const set = camSetRef.current;
-              const cx = (pos.x / 100) * width;
-              const cy = (pos.y / 100) * height;
-              const r = set.radius;
+                // Camera PIP layer
+                const pos = camPosRef.current;
+                const set = camSetRef.current;
+                const cx = (pos.x / 100) * width;
+                const cy = (pos.y / 100) * height;
+                const r = set.radius;
 
-              ctx.save();
-              ctx.beginPath();
-              ctx.arc(cx, cy, r, 0, Math.PI * 2);
-              ctx.clip();
-
-              const src = camVideo;
-              const sw = r * 2;
-              const sh = r * 2;
-
-              if (set.mirrored) {
                 ctx.save();
-                ctx.translate(cx, 0);
-                ctx.scale(-1, 1);
-                ctx.drawImage(src, -(cx - r), cy - r, sw, sh);
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                ctx.clip();
+
+                const src = camVideo;
+                const sw = r * 2;
+                const sh = r * 2;
+
+                if (set.mirrored) {
+                  ctx.save();
+                  ctx.translate(cx, 0);
+                  ctx.scale(-1, 1);
+                  ctx.drawImage(src, -(cx - r), cy - r, sw, sh);
+                  ctx.restore();
+                } else {
+                  ctx.drawImage(src, cx - r, cy - r, sw, sh);
+                }
                 ctx.restore();
-              } else {
-                ctx.drawImage(src, cx - r, cy - r, sw, sh);
+
+                // Border ring
+                ctx.save();
+                ctx.shadowColor = "rgba(255,255,255,0.25)";
+                ctx.shadowBlur = set.shadowBlur;
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                ctx.strokeStyle = set.borderColor;
+                ctx.lineWidth = set.borderWidth;
+                ctx.stroke();
+                ctx.restore();
+
+                overlayAnnotations(ctx, width, height);
               }
-              ctx.restore();
-
-              // Border ring
-              ctx.save();
-              ctx.shadowColor = "rgba(255,255,255,0.25)";
-              ctx.shadowBlur = set.shadowBlur;
-              ctx.beginPath();
-              ctx.arc(cx, cy, r, 0, Math.PI * 2);
-              ctx.strokeStyle = set.borderColor;
-              ctx.lineWidth = set.borderWidth;
-              ctx.stroke();
-              ctx.restore();
-
-              overlayAnnotations(ctx, width, height);
             }
             requestAnimationFrame(frame);
           };
