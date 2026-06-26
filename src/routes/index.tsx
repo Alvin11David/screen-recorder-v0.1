@@ -27,7 +27,6 @@ import {
   Check,
   Zap,
   Lock,
-  Hash,
   Expand,
   Film,
   History,
@@ -151,11 +150,39 @@ function useAudioMeter(stream: MediaStream | null) {
   return level;
 }
 
-const FEATURES = [
-  { icon: Zap, label: "HD / Full HD / 4K" },
-  { icon: Lock, label: "100% local" },
-  { icon: ShieldCheck, label: "No watermark" },
-  { icon: Hash, label: "No data leaves" },
+const HERO_BADGES = [
+  {
+    icon: Zap,
+    label: "Zero Installs",
+    color: "text-cyan-400",
+    bg: "bg-cyan-500/10",
+    ring: "ring-cyan-500/25",
+    glow: "shadow-[0_0_16px_oklch(0.74_0.15_222/0.5)]",
+  },
+  {
+    icon: ShieldCheck,
+    label: "100% Private",
+    color: "text-emerald-400",
+    bg: "bg-emerald-500/10",
+    ring: "ring-emerald-500/25",
+    glow: "shadow-[0_0_16px_oklch(0.72_0.16_160/0.5)]",
+  },
+  {
+    icon: Lock,
+    label: "No Watermark",
+    color: "text-violet-400",
+    bg: "bg-violet-500/10",
+    ring: "ring-violet-500/25",
+    glow: "shadow-[0_0_16px_oklch(0.65_0.2_295/0.5)]",
+  },
+  {
+    icon: Sparkles,
+    label: "4K Quality",
+    color: "text-amber-400",
+    bg: "bg-amber-500/10",
+    ring: "ring-amber-500/25",
+    glow: "shadow-[0_0_16px_oklch(0.75_0.18_60/0.5)]",
+  },
 ] as const;
 
 const PARTICLES = Array.from({ length: 25 }, (_, i) => ({
@@ -1000,27 +1027,121 @@ function RecordingResultPanel({
   );
 }
 
+const TRUST_CARDS = [
+  {
+    value: "Zero",
+    label: "Installs",
+    sub: "Runs entirely in your browser",
+    icon: Zap,
+    gradient: "from-cyan-400 to-blue-500",
+    iconBg: "from-cyan-500 to-blue-600",
+    glowColor: "oklch(0.74 0.15 222 / 0.4)",
+    hoverBg: "from-cyan-500/[0.07] to-blue-500/[0.04]",
+    ring: "group-hover:ring-cyan-500/30",
+  },
+  {
+    value: "100%",
+    label: "Private",
+    sub: "Nothing ever leaves your device",
+    icon: ShieldCheck,
+    gradient: "from-emerald-400 to-teal-500",
+    iconBg: "from-emerald-500 to-teal-600",
+    glowColor: "oklch(0.72 0.16 160 / 0.4)",
+    hoverBg: "from-emerald-500/[0.07] to-teal-500/[0.04]",
+    ring: "group-hover:ring-emerald-500/30",
+  },
+  {
+    value: "No",
+    label: "Watermark",
+    sub: "Clean output — yours to keep",
+    icon: Lock,
+    gradient: "from-violet-400 to-purple-500",
+    iconBg: "from-violet-500 to-purple-600",
+    glowColor: "oklch(0.65 0.2 295 / 0.4)",
+    hoverBg: "from-violet-500/[0.07] to-purple-500/[0.04]",
+    ring: "group-hover:ring-violet-500/30",
+  },
+  {
+    value: "4K",
+    label: "Quality",
+    sub: "Up to 3840 × 2160 resolution",
+    icon: Sparkles,
+    gradient: "from-amber-400 to-orange-500",
+    iconBg: "from-amber-500 to-orange-600",
+    glowColor: "oklch(0.75 0.18 60 / 0.4)",
+    hoverBg: "from-amber-500/[0.07] to-orange-500/[0.04]",
+    ring: "group-hover:ring-amber-500/30",
+  },
+] as const;
+
 function TrustMetrics() {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 1.2, duration: 0.6 }}
-      className="mt-14 text-center"
+      transition={{ delay: 1.0, duration: 0.7 }}
+      className="mt-14"
     >
-      <div className="flex items-center justify-center gap-8 sm:gap-12 flex-wrap">
-        {[
-          { value: "Zero", label: "installs" },
-          { value: "100%", label: "private" },
-          { value: "No", label: "watermark" },
-          { value: "4K", label: "quality" },
-        ].map(({ value, label }) => (
-          <div key={label} className="text-center">
-            <p className="font-display text-xl font-bold text-white/50">{value}</p>
-            <p className="text-[11px] text-white/20 mt-0.5">{label}</p>
-          </div>
+      {/* Section label */}
+      <div className="flex items-center gap-3 mb-5">
+        <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/[0.07]" />
+        <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/25">Why ScreenCapture Pro</span>
+        <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/[0.07]" />
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {TRUST_CARDS.map(({ value, label, sub, icon: Icon, gradient, iconBg, glowColor, hoverBg, ring }, i) => (
+          <motion.div
+            key={label}
+            initial={{ opacity: 0, y: 24, scale: 0.93 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 1.1 + i * 0.1, duration: 0.55, ease: [0.25, 0.1, 0.25, 1] }}
+            whileHover={{ y: -4, transition: { duration: 0.2, ease: "easeOut" } }}
+            className={cn(
+              "group relative overflow-hidden rounded-2xl p-5 ring-1 ring-white/[0.07] bg-white/[0.025] backdrop-blur-sm cursor-default transition-all duration-300",
+              ring,
+            )}
+          >
+            {/* Hover background glow */}
+            <div className={cn(
+              "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br rounded-2xl",
+              hoverBg,
+            )} />
+
+            {/* Bottom edge shimmer on hover */}
+            <div className="absolute bottom-0 left-0 right-0 h-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
+            <div className="relative z-10 flex flex-col gap-3.5">
+              {/* Icon badge */}
+              <motion.div
+                whileHover={{ rotate: [0, -8, 8, 0], transition: { duration: 0.4 } }}
+                className={cn(
+                  "w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br shadow-lg transition-all duration-300",
+                  iconBg,
+                )}
+                style={{ boxShadow: `0 0 0 1px white/10, 0 6px 24px ${glowColor}` }}
+              >
+                <Icon className="h-[18px] w-[18px] text-white" strokeWidth={2} />
+              </motion.div>
+
+              {/* Text */}
+              <div>
+                <div className="flex items-baseline gap-1.5">
+                  <span className={cn(
+                    "font-display text-3xl font-black bg-gradient-to-r bg-clip-text text-transparent leading-none",
+                    gradient,
+                  )}>
+                    {value}
+                  </span>
+                </div>
+                <p className="text-sm font-bold text-white/75 mt-0.5">{label}</p>
+                <p className="text-[11px] text-white/30 mt-1.5 leading-snug">{sub}</p>
+              </div>
+            </div>
+          </motion.div>
         ))}
       </div>
+
       <div className="mt-8 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
     </motion.div>
   );
@@ -1201,36 +1322,51 @@ function Index() {
     <main className="relative min-h-screen overflow-x-hidden">
       {/* ── Background layer ── */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,oklch(0.74_0.15_222/0.15),transparent)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_20%_80%,oklch(0.72_0.16_200/0.1),transparent)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_80%_80%,oklch(0.74_0.15_222/0.08),transparent)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_30%_at_50%_50%,oklch(0.7_0.14_250/0.06),transparent)]" />
-        <div className="absolute inset-0 bg-[image:radial-gradient(oklch(1_0_0/0.03)_1px,transparent_1px)] bg-[size:24px_24px]" />
+        {/* Base radial gradients */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_-10%,oklch(0.74_0.15_222/0.22),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_15%_85%,oklch(0.72_0.16_200/0.14),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_85%_85%,oklch(0.65_0.2_295/0.12),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_55%,oklch(0.7_0.14_250/0.08),transparent)]" />
 
-        {/* Floating decorative orbs */}
-        <div className="absolute -top-48 -left-48 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-primary/10 to-accent/5 blur-[120px] animate-float-1 animate-blob-pulse will-change-transform" />
+        {/* Aurora beam — sweeps across the top */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-[180px] bg-gradient-to-b from-cyan-500/[0.06] via-blue-500/[0.04] to-transparent" />
         <div
-          className="absolute -bottom-64 -right-48 w-[500px] h-[500px] rounded-full bg-gradient-to-tl from-blue-500/8 to-purple-500/8 blur-[100px] animate-float-2 animate-blob-pulse will-change-transform"
+          className="absolute -top-[40px] left-[-10%] right-[-10%] h-[90px] bg-gradient-to-r from-transparent via-violet-500/[0.18] to-transparent blur-[32px] animate-aurora-sweep"
+        />
+
+        {/* Dot grid */}
+        <div className="absolute inset-0 bg-[image:radial-gradient(oklch(1_0_0/0.04)_1px,transparent_1px)] bg-[size:24px_24px]" />
+
+        {/* Floating decorative orbs — brighter */}
+        <div className="absolute -top-48 -left-48 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-cyan-500/[0.14] to-blue-600/[0.08] blur-[130px] animate-float-1 animate-blob-pulse will-change-transform" />
+        <div
+          className="absolute -bottom-64 -right-48 w-[600px] h-[600px] rounded-full bg-gradient-to-tl from-violet-500/[0.13] to-purple-600/[0.08] blur-[110px] animate-float-2 animate-blob-pulse will-change-transform"
           style={{ animationDelay: "-3s" }}
         />
         <div
-          className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-accent/8 to-primary/5 blur-[100px] animate-float-3 animate-blob-pulse will-change-transform"
+          className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[450px] h-[450px] rounded-full bg-gradient-to-tr from-teal-500/[0.1] to-cyan-500/[0.07] blur-[110px] animate-float-3 animate-blob-pulse will-change-transform"
           style={{ animationDelay: "-6s" }}
         />
         <div
-          className="absolute top-1/4 -right-32 w-[350px] h-[350px] rounded-full bg-gradient-to-bl from-violet-500/6 to-transparent blur-[90px] animate-drift animate-blob-pulse will-change-transform"
+          className="absolute top-1/4 -right-32 w-[380px] h-[380px] rounded-full bg-gradient-to-bl from-violet-500/[0.1] to-pink-500/[0.06] blur-[100px] animate-drift animate-blob-pulse will-change-transform"
           style={{ animationDelay: "-2s" }}
         />
         <div
-          className="absolute bottom-1/4 -left-32 w-[300px] h-[300px] rounded-full bg-gradient-to-tr from-teal-500/6 to-transparent blur-[80px] animate-drift animate-blob-pulse will-change-transform"
+          className="absolute bottom-1/4 -left-32 w-[340px] h-[340px] rounded-full bg-gradient-to-tr from-emerald-500/[0.09] to-teal-500/[0.05] blur-[90px] animate-drift animate-blob-pulse will-change-transform"
           style={{ animationDelay: "-5s" }}
+        />
+        {/* Amber accent orb */}
+        <div
+          className="absolute top-[60%] left-[60%] w-[280px] h-[280px] rounded-full bg-gradient-to-tl from-amber-500/[0.08] to-orange-500/[0.05] blur-[80px] animate-float-1 will-change-transform"
+          style={{ animationDelay: "-9s" }}
         />
 
         {/* Floating particles */}
         {PARTICLES.map((p, i) => (
           <div
             key={i}
-            className="absolute rounded-full bg-white/8 animate-twinkle"
+            className="absolute rounded-full bg-white/[0.12] animate-twinkle"
             style={{
               left: p.left,
               top: p.top,
@@ -1391,71 +1527,79 @@ function Index() {
 
         {/* ── Hero ── */}
         <motion.div variants={fadeUp} className="text-center mb-8 md:mb-10">
-          <motion.span
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.5 }}
-            className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.04] px-3.5 py-1.5 text-[11px] font-medium text-white/40 ring-1 ring-white/[0.06] backdrop-blur-sm mb-5"
-          >
-            <Sparkles className="h-3 w-3 text-primary/60" />
-            Browser-based &middot; No installs &middot; 100% private
-          </motion.span>
-
           <motion.h1
-            className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1] mb-4"
+            className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-black tracking-tight text-white leading-[1.05] mb-5"
           >
-            <span className="relative inline-block mb-2">
-              <span className="absolute -inset-x-16 -inset-y-8 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 blur-[80px]" />
+            <span className="relative inline-block mb-1">
+              {/* Glow halo behind headline */}
+              <span className="absolute -inset-x-20 -inset-y-10 bg-gradient-to-r from-cyan-500/8 via-blue-500/10 to-violet-500/8 blur-[90px] pointer-events-none" />
               {"Record your screen".split(" ").map((word, i) => (
                 <motion.span
                   key={i}
-                  initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
+                  initial={{ opacity: 0, y: 40, filter: "blur(12px)" }}
                   animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                   transition={{
-                    delay: 0.25 + i * 0.15,
-                    duration: 0.7,
-                    ease: [0.25, 0.1, 0.25, 1],
+                    delay: 0.2 + i * 0.14,
+                    duration: 0.75,
+                    ease: [0.16, 1, 0.3, 1],
                   }}
-                  className="inline-block mr-[0.3em] last:mr-0"
+                  className="inline-block mr-[0.28em] last:mr-0"
                 >
                   {word}
                 </motion.span>
               ))}
             </span>
             <br />
-            <span className="text-gradient bg-[length:200%_auto] hero-animate-gradient inline-block pb-1">
-              in stunning quality
-            </span>
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.62, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              className="inline-block pb-2"
+            >
+              <span className="relative">
+                {/* Multi-color shimmer under the gradient text */}
+                <span className="absolute -bottom-1 left-0 right-0 h-[3px] rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500 opacity-70 blur-[2px]" />
+                <span className="text-gradient bg-[length:250%_auto] hero-animate-gradient">
+                  in stunning quality
+                </span>
+              </span>
+            </motion.span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.55, duration: 0.6 }}
-            className="text-sm sm:text-base text-white/40 max-w-xl mx-auto leading-relaxed mb-6"
+            transition={{ delay: 0.65, duration: 0.6 }}
+            className="text-sm sm:text-base text-white/45 max-w-xl mx-auto leading-relaxed mb-7"
           >
             Capture your display in HD, Full HD or 4K directly from the browser.
             <br className="hidden sm:block" />
             No installs, no watermarks, no data leaving your machine.
           </motion.p>
 
-          {/* Feature pills */}
+          {/* Feature badges */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.65, duration: 0.6 }}
-            className="flex items-center justify-center gap-2 flex-wrap"
+            className="flex items-center justify-center gap-2.5 flex-wrap"
           >
-            {FEATURES.map(({ icon: Icon, label }, fi) => (
+            {HERO_BADGES.map(({ icon: Icon, label, color, bg, ring, glow }, fi) => (
               <motion.span
                 key={label}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.7 + fi * 0.08, duration: 0.4 }}
-                className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.03] px-3 py-1.5 text-[11px] text-white/35 ring-1 ring-white/[0.06] backdrop-blur-sm transition-all hover:bg-white/[0.06] hover:text-white/50 hover:ring-white/[0.12]"
+                initial={{ opacity: 0, scale: 0.75, y: 12 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ delay: 0.7 + fi * 0.1, duration: 0.5, type: "spring", stiffness: 280, damping: 22 }}
+                whileHover={{ y: -2, scale: 1.05, transition: { duration: 0.18 } }}
+                className={cn(
+                  "inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold ring-1 backdrop-blur-sm cursor-default",
+                  bg, ring,
+                )}
               >
-                <Icon className="h-3 w-3 text-primary/40" />
-                {label}
+                <span className={cn("flex h-5 w-5 items-center justify-center rounded-full bg-black/20", glow)}>
+                  <Icon className={cn("h-3 w-3", color)} />
+                </span>
+                <span className={color}>{label}</span>
               </motion.span>
             ))}
           </motion.div>

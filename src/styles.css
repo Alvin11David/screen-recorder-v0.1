@@ -470,3 +470,34 @@
 @utility animate-hud-pulse {
   animation: hud-pulse 2s ease-in-out infinite;
 }
+
+@keyframes aurora-sweep {
+  0%   { transform: translateX(-120%) skewX(-15deg); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateX(220%) skewX(-15deg); opacity: 0; }
+}
+
+@utility animate-aurora-sweep {
+  animation: aurora-sweep 7s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  animation-delay: -2s;
+}
+
+@keyframes badge-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-4px); }
+}
+
+@utility animate-badge-float {
+  animation: badge-float 3.5s ease-in-out infinite;
+}
+
+@keyframes card-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@utility animate-card-shimmer {
+  background-size: 200% 100%;
+  animation: card-shimmer 3s linear infinite;
+}
