@@ -34,9 +34,8 @@ export interface GitHubUser {
 }
 
 export const exchangeGitHubCode = createServerFn({ method: "POST" })
-  .validator((d: unknown) => d as string)
   .handler(async (ctx): Promise<GitHubUser> => {
-    const code = ctx.data;
+    const code = ctx.data as unknown as string;
     const apiBase = process.env.API_URL || "http://localhost:8080";
 
     const res = await fetch(`${apiBase}/api/auth/github/callback`, {
