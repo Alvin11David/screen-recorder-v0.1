@@ -30,6 +30,16 @@ import {
   Hash,
   Expand,
   Film,
+  History,
+  Keyboard,
+  Timer,
+  Volume2,
+  VolumeX,
+  AlignLeft,
+  Settings,
+  ChevronDown,
+  ChevronUp,
+  Gauge,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -53,6 +63,11 @@ import { CropOverlay } from "@/components/recorder/CropOverlay";
 import { MultiMonitorSetup } from "@/components/recorder/MultiMonitorSetup";
 import { DrawingOverlay } from "@/components/recorder/DrawingOverlay";
 import { VideoEditor } from "@/components/editor/VideoEditor";
+import { SpotlightOverlay } from "@/components/recorder/SpotlightOverlay";
+import { FloatingMiniBar } from "@/components/recorder/FloatingMiniBar";
+import { RecordingHistory, saveToHistory } from "@/components/recorder/RecordingHistory";
+import { KeyboardShortcutsPanel } from "@/components/recorder/KeyboardShortcutsPanel";
+import { TeleprompterOverlay } from "@/components/recorder/TeleprompterOverlay";
 
 const SOURCES: {
   id: CaptureSurface;
@@ -1015,6 +1030,14 @@ function Index() {
   const [source, setSource] = useState<CaptureSurface>("monitor");
   const [whiteboardActive, setWhiteboardActive] = useState(false);
   const [editorBlob, setEditorBlob] = useState<Blob | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
+  const [teleprompterActive, setTeleprompterActive] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [scheduledTime, setScheduledTime] = useState("");
+  const [scheduleActive, setScheduleActive] = useState(false);
+  const scheduleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const { isAuthenticated, user, logout } = useAuth();
   const {
     status,
@@ -1036,6 +1059,12 @@ function Index() {
     setCameraSettings,
     quality,
     setQuality,
+    fps,
+    setFps,
+    noiseSuppressionEnabled,
+    setNoiseSuppressionEnabled,
+    autoStopMinutes,
+    setAutoStopMinutes,
     startRecording,
     cancelCountdown,
     confirmCrop,
@@ -1055,8 +1084,97 @@ function Index() {
   } = useScreenRecorder();
 
   const isIdle = status === "idle";
+  const isLiveStatus = status === "recording" || status === "paused";
   const showClickFX = status === "recording" || whiteboardActive;
   const showCursorFX = status === "recording" || whiteboardActive;
+
+  // Save to history whenever a recording completes
+  useEffect(() => {
+    if (result) saveToHistory(result);
+  }, [result]);
+
+  // Global keyboard shortcuts
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      const isInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+
+      if (e.altKey) {
+        switch (e.key.toLowerCase()) {
+          case "r":
+            e.preventDefault();
+            if (status === "idle" && !result) startRecording(source);
+            break;
+          case "n":
+            e.preventDefault();
+            if (result || status !== "idle") reset();
+            break;
+          case "h":
+            e.preventDefault();
+            setShowHistory((v) => !v);
+            break;
+          case "k":
+            e.preventDefault();
+            setShowShortcuts((v) => !v);
+            break;
+          case "e":
+            e.preventDefault();
+            if (result) setEditorBlob(result.blob);
+            break;
+          case "t":
+            e.preventDefault();
+            setTeleprompterActive((v) => !v);
+            break;
+          case "w":
+            e.preventDefault();
+            setWhiteboardActive((v) => !v);
+            break;
+          case "a":
+            e.preventDefault();
+            setAnnotationsEnabled((v) => !v);
+            if (!annotationsEnabled) setupAnnotationCanvas(1920, 1080);
+            break;
+        }
+        return;
+      }
+
+      if (isInput) return;
+
+      if (e.key === " ") {
+        e.preventDefault();
+        if (status === "recording") pauseRecording();
+        else if (status === "paused") resumeRecording();
+      }
+      if (e.key === "Escape") {
+        if (status === "recording" || status === "paused") stopRecording();
+        else if (showHistory) setShowHistory(false);
+        else if (showShortcuts) setShowShortcuts(false);
+        else if (teleprompterActive) setTeleprompterActive(false);
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [status, result, source, showHistory, showShortcuts, teleprompterActive, annotationsEnabled,
+      startRecording, pauseRecording, resumeRecording, stopRecording, reset, setAnnotationsEnabled, setupAnnotationCanvas]);
+
+  // Scheduled recording
+  const handleSchedule = useCallback(() => {
+    if (!scheduledTime) return;
+    const target = new Date(scheduledTime).getTime();
+    const now = Date.now();
+    const delay = target - now;
+    if (delay <= 0) return;
+    setScheduleActive(true);
+    scheduleTimerRef.current = setTimeout(() => {
+      startRecording(source);
+      setScheduleActive(false);
+    }, delay);
+  }, [scheduledTime, source, startRecording]);
+
+  const cancelSchedule = useCallback(() => {
+    if (scheduleTimerRef.current) clearTimeout(scheduleTimerRef.current);
+    setScheduleActive(false);
+  }, []);
 
   const container = {
     hidden: { opacity: 0 },
@@ -1147,6 +1265,23 @@ function Index() {
         active={includeCamera && (status === "idle" || status === "countdown")}
       />
 
+      {/* ── New feature overlays ── */}
+      <SpotlightOverlay active={isLiveStatus} />
+      <FloatingMiniBar
+        status={status}
+        elapsed={elapsed}
+        onPause={pauseRecording}
+        onResume={resumeRecording}
+        onStop={stopRecording}
+      />
+      <TeleprompterOverlay
+        active={teleprompterActive}
+        onClose={() => setTeleprompterActive(false)}
+        isRecording={status === "recording"}
+      />
+      <RecordingHistory open={showHistory} onClose={() => setShowHistory(false)} />
+      <KeyboardShortcutsPanel open={showShortcuts} onClose={() => setShowShortcuts(false)} />
+
       {status === "crop" && stream && (
         <CropOverlay stream={stream} onConfirm={confirmCrop} onCancel={cancelCrop} />
       )}
@@ -1188,6 +1323,36 @@ function Index() {
             </span>
           </div>
           <div className="flex items-center gap-2">
+            {/* History button */}
+            <button
+              onClick={() => setShowHistory(true)}
+              title="Recording History (Alt+H)"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-white/30 ring-1 ring-white/[0.06] transition-all hover:bg-white/[0.06] hover:text-white/70 hover:ring-white/[0.12]"
+            >
+              <History className="h-4 w-4" />
+            </button>
+            {/* Keyboard shortcuts button */}
+            <button
+              onClick={() => setShowShortcuts(true)}
+              title="Keyboard Shortcuts (Alt+K)"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-white/30 ring-1 ring-white/[0.06] transition-all hover:bg-white/[0.06] hover:text-white/70 hover:ring-white/[0.12]"
+            >
+              <Keyboard className="h-4 w-4" />
+            </button>
+            {/* Teleprompter button */}
+            <button
+              onClick={() => setTeleprompterActive((v) => !v)}
+              title="Teleprompter (Alt+T)"
+              className={cn(
+                "flex h-8 w-8 items-center justify-center rounded-lg ring-1 transition-all",
+                teleprompterActive
+                  ? "bg-primary/15 text-primary/80 ring-primary/25"
+                  : "text-white/30 ring-white/[0.06] hover:bg-white/[0.06] hover:text-white/70 hover:ring-white/[0.12]",
+              )}
+            >
+              <AlignLeft className="h-4 w-4" />
+            </button>
+            <div className="h-5 w-px bg-white/[0.06] hidden md:block" />
             <span className="hidden md:flex items-center gap-1.5 rounded-full bg-white/[0.03] px-3 py-1 text-[11px] text-white/30 ring-1 ring-white/[0.06]">
               <Sparkles className="h-3 w-3 text-white/20" />
               No installs
@@ -1330,6 +1495,181 @@ function Index() {
               className="mb-4"
             >
               <SourceCards value={source} onChange={setSource} disabled={!isIdle} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ── Advanced Settings ── */}
+        <AnimatePresence>
+          {isIdle && !result && (
+            <motion.div
+              key="advanced-settings"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.35 }}
+              className="mb-4"
+            >
+              <button
+                onClick={() => setShowAdvanced((v) => !v)}
+                className="flex w-full items-center justify-between rounded-xl bg-white/[0.025] px-4 py-3 ring-1 ring-white/[0.06] transition-all hover:bg-white/[0.04] hover:ring-white/[0.1]"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Settings className="h-4 w-4 text-white/30" />
+                  <span className="text-xs font-medium text-white/45">Advanced Settings</span>
+                  {/* Active badges */}
+                  <div className="flex items-center gap-1.5">
+                    {fps !== 60 && (
+                      <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-mono text-primary/70">{fps}fps</span>
+                    )}
+                    {noiseSuppressionEnabled && (
+                      <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] text-emerald-400/70">Noise filter</span>
+                    )}
+                    {autoStopMinutes > 0 && (
+                      <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] text-amber-400/70">Auto-stop {autoStopMinutes}m</span>
+                    )}
+                    {scheduleActive && (
+                      <span className="rounded-full bg-violet-500/15 px-2 py-0.5 text-[10px] text-violet-400/70 flex items-center gap-1">
+                        <span className="relative flex h-1.5 w-1.5">
+                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-75" />
+                          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-violet-400" />
+                        </span>
+                        Scheduled
+                      </span>
+                    )}
+                  </div>
+                </div>
+                {showAdvanced
+                  ? <ChevronUp className="h-4 w-4 text-white/20" />
+                  : <ChevronDown className="h-4 w-4 text-white/20" />}
+              </button>
+
+              <AnimatePresence>
+                {showAdvanced && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="mt-2 rounded-xl bg-white/[0.02] p-4 ring-1 ring-white/[0.05] space-y-5">
+
+                      {/* FPS */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-2.5">
+                          <Gauge className="h-3.5 w-3.5 text-white/25" />
+                          <span className="text-[11px] font-semibold uppercase tracking-wider text-white/25">Frame Rate</span>
+                        </div>
+                        <div className="flex gap-2">
+                          {([30, 60] as const).map((f) => (
+                            <button
+                              key={f}
+                              onClick={() => setFps(f)}
+                              className={cn(
+                                "flex-1 rounded-lg py-2 text-xs font-semibold ring-1 transition-all",
+                                fps === f
+                                  ? "bg-primary/15 text-primary/80 ring-primary/30"
+                                  : "bg-white/[0.03] text-white/35 ring-white/[0.07] hover:bg-white/[0.06] hover:text-white/55",
+                              )}
+                            >
+                              {f} FPS
+                            </button>
+                          ))}
+                        </div>
+                        <p className="mt-1.5 text-[10px] text-white/20">Higher FPS produces smoother recordings but larger files</p>
+                      </div>
+
+                      {/* Noise suppression */}
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2.5">
+                          {noiseSuppressionEnabled
+                            ? <Volume2 className="h-4 w-4 text-emerald-400/60" />
+                            : <VolumeX className="h-4 w-4 text-white/25" />}
+                          <div>
+                            <p className="text-xs font-medium text-white/50">AI Noise Suppression</p>
+                            <p className="text-[10px] text-white/25">Removes background noise from microphone</p>
+                          </div>
+                        </div>
+                        <Switch
+                          checked={noiseSuppressionEnabled}
+                          onCheckedChange={setNoiseSuppressionEnabled}
+                        />
+                      </div>
+
+                      {/* Auto-stop */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-2.5">
+                          <Timer className="h-3.5 w-3.5 text-white/25" />
+                          <span className="text-[11px] font-semibold uppercase tracking-wider text-white/25">Auto-Stop Timer</span>
+                          {autoStopMinutes > 0 && (
+                            <span className="ml-auto text-[11px] font-mono text-amber-400/60">{autoStopMinutes} min</span>
+                          )}
+                        </div>
+                        <div className="flex gap-2 flex-wrap">
+                          {[0, 5, 10, 15, 30, 60].map((m) => (
+                            <button
+                              key={m}
+                              onClick={() => setAutoStopMinutes(m)}
+                              className={cn(
+                                "rounded-lg px-3 py-1.5 text-xs font-semibold ring-1 transition-all",
+                                autoStopMinutes === m
+                                  ? "bg-amber-500/15 text-amber-400/80 ring-amber-500/30"
+                                  : "bg-white/[0.03] text-white/35 ring-white/[0.07] hover:bg-white/[0.06]",
+                              )}
+                            >
+                              {m === 0 ? "Off" : `${m}m`}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Scheduled Recording */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-2.5">
+                          <Calendar className="h-3.5 w-3.5 text-white/25" />
+                          <span className="text-[11px] font-semibold uppercase tracking-wider text-white/25">Scheduled Recording</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="datetime-local"
+                            value={scheduledTime}
+                            onChange={(e) => setScheduledTime(e.target.value)}
+                            disabled={scheduleActive}
+                            className="flex-1 rounded-lg bg-white/[0.04] px-3 py-2 text-xs text-white/60 ring-1 ring-white/[0.08] outline-none transition-all focus:ring-primary/30 disabled:opacity-40"
+                          />
+                          {scheduleActive ? (
+                            <button
+                              onClick={cancelSchedule}
+                              className="rounded-lg bg-red-500/15 px-3 py-2 text-xs font-medium text-red-400/80 ring-1 ring-red-500/25 transition-all hover:bg-red-500/25"
+                            >
+                              Cancel
+                            </button>
+                          ) : (
+                            <button
+                              onClick={handleSchedule}
+                              disabled={!scheduledTime}
+                              className="rounded-lg bg-violet-500/15 px-3 py-2 text-xs font-medium text-violet-400/80 ring-1 ring-violet-500/25 transition-all hover:bg-violet-500/25 disabled:opacity-30 disabled:cursor-not-allowed"
+                            >
+                              Schedule
+                            </button>
+                          )}
+                        </div>
+                        {scheduleActive && (
+                          <p className="mt-1.5 text-[10px] text-violet-400/50 flex items-center gap-1">
+                            <span className="relative flex h-1.5 w-1.5 mr-1">
+                              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-75" />
+                              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-violet-400" />
+                            </span>
+                            Waiting to record at {new Date(scheduledTime).toLocaleTimeString()}
+                          </p>
+                        )}
+                      </div>
+
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           )}
         </AnimatePresence>
