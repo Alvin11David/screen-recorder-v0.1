@@ -185,6 +185,30 @@ export function useScreenRecorder() {
     ctx.drawImage(ac, 0, 0, w, h);
   }, []);
 
+  const createThrottledFrameLoop = useCallback((
+    fps: number,
+    drawFn: () => void,
+    runningRef: React.MutableRefObject<boolean>,
+    pausedRef: React.MutableRefObject<boolean>
+  ) => {
+    const frameInterval = 1000 / fps;
+    let lastFrameTime = 0;
+
+    const frame = (timestamp: number) => {
+      if (!runningRef.current) return;
+      if (!pausedRef.current) {
+        const elapsed = timestamp - lastFrameTime;
+        if (elapsed >= frameInterval) {
+          lastFrameTime = timestamp - (elapsed % frameInterval);
+          drawFn();
+        }
+      }
+      requestAnimationFrame(frame);
+    };
+
+    requestAnimationFrame(frame);
+  }, []);
+
   // Request / release camera when toggled
   useEffect(() => {
     if (!includeCamera) {
