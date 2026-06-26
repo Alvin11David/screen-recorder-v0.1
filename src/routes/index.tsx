@@ -129,6 +129,7 @@ function useAudioMeter(stream: MediaStream | null) {
       return;
     }
     const ctx = new AudioContext();
+    if (ctx.state === "suspended") ctx.resume();
     const src = ctx.createMediaStreamSource(stream);
     const analyser = ctx.createAnalyser();
     analyser.fftSize = 256;
