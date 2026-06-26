@@ -30,6 +30,16 @@ import {
   Hash,
   Expand,
   Film,
+  History,
+  Keyboard,
+  Timer,
+  Volume2,
+  VolumeX,
+  AlignLeft,
+  Settings,
+  ChevronDown,
+  ChevronUp,
+  Gauge,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -53,6 +63,11 @@ import { CropOverlay } from "@/components/recorder/CropOverlay";
 import { MultiMonitorSetup } from "@/components/recorder/MultiMonitorSetup";
 import { DrawingOverlay } from "@/components/recorder/DrawingOverlay";
 import { VideoEditor } from "@/components/editor/VideoEditor";
+import { SpotlightOverlay } from "@/components/recorder/SpotlightOverlay";
+import { FloatingMiniBar } from "@/components/recorder/FloatingMiniBar";
+import { RecordingHistory, saveToHistory } from "@/components/recorder/RecordingHistory";
+import { KeyboardShortcutsPanel } from "@/components/recorder/KeyboardShortcutsPanel";
+import { TeleprompterOverlay } from "@/components/recorder/TeleprompterOverlay";
 
 const SOURCES: {
   id: CaptureSurface;
@@ -164,6 +179,8 @@ function RecordingPreview({
 }) {
   const liveRef = useRef<HTMLVideoElement>(null);
   const isLive = status === "recording" || status === "paused";
+  const isRecording = status === "recording";
+  const isPaused = status === "paused";
   const [livePlayFailed, setLivePlayFailed] = useState(false);
   const audioLevel = useAudioMeter(isLive ? stream : null);
 
@@ -183,112 +200,341 @@ function RecordingPreview({
   }, []);
 
   return (
-    <div className="glass-deep relative aspect-video w-full overflow-hidden rounded-2xl shadow-elegant group">
-      <div className="absolute inset-0 rounded-2xl ring-1 ring-white/[0.06]" />
-      <div className="flex items-center gap-1.5 absolute top-0 left-0 right-0 z-20 px-4 h-9">
-        <div className="flex items-center gap-1.5">
-          <div className="h-2.5 w-2.5 rounded-full bg-red-500/70 ring-1 ring-red-500/30" />
-          <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/70 ring-1 ring-yellow-500/30" />
-          <div className="h-2.5 w-2.5 rounded-full bg-green-500/70 ring-1 ring-green-500/30" />
-        </div>
-        <span className="ml-2 text-[10px] font-mono text-white/15 tracking-wider uppercase">
-          preview
-        </span>
-      </div>
-      <div className="h-full w-full pt-9">
-        {isLive && (
-          <>
-            <video
-              ref={liveRef}
-              muted
-              playsInline
-              className="h-full w-full object-contain bg-black/40"
+    <div className="relative group">
+      {/* ── Reactive ambient halo ── */}
+      <div
+        className={cn(
+          "absolute -inset-6 -z-10 rounded-3xl blur-[70px] transition-all duration-1000",
+          isRecording
+            ? "opacity-100 bg-[radial-gradient(ellipse_at_center,oklch(0.63_0.245_27/0.18)_0%,oklch(0.74_0.15_222/0.10)_50%,transparent_80%)]"
+            : isPaused
+            ? "opacity-100 bg-[radial-gradient(ellipse_at_center,oklch(0.85_0.18_80/0.14)_0%,oklch(0.74_0.15_222/0.08)_50%,transparent_80%)]"
+            : result
+            ? "opacity-100 bg-[radial-gradient(ellipse_at_center,oklch(0.72_0.16_160/0.14)_0%,oklch(0.74_0.15_222/0.08)_50%,transparent_80%)]"
+            : "opacity-50 bg-[radial-gradient(ellipse_at_top,oklch(0.74_0.15_222/0.12)_0%,transparent_70%)]",
+        )}
+      />
+
+      {/* ── Monitor outer frame ── */}
+      <div
+        className={cn(
+          "relative aspect-video w-full overflow-hidden rounded-2xl transition-all duration-700",
+          "bg-[oklch(0.09_0.02_264)]",
+          isRecording
+            ? "shadow-[0_0_0_1.5px_oklch(0.63_0.245_27/0.55),0_0_0_4px_oklch(0.63_0.245_27/0.10),0_40px_100px_-24px_oklch(0_0_0/0.85)]"
+            : isPaused
+            ? "shadow-[0_0_0_1.5px_oklch(0.85_0.18_80/0.45),0_0_0_4px_oklch(0.85_0.18_80/0.08),0_40px_100px_-24px_oklch(0_0_0/0.85)]"
+            : "shadow-[0_0_0_1px_oklch(1_0_0/0.08),0_40px_100px_-24px_oklch(0_0_0/0.80)]",
+        )}
+      >
+        {/* ── Recording rim pulse ── */}
+        <AnimatePresence>
+          {isRecording && (
+            <motion.div
+              key="rec-rim"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0.4, 0.7, 0.4] }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute inset-0 z-30 rounded-2xl pointer-events-none ring-2 ring-inset ring-red-500/30"
             />
-            <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden rounded-2xl">
-              <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(255,255,255,0.006)_2px,rgba(255,255,255,0.006)_4px)]" />
-              <div className="absolute left-4 right-4 h-px bg-gradient-to-r from-transparent via-primary/25 to-transparent animate-line-scan" />
+          )}
+        </AnimatePresence>
+
+        {/* ── Chrome title bar ── */}
+        <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 h-9 bg-gradient-to-b from-white/[0.04] to-transparent border-b border-white/[0.05]">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-[6px]">
+              <div className="h-[11px] w-[11px] rounded-full bg-[oklch(0.7_0.2_15)] ring-1 ring-white/10 shadow-[0_0_6px_oklch(0.7_0.2_15/0.5)]" />
+              <div className="h-[11px] w-[11px] rounded-full bg-[oklch(0.82_0.18_85)] ring-1 ring-white/10 shadow-[0_0_6px_oklch(0.82_0.18_85/0.4)]" />
+              <div className="h-[11px] w-[11px] rounded-full bg-[oklch(0.72_0.2_145)] ring-1 ring-white/10 shadow-[0_0_6px_oklch(0.72_0.2_145/0.4)]" />
             </div>
-            {livePlayFailed && (
-              <button
-                onClick={retryPlay}
-                className="absolute inset-0 z-10 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity"
+            <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/15 select-none ml-1">
+              screen preview
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            {isLive && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.15em] backdrop-blur-xl",
+                  isRecording
+                    ? "bg-red-500/20 text-red-400 ring-1 ring-red-500/30"
+                    : "bg-yellow-500/20 text-yellow-300 ring-1 ring-yellow-500/30",
+                )}
               >
-                <div className="flex items-center gap-2 rounded-full bg-white/10 px-5 py-3 ring-1 ring-white/20 hover:bg-white/20 transition-all">
-                  <Play className="h-5 w-5 text-white" />
-                  <span className="text-sm font-medium text-white">Click to enable preview</span>
-                </div>
-              </button>
-            )}
-            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
-            <div className="absolute top-4 left-4 flex items-center gap-3 z-20">
-              <div className="flex items-center gap-2 rounded-full bg-black/60 px-3.5 py-1.5 backdrop-blur-xl ring-1 ring-white/[0.08]">
-                <span className="relative flex h-2.5 w-2.5">
-                  {status === "recording" && (
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
+                <span className="relative flex h-1.5 w-1.5">
+                  {isRecording && (
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
                   )}
-                  <span
-                    className={cn(
-                      "relative inline-flex h-2.5 w-2.5 rounded-full",
-                      status === "recording" ? "bg-red-500" : "bg-yellow-400",
-                    )}
+                  <span className={cn("relative h-1.5 w-1.5 rounded-full", isRecording ? "bg-red-400" : "bg-yellow-400")} />
+                </span>
+                {isRecording ? "Live" : "Paused"}
+              </motion.div>
+            )}
+            {result && !isLive && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.15em] text-emerald-400 ring-1 ring-emerald-500/30"
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                Ready
+              </motion.div>
+            )}
+          </div>
+        </div>
+
+        {/* ── Content area ── */}
+        <div className="relative h-full w-full pt-9">
+
+          {/* ── Idle state ── */}
+          {!isLive && !result && (
+            <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden">
+              {/* Dot grid */}
+              <div className="absolute inset-0 bg-[image:radial-gradient(circle,oklch(1_0_0/0.06)_1px,transparent_1px)] bg-[size:28px_28px]" />
+              {/* Radial vignette */}
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_50%,transparent_30%,oklch(0.09_0.02_264/0.9)_100%)]" />
+              {/* Top glow */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[200px] bg-[radial-gradient(ellipse,oklch(0.74_0.15_222/0.12)_0%,transparent_70%)] blur-xl" />
+
+              {/* Viewfinder corner accents */}
+              {[
+                "top-3 left-3 border-t-2 border-l-2 rounded-tl-sm",
+                "top-3 right-3 border-t-2 border-r-2 rounded-tr-sm",
+                "bottom-3 left-3 border-b-2 border-l-2 rounded-bl-sm",
+                "bottom-3 right-3 border-b-2 border-r-2 rounded-br-sm",
+              ].map((cls, i) => (
+                <div
+                  key={i}
+                  className={cn("absolute w-5 h-5 border-white/10", cls)}
+                />
+              ))}
+
+              {/* Center icon cluster */}
+              <div className="relative z-10 flex flex-col items-center gap-5 text-center px-8">
+                <div className="relative flex items-center justify-center">
+                  {/* Outer pulsing ring */}
+                  <motion.div
+                    animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.05, 0.15] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute h-24 w-24 rounded-full border border-primary/30"
                   />
-                </span>
-                <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/80">
-                  {status === "recording" ? "REC" : "PAUSED"}
-                </span>
-              </div>
-              <div className="rounded-full bg-black/60 px-3.5 py-1.5 backdrop-blur-xl ring-1 ring-white/[0.08]">
-                <span className="font-mono text-sm tabular-nums text-white/90">
-                  {formatTimer(elapsed)}
-                </span>
-              </div>
-            </div>
-            {status === "recording" && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-4 z-20">
-                <div className="flex items-center gap-2 rounded-full bg-black/60 px-4 py-2 backdrop-blur-xl ring-1 ring-white/[0.08]">
-                  <div className="flex items-center gap-[3px]">
-                    {Array.from({ length: 16 }).map((_, i) => (
+                  {/* Middle ring */}
+                  <motion.div
+                    animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.12, 0.3] }}
+                    transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                    className="absolute h-16 w-16 rounded-full border border-primary/40"
+                  />
+                  {/* Icon container */}
+                  <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.04] ring-1 ring-white/[0.08] backdrop-blur-sm">
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-white/[0.06] to-transparent" />
+                    <Monitor className="h-5 w-5 text-white/25 relative z-10" strokeWidth={1.5} />
+                  </div>
+                </div>
+                <div>
+                  <p className="font-display text-sm font-semibold text-white/40 tracking-wide">
+                    Ready to capture
+                  </p>
+                  <p className="mt-1 text-[11px] text-white/20 leading-relaxed max-w-[220px] mx-auto">
+                    Choose a source below, then hit&nbsp;
+                    <span className="text-primary/50 font-medium">Start Recording</span>
+                  </p>
+                </div>
+
+                {/* No-signal indicator */}
+                <div className="flex items-center gap-2 rounded-full bg-white/[0.03] px-3 py-1 ring-1 ring-white/[0.05]">
+                  <div className="flex items-center gap-[2px]">
+                    {[0.2, 0.45, 0.7, 0.45, 0.2].map((h, i) => (
                       <div
                         key={i}
-                        className="w-[3px] rounded-full bg-white/60 transition-all duration-75"
-                        style={{
-                          height: `${Math.max(3, audioLevel * 36 * (0.3 + 0.7 * (i / 16)))}px`,
-                          opacity: Math.max(0.2, audioLevel * (0.3 + 0.7 * (i / 16))),
-                        }}
+                        className="w-[2px] rounded-full bg-white/12"
+                        style={{ height: `${h * 10}px` }}
                       />
                     ))}
                   </div>
+                  <span className="font-mono text-[9px] tracking-widest text-white/15 uppercase">
+                    No signal
+                  </span>
                 </div>
               </div>
-            )}
-          </>
-        )}
-        {!isLive && !result && (
-          <div className="flex h-full w-full flex-col items-center justify-center gap-4 bg-black/30">
-            <span className="relative flex h-16 w-16 items-center justify-center">
-              <span className="absolute h-full w-full rounded-2xl bg-primary/10 animate-ping opacity-40" />
-              <span className="absolute h-12 w-12 rounded-xl bg-primary/15 blur-sm" />
-              <Monitor className="h-7 w-7 text-white/30" strokeWidth={1.5} />
-            </span>
-            <div className="text-center">
-              <p className="text-base font-medium text-white/45">Your preview appears here</p>
-              <p className="mt-1 text-sm text-white/25">
-                Select a source and quality, then start recording
-              </p>
+
+              {/* Subtle horizontal scan line on idle */}
+              <div className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/[0.08] to-transparent animate-preview-scan pointer-events-none" />
             </div>
-          </div>
-        )}
-        {!isLive && result && (
-          <video
-            src={result.url}
-            autoPlay
-            muted
-            playsInline
-            controls
-            className="h-full w-full object-contain bg-black/40"
-          />
-        )}
+          )}
+
+          {/* ── Live state ── */}
+          {isLive && (
+            <>
+              <video
+                ref={liveRef}
+                muted
+                playsInline
+                className={cn(
+                  "h-full w-full object-contain transition-all duration-500",
+                  isPaused ? "bg-black/60 brightness-75" : "bg-black/50",
+                )}
+              />
+
+              {/* CRT scan line overlay */}
+              <div className="absolute inset-0 z-10 pointer-events-none">
+                <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_3px,oklch(0_0_0/0.03)_3px,oklch(0_0_0/0.03)_4px)]" />
+                <div className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/20 to-transparent animate-line-scan opacity-60" />
+              </div>
+
+              {/* Play-failed overlay */}
+              {livePlayFailed && (
+                <button
+                  onClick={retryPlay}
+                  className="absolute inset-0 z-20 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+                >
+                  <motion.div
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="flex items-center gap-2.5 rounded-full bg-white/10 px-6 py-3.5 ring-1 ring-white/20 hover:bg-white/15 transition-all"
+                  >
+                    <Play className="h-5 w-5 text-white fill-white" />
+                    <span className="text-sm font-semibold text-white">Click to enable preview</span>
+                  </motion.div>
+                </button>
+              )}
+
+              {/* Corner crosshairs */}
+              {[
+                "top-[2.5rem] left-3",
+                "top-[2.5rem] right-3",
+                "bottom-3 left-3",
+                "bottom-3 right-3",
+              ].map((pos, i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    "absolute w-4 h-4 pointer-events-none z-20",
+                    pos,
+                    i < 2
+                      ? i === 0
+                        ? "border-t border-l border-white/20 rounded-tl"
+                        : "border-t border-r border-white/20 rounded-tr"
+                      : i === 2
+                      ? "border-b border-l border-white/20 rounded-bl"
+                      : "border-b border-r border-white/20 rounded-br",
+                  )}
+                />
+              ))}
+
+              {/* Bottom gradient vignette */}
+              <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none z-10" />
+
+              {/* ── HUD: top-left status ── */}
+              <div className="absolute top-[2.75rem] left-4 flex items-center gap-2 z-20">
+                <motion.div
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className={cn(
+                    "flex items-center gap-2 rounded-lg px-3 py-1.5 backdrop-blur-2xl ring-1",
+                    isRecording
+                      ? "bg-red-950/80 ring-red-500/30"
+                      : "bg-yellow-950/80 ring-yellow-500/30",
+                  )}
+                >
+                  <span className="relative flex h-2 w-2">
+                    {isRecording && (
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-80" />
+                    )}
+                    <span
+                      className={cn(
+                        "relative inline-flex h-2 w-2 rounded-full",
+                        isRecording ? "bg-red-400" : "bg-yellow-300",
+                      )}
+                    />
+                  </span>
+                  <span
+                    className={cn(
+                      "text-[10px] font-black uppercase tracking-[0.2em]",
+                      isRecording ? "text-red-300" : "text-yellow-200",
+                    )}
+                  >
+                    {isRecording ? "REC" : "PAUSED"}
+                  </span>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.05 }}
+                  className="flex items-center gap-1.5 rounded-lg bg-black/60 px-3 py-1.5 backdrop-blur-2xl ring-1 ring-white/[0.08]"
+                >
+                  <span className="font-mono text-xs tabular-nums text-white/80 tracking-wider">
+                    {formatTimer(elapsed)}
+                  </span>
+                </motion.div>
+              </div>
+
+              {/* ── HUD: bottom audio meter ── */}
+              {isRecording && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="absolute bottom-4 left-4 z-20 flex items-center gap-2 rounded-lg bg-black/60 px-3 py-2 backdrop-blur-2xl ring-1 ring-white/[0.08]"
+                >
+                  <div className="flex items-end gap-[2.5px] h-6">
+                    {Array.from({ length: 20 }).map((_, i) => {
+                      const center = Math.abs(i - 9.5) / 9.5;
+                      const barLevel = audioLevel * (1 - center * 0.4);
+                      return (
+                        <div
+                          key={i}
+                          className="w-[2.5px] rounded-full transition-all duration-75"
+                          style={{
+                            height: `${Math.max(3, barLevel * 22 + (1 - center) * 2)}px`,
+                            backgroundColor: audioLevel > 0.7
+                              ? `oklch(0.7 0.2 15 / ${Math.max(0.25, barLevel * 0.9)})`
+                              : `oklch(0.74 0.15 222 / ${Math.max(0.2, barLevel * 0.85)})`,
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
+                  <span className="text-[9px] font-mono text-white/25 uppercase tracking-wider ml-1">
+                    Audio
+                  </span>
+                </motion.div>
+              )}
+
+              {/* ── HUD: top-right frame info ── */}
+              {isRecording && (
+                <motion.div
+                  initial={{ opacity: 0, x: 8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="absolute top-[2.75rem] right-4 z-20 rounded-lg bg-black/60 px-3 py-1.5 backdrop-blur-2xl ring-1 ring-white/[0.08]"
+                >
+                  <span className="font-mono text-[9px] text-white/30 uppercase tracking-wider">60 fps</span>
+                </motion.div>
+              )}
+            </>
+          )}
+
+          {/* ── Result / playback state ── */}
+          {!isLive && result && (
+            <div className="relative h-full w-full">
+              <video
+                src={result.url}
+                autoPlay
+                muted
+                playsInline
+                controls
+                className="h-full w-full object-contain bg-black/50"
+              />
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* ── Bottom bezel detail ── */}
+      <div className="mx-auto mt-2 h-[3px] w-[40%] rounded-full bg-gradient-to-r from-transparent via-white/[0.05] to-transparent" />
     </div>
   );
 }
@@ -784,6 +1030,14 @@ function Index() {
   const [source, setSource] = useState<CaptureSurface>("monitor");
   const [whiteboardActive, setWhiteboardActive] = useState(false);
   const [editorBlob, setEditorBlob] = useState<Blob | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
+  const [teleprompterActive, setTeleprompterActive] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [scheduledTime, setScheduledTime] = useState("");
+  const [scheduleActive, setScheduleActive] = useState(false);
+  const scheduleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const { isAuthenticated, user, logout } = useAuth();
   const {
     status,
@@ -805,6 +1059,12 @@ function Index() {
     setCameraSettings,
     quality,
     setQuality,
+    fps,
+    setFps,
+    noiseSuppressionEnabled,
+    setNoiseSuppressionEnabled,
+    autoStopMinutes,
+    setAutoStopMinutes,
     startRecording,
     cancelCountdown,
     confirmCrop,
@@ -824,8 +1084,105 @@ function Index() {
   } = useScreenRecorder();
 
   const isIdle = status === "idle";
+  const isLiveStatus = status === "recording" || status === "paused";
   const showClickFX = status === "recording" || whiteboardActive;
   const showCursorFX = status === "recording" || whiteboardActive;
+
+  // Save to history whenever a recording completes
+  useEffect(() => {
+    if (result) saveToHistory(result);
+  }, [result]);
+
+  // Global keyboard shortcuts
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      const isInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (e.target as HTMLElement)?.isContentEditable;
+
+      // Block ALL shortcuts when user is typing in an input/textarea
+      if (isInput) return;
+
+      if (e.altKey) {
+        switch (e.key.toLowerCase()) {
+          case "r":
+            e.preventDefault();
+            if (status === "idle" && !result) startRecording(source);
+            break;
+          case "n":
+            e.preventDefault();
+            if (result || status !== "idle") reset();
+            break;
+          case "h":
+            e.preventDefault();
+            setShowHistory((v) => !v);
+            break;
+          case "k":
+            e.preventDefault();
+            setShowShortcuts((v) => !v);
+            break;
+          case "e":
+            e.preventDefault();
+            if (result) setEditorBlob(result.blob);
+            break;
+          case "t":
+            e.preventDefault();
+            setTeleprompterActive((v) => !v);
+            break;
+          case "w":
+            e.preventDefault();
+            setWhiteboardActive((v) => !v);
+            break;
+          case "a":
+            e.preventDefault();
+            setAnnotationsEnabled((v) => !v);
+            if (!annotationsEnabled) setupAnnotationCanvas(1920, 1080);
+            break;
+        }
+        return;
+      }
+
+      if (e.key === " ") {
+        e.preventDefault();
+        if (status === "recording") pauseRecording();
+        else if (status === "paused") resumeRecording();
+      }
+      if (e.key === "Escape") {
+        if (status === "recording" || status === "paused") stopRecording();
+        else if (showHistory) setShowHistory(false);
+        else if (showShortcuts) setShowShortcuts(false);
+        else if (teleprompterActive) setTeleprompterActive(false);
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [status, result, source, showHistory, showShortcuts, teleprompterActive, annotationsEnabled,
+      startRecording, pauseRecording, resumeRecording, stopRecording, reset, setAnnotationsEnabled, setupAnnotationCanvas]);
+
+  // Scheduled recording
+  const handleSchedule = useCallback(() => {
+    if (!scheduledTime) return;
+    const target = new Date(scheduledTime).getTime();
+    const now = Date.now();
+    const delay = target - now;
+    if (delay <= 0) return;
+    setScheduleActive(true);
+    scheduleTimerRef.current = setTimeout(() => {
+      startRecording(source);
+      setScheduleActive(false);
+    }, delay);
+  }, [scheduledTime, source, startRecording]);
+
+  const cancelSchedule = useCallback(() => {
+    if (scheduleTimerRef.current) clearTimeout(scheduleTimerRef.current);
+    setScheduleActive(false);
+  }, []);
+
+  // Clean up schedule timer on unmount
+  useEffect(() => {
+    return () => {
+      if (scheduleTimerRef.current) clearTimeout(scheduleTimerRef.current);
+    };
+  }, []);
 
   const container = {
     hidden: { opacity: 0 },
@@ -916,6 +1273,23 @@ function Index() {
         active={includeCamera && (status === "idle" || status === "countdown")}
       />
 
+      {/* ── New feature overlays ── */}
+      <SpotlightOverlay active={isLiveStatus} />
+      <FloatingMiniBar
+        status={status}
+        elapsed={elapsed}
+        onPause={pauseRecording}
+        onResume={resumeRecording}
+        onStop={stopRecording}
+      />
+      <TeleprompterOverlay
+        active={teleprompterActive}
+        onClose={() => setTeleprompterActive(false)}
+        isRecording={status === "recording"}
+      />
+      <RecordingHistory open={showHistory} onClose={() => setShowHistory(false)} />
+      <KeyboardShortcutsPanel open={showShortcuts} onClose={() => setShowShortcuts(false)} />
+
       {status === "crop" && stream && (
         <CropOverlay stream={stream} onConfirm={confirmCrop} onCancel={cancelCrop} />
       )}
@@ -957,6 +1331,36 @@ function Index() {
             </span>
           </div>
           <div className="flex items-center gap-2">
+            {/* History button */}
+            <button
+              onClick={() => setShowHistory(true)}
+              title="Recording History (Alt+H)"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-white/30 ring-1 ring-white/[0.06] transition-all hover:bg-white/[0.06] hover:text-white/70 hover:ring-white/[0.12]"
+            >
+              <History className="h-4 w-4" />
+            </button>
+            {/* Keyboard shortcuts button */}
+            <button
+              onClick={() => setShowShortcuts(true)}
+              title="Keyboard Shortcuts (Alt+K)"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-white/30 ring-1 ring-white/[0.06] transition-all hover:bg-white/[0.06] hover:text-white/70 hover:ring-white/[0.12]"
+            >
+              <Keyboard className="h-4 w-4" />
+            </button>
+            {/* Teleprompter button */}
+            <button
+              onClick={() => setTeleprompterActive((v) => !v)}
+              title="Teleprompter (Alt+T)"
+              className={cn(
+                "flex h-8 w-8 items-center justify-center rounded-lg ring-1 transition-all",
+                teleprompterActive
+                  ? "bg-primary/15 text-primary/80 ring-primary/25"
+                  : "text-white/30 ring-white/[0.06] hover:bg-white/[0.06] hover:text-white/70 hover:ring-white/[0.12]",
+              )}
+            >
+              <AlignLeft className="h-4 w-4" />
+            </button>
+            <div className="h-5 w-px bg-white/[0.06] hidden md:block" />
             <span className="hidden md:flex items-center gap-1.5 rounded-full bg-white/[0.03] px-3 py-1 text-[11px] text-white/30 ring-1 ring-white/[0.06]">
               <Sparkles className="h-3 w-3 text-white/20" />
               No installs
@@ -1074,7 +1478,16 @@ function Index() {
         </AnimatePresence>
 
         {/* ── Preview ── */}
-        <motion.div variants={fadeUp} className="mb-4">
+        <motion.div variants={fadeUp} className="mb-5">
+          {/* Subtle label above preview */}
+          <div className="flex items-center gap-3 mb-3">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/[0.06]" />
+            <span className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.2em] text-white/20">
+              <MonitorPlay className="h-3 w-3" />
+              Output Preview
+            </span>
+            <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/[0.06]" />
+          </div>
           <RecordingPreview stream={stream} status={status} elapsed={elapsed} result={result} />
         </motion.div>
 
@@ -1090,6 +1503,181 @@ function Index() {
               className="mb-4"
             >
               <SourceCards value={source} onChange={setSource} disabled={!isIdle} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ── Advanced Settings ── */}
+        <AnimatePresence>
+          {isIdle && !result && (
+            <motion.div
+              key="advanced-settings"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.35 }}
+              className="mb-4"
+            >
+              <button
+                onClick={() => setShowAdvanced((v) => !v)}
+                className="flex w-full items-center justify-between rounded-xl bg-white/[0.025] px-4 py-3 ring-1 ring-white/[0.06] transition-all hover:bg-white/[0.04] hover:ring-white/[0.1]"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Settings className="h-4 w-4 text-white/30" />
+                  <span className="text-xs font-medium text-white/45">Advanced Settings</span>
+                  {/* Active badges */}
+                  <div className="flex items-center gap-1.5">
+                    {fps !== 60 && (
+                      <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-mono text-primary/70">{fps}fps</span>
+                    )}
+                    {noiseSuppressionEnabled && (
+                      <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] text-emerald-400/70">Noise filter</span>
+                    )}
+                    {autoStopMinutes > 0 && (
+                      <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] text-amber-400/70">Auto-stop {autoStopMinutes}m</span>
+                    )}
+                    {scheduleActive && (
+                      <span className="rounded-full bg-violet-500/15 px-2 py-0.5 text-[10px] text-violet-400/70 flex items-center gap-1">
+                        <span className="relative flex h-1.5 w-1.5">
+                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-75" />
+                          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-violet-400" />
+                        </span>
+                        Scheduled
+                      </span>
+                    )}
+                  </div>
+                </div>
+                {showAdvanced
+                  ? <ChevronUp className="h-4 w-4 text-white/20" />
+                  : <ChevronDown className="h-4 w-4 text-white/20" />}
+              </button>
+
+              <AnimatePresence>
+                {showAdvanced && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="mt-2 rounded-xl bg-white/[0.02] p-4 ring-1 ring-white/[0.05] space-y-5">
+
+                      {/* FPS */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-2.5">
+                          <Gauge className="h-3.5 w-3.5 text-white/25" />
+                          <span className="text-[11px] font-semibold uppercase tracking-wider text-white/25">Frame Rate</span>
+                        </div>
+                        <div className="flex gap-2">
+                          {([30, 60] as const).map((f) => (
+                            <button
+                              key={f}
+                              onClick={() => setFps(f)}
+                              className={cn(
+                                "flex-1 rounded-lg py-2 text-xs font-semibold ring-1 transition-all",
+                                fps === f
+                                  ? "bg-primary/15 text-primary/80 ring-primary/30"
+                                  : "bg-white/[0.03] text-white/35 ring-white/[0.07] hover:bg-white/[0.06] hover:text-white/55",
+                              )}
+                            >
+                              {f} FPS
+                            </button>
+                          ))}
+                        </div>
+                        <p className="mt-1.5 text-[10px] text-white/20">Higher FPS produces smoother recordings but larger files</p>
+                      </div>
+
+                      {/* Noise suppression */}
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2.5">
+                          {noiseSuppressionEnabled
+                            ? <Volume2 className="h-4 w-4 text-emerald-400/60" />
+                            : <VolumeX className="h-4 w-4 text-white/25" />}
+                          <div>
+                            <p className="text-xs font-medium text-white/50">AI Noise Suppression</p>
+                            <p className="text-[10px] text-white/25">Removes background noise from microphone</p>
+                          </div>
+                        </div>
+                        <Switch
+                          checked={noiseSuppressionEnabled}
+                          onCheckedChange={setNoiseSuppressionEnabled}
+                        />
+                      </div>
+
+                      {/* Auto-stop */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-2.5">
+                          <Timer className="h-3.5 w-3.5 text-white/25" />
+                          <span className="text-[11px] font-semibold uppercase tracking-wider text-white/25">Auto-Stop Timer</span>
+                          {autoStopMinutes > 0 && (
+                            <span className="ml-auto text-[11px] font-mono text-amber-400/60">{autoStopMinutes} min</span>
+                          )}
+                        </div>
+                        <div className="flex gap-2 flex-wrap">
+                          {[0, 5, 10, 15, 30, 60].map((m) => (
+                            <button
+                              key={m}
+                              onClick={() => setAutoStopMinutes(m)}
+                              className={cn(
+                                "rounded-lg px-3 py-1.5 text-xs font-semibold ring-1 transition-all",
+                                autoStopMinutes === m
+                                  ? "bg-amber-500/15 text-amber-400/80 ring-amber-500/30"
+                                  : "bg-white/[0.03] text-white/35 ring-white/[0.07] hover:bg-white/[0.06]",
+                              )}
+                            >
+                              {m === 0 ? "Off" : `${m}m`}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Scheduled Recording */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-2.5">
+                          <Calendar className="h-3.5 w-3.5 text-white/25" />
+                          <span className="text-[11px] font-semibold uppercase tracking-wider text-white/25">Scheduled Recording</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="datetime-local"
+                            value={scheduledTime}
+                            onChange={(e) => setScheduledTime(e.target.value)}
+                            disabled={scheduleActive}
+                            className="flex-1 rounded-lg bg-white/[0.04] px-3 py-2 text-xs text-white/60 ring-1 ring-white/[0.08] outline-none transition-all focus:ring-primary/30 disabled:opacity-40"
+                          />
+                          {scheduleActive ? (
+                            <button
+                              onClick={cancelSchedule}
+                              className="rounded-lg bg-red-500/15 px-3 py-2 text-xs font-medium text-red-400/80 ring-1 ring-red-500/25 transition-all hover:bg-red-500/25"
+                            >
+                              Cancel
+                            </button>
+                          ) : (
+                            <button
+                              onClick={handleSchedule}
+                              disabled={!scheduledTime}
+                              className="rounded-lg bg-violet-500/15 px-3 py-2 text-xs font-medium text-violet-400/80 ring-1 ring-violet-500/25 transition-all hover:bg-violet-500/25 disabled:opacity-30 disabled:cursor-not-allowed"
+                            >
+                              Schedule
+                            </button>
+                          )}
+                        </div>
+                        {scheduleActive && (
+                          <p className="mt-1.5 text-[10px] text-violet-400/50 flex items-center gap-1">
+                            <span className="relative flex h-1.5 w-1.5 mr-1">
+                              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-75" />
+                              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-violet-400" />
+                            </span>
+                            Waiting to record at {new Date(scheduledTime).toLocaleTimeString()}
+                          </p>
+                        )}
+                      </div>
+
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           )}
         </AnimatePresence>

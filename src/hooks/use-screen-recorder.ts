@@ -71,6 +71,15 @@ export function useScreenRecorder() {
   const [includeAudio, setIncludeAudio] = useState(true);
   const [quality, setQuality] = useState<QualityPreset>(QUALITY_PRESETS[1]);
   const [includeCamera, setIncludeCamera] = useState(false);
+  const [fps, setFps] = useState<30 | 60>(60);
+  const [noiseSuppressionEnabled, setNoiseSuppressionEnabled] = useState(false);
+  const [autoStopMinutes, setAutoStopMinutes] = useState(0); // 0 = disabled
+  const fpsRef = useRef(fps);
+  fpsRef.current = fps;
+  const noiseRef = useRef(noiseSuppressionEnabled);
+  noiseRef.current = noiseSuppressionEnabled;
+  const autoStopRef = useRef(autoStopMinutes);
+  autoStopRef.current = autoStopMinutes;
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [cameraPosition, setCameraPosition] = useState(DEFAULT_CAMERA_POSITION);
   const [cameraSettings, setCameraSettings] = useState<CameraSettings>({
@@ -118,11 +127,18 @@ export function useScreenRecorder() {
     }
   };
 
+  const stopRecordingRef = useRef<(() => void) | null>(null);
+
   const startTimer = useCallback(() => {
     startTimeRef.current = Date.now();
     clearTimer();
     timerRef.current = setInterval(() => {
-      setElapsed(accumulatedRef.current + (Date.now() - startTimeRef.current) / 1000);
+      const current = accumulatedRef.current + (Date.now() - startTimeRef.current) / 1000;
+      setElapsed(current);
+      // Auto-stop if configured
+      if (autoStopRef.current > 0 && current >= autoStopRef.current * 60) {
+        stopRecordingRef.current?.();
+      }
     }, 250);
   }, []);
 
@@ -206,12 +222,12 @@ export function useScreenRecorder() {
         const constraints: DisplayMediaStreamOptions & { displaySurface?: string } = {
           displaySurface: surface,
           video: {
-            frameRate: { ideal: 60, max: 60 },
+            frameRate: { ideal: fpsRef.current, max: fpsRef.current },
             width: { ideal: quality.width },
             height: { ideal: quality.height },
           } as MediaTrackConstraints,
           audio: includeAudio
-            ? { echoCancellation: false, noiseSuppression: false, sampleRate: 44100 }
+            ? { echoCancellation: noiseRef.current, noiseSuppression: noiseRef.current, sampleRate: 44100 }
             : false,
         };
         const displayStream = await navigator.mediaDevices.getDisplayMedia(constraints);
@@ -321,7 +337,7 @@ export function useScreenRecorder() {
           };
           requestAnimationFrame(frame);
 
-          const canvasStream = canvas.captureStream(60);
+          const canvasStream = canvas.captureStream(fpsRef.current);
 
           // Mix audio
           const audioCtx = new AudioContext();
@@ -369,7 +385,7 @@ export function useScreenRecorder() {
           };
           requestAnimationFrame(frame);
 
-          const canvasStream = canvas.captureStream(60);
+          const canvasStream = canvas.captureStream(fpsRef.current);
 
           const audioCtx = new AudioContext();
           compositeAudioCtx.current = audioCtx;
@@ -545,7 +561,7 @@ export function useScreenRecorder() {
         };
         requestAnimationFrame(frame);
 
-        const canvasStream = canvas.captureStream(60);
+        const canvasStream = canvas.captureStream(fpsRef.current);
 
         const audioCtx = new AudioContext();
         compositeAudioCtx.current = audioCtx;
@@ -582,7 +598,7 @@ export function useScreenRecorder() {
         };
         requestAnimationFrame(frame);
 
-        const canvasStream = canvas.captureStream(60);
+        const canvasStream = canvas.captureStream(fpsRef.current);
 
         const audioCtx = new AudioContext();
         compositeAudioCtx.current = audioCtx;
@@ -665,9 +681,9 @@ export function useScreenRecorder() {
   const addMonitorStream = useCallback(async () => {
     try {
       const newStream = await navigator.mediaDevices.getDisplayMedia({
-        video: { frameRate: { ideal: 60, max: 60 } },
+        video: { frameRate: { ideal: fpsRef.current, max: fpsRef.current } },
         audio: includeAudio
-          ? { echoCancellation: false, noiseSuppression: false, sampleRate: 44100 }
+          ? { echoCancellation: noiseRef.current, noiseSuppression: noiseRef.current, sampleRate: 44100 }
           : false,
       } as DisplayMediaStreamOptions);
       const updated = [...multiStreamsRef.current, newStream];
@@ -752,7 +768,7 @@ export function useScreenRecorder() {
     };
     requestAnimationFrame(frame);
 
-    const canvasStream = canvas.captureStream(60);
+    const canvasStream = canvas.captureStream(fpsRef.current);
 
     // Mix audio from all streams
     const audioCtx = new AudioContext();
@@ -919,6 +935,9 @@ export function useScreenRecorder() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Keep stopRecordingRef in sync so auto-stop timer can call it
+  stopRecordingRef.current = stopRecording;
+
   return {
     status,
     elapsed,
@@ -932,6 +951,12 @@ export function useScreenRecorder() {
     setIncludeAudio,
     quality,
     setQuality,
+    fps,
+    setFps,
+    noiseSuppressionEnabled,
+    setNoiseSuppressionEnabled,
+    autoStopMinutes,
+    setAutoStopMinutes,
     includeCamera,
     setIncludeCamera,
     cameraStream,
