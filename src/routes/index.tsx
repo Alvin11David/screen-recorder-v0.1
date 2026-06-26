@@ -94,7 +94,7 @@ const SOURCES: {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "ScreenCapture Pro — Record Your Screen in 4K" },
+      { title: "ScreenFlow — Record Your Screen in 4K" },
       {
         name: "description",
         content:
@@ -953,7 +953,7 @@ function Index() {
               <Video className="h-4 w-4 text-white" />
             </span>
             <span className="font-display text-base font-bold tracking-tight text-white/80">
-              ScreenCapture <span className="text-gradient">Pro</span>
+              ScreenFlow
             </span>
           </div>
           <div className="flex items-center gap-2">

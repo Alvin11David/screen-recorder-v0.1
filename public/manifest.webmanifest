@@ -1,6 +1,6 @@
 {
-  "name": "ScreenCapture Pro",
-  "short_name": "ScreenCap",
+  "name": "ScreenFlow",
+  "short_name": "ScreenFlow",
   "description": "Record your screen in HD, Full HD and 4K directly from the browser. No installs, no watermarks, no data leaving your machine.",
   "start_url": "/",
   "display": "standalone",

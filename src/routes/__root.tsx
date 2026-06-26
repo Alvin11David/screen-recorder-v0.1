@@ -79,14 +79,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "ScreenCapture Pro — High-Quality Browser Screen Recorder" },
+      { title: "ScreenFlow — High-Quality Browser Screen Recorder" },
       {
         name: "description",
         content:
           "Record your screen in stunning HD, Full HD and 4K directly in your browser and save it locally. No installs, no watermarks.",
       },
-      { name: "author", content: "ScreenCapture Pro" },
-      { property: "og:title", content: "ScreenCapture Pro" },
+      { name: "author", content: "ScreenFlow" },
+      { property: "og:title", content: "ScreenFlow" },
       {
         property: "og:description",
         content: "High-quality browser screen recording with local saving.",
