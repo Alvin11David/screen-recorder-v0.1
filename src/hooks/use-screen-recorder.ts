@@ -345,6 +345,7 @@ export function useScreenRecorder() {
 
           // Mix audio
           const audioCtx = new AudioContext();
+          if (audioCtx.state === "suspended") audioCtx.resume();
           compositeAudioCtx.current = audioCtx;
           const dest = audioCtx.createMediaStreamDestination();
 
