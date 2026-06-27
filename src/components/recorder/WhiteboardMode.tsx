@@ -585,10 +585,20 @@ export function WhiteboardMode({ active, onClose }: WhiteboardModeProps) {
 
           <div className="mx-1 h-6 w-px bg-white/[0.08]" />
 
-          <button
-            type="button"
-            title="Undo"
-            onClick={handleUndo}
+          <div className="flex items-center gap-1.5" title="Cursor speed">
+            <MousePointer2 className="h-3.5 w-3.5 text-white/40 shrink-0" />
+            <input
+              type="range"
+              min={5}
+              max={100}
+              step={5}
+              value={Math.round(cursorSpeed * 100)}
+              onChange={(e) => setCursorSpeed(Number(e.target.value) / 100)}
+              className="w-14 h-1 accent-white/50 cursor-pointer"
+            />
+          </div>
+
+          <div className="mx-1 h-6 w-px bg-white/[0.08]" />
             className="flex h-8 w-8 items-center justify-center rounded-lg text-white/40 hover:text-white/70 hover:bg-white/[0.06] transition-all"
           >
             <Undo2 className="h-4 w-4" />
