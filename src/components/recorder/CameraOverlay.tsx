@@ -90,10 +90,10 @@ export function CameraOverlay({
           onMouseDown={handleDown}
           className="relative h-full w-full cursor-grab active:cursor-grabbing select-none"
         >
-          {/* Camera feed clipped to circle */}
+          {/* Camera feed clipped to shape */}
           <div
             className="h-full w-full overflow-hidden"
-            style={{ borderRadius: "50%" }}
+            style={{ borderRadius: shapeRadius[settings.shape] }}
           >
             <video
               ref={videoRef}
@@ -108,7 +108,10 @@ export function CameraOverlay({
 
           {/* Border ring */}
           <div
-            className="pointer-events-none absolute inset-0 rounded-full"
+            className={cn(
+              "pointer-events-none absolute inset-0",
+              shapeClipClass[settings.shape],
+            )}
             style={{
               boxShadow: `0 0 0 ${settings.borderWidth}px ${settings.borderColor}, 0 0 ${settings.shadowBlur}px rgba(255,255,255,0.2)`,
             }}
