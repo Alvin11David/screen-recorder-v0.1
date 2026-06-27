@@ -1497,11 +1497,7 @@ function Index() {
             >
               <AlignLeft className="h-4 w-4" />
             </button>
-            <div className="h-5 w-px bg-white/[0.06] hidden md:block" />
-            <span className="hidden md:flex items-center gap-1.5 rounded-full bg-white/[0.03] px-3 py-1 text-[11px] text-white/30 ring-1 ring-white/[0.06]">
-              <Sparkles className="h-3 w-3 text-white/20" />
-              No installs
-            </span>
+
             {isAuthenticated ? (
               <div className="flex items-center gap-2">
                 <span className="flex items-center gap-1.5 rounded-full bg-white/[0.04] px-3 py-1.5 text-xs text-white/50 ring-1 ring-white/[0.06] backdrop-blur-sm">
