@@ -599,6 +599,11 @@ export function WhiteboardMode({ active, onClose }: WhiteboardModeProps) {
           </div>
 
           <div className="mx-1 h-6 w-px bg-white/[0.08]" />
+
+          <button
+            type="button"
+            title="Undo"
+            onClick={handleUndo}
             className="flex h-8 w-8 items-center justify-center rounded-lg text-white/40 hover:text-white/70 hover:bg-white/[0.06] transition-all"
           >
             <Undo2 className="h-4 w-4" />
