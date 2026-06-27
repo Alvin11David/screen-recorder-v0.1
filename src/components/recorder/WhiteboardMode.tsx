@@ -134,6 +134,8 @@ export function WhiteboardMode({ active, onClose }: WhiteboardModeProps) {
   colorRef.current = color;
   const sizeRef = useRef(brushSize);
   sizeRef.current = brushSize;
+  const cursorSpeedRef = useRef(cursorSpeed);
+  cursorSpeedRef.current = cursorSpeed;
 
   // ── Canvas setup ──
   useEffect(() => {
