@@ -117,6 +117,7 @@ export function WhiteboardMode({ active, onClose }: WhiteboardModeProps) {
   const [tool, setTool] = useState<Tool>("pen");
   const [color, setColor] = useState(COLORS[0]);
   const [brushSize, setBrushSize] = useState(4);
+  const [cursorSpeed, setCursorSpeed] = useState(0.15);
   const [cursorPos, setCursorPos] = useState<Point>({ x: -100, y: -100 });
   const [cursorVisible, setCursorVisible] = useState(false);
   const targetCursor = useRef<Point>({ x: -100, y: -100 });
