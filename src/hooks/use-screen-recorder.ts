@@ -91,6 +91,7 @@ export function useScreenRecorder() {
     borderWidth: 3,
     shadowBlur: 20,
     radius: 70,
+    shape: "circle",
   });
 
   const recorderRef = useRef<MediaRecorder | null>(null);
