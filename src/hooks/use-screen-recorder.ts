@@ -24,12 +24,15 @@ export const QUALITY_PRESETS: QualityPreset[] = [
   { label: "4K Ultra HD", short: "4K", width: 3840, height: 2160 },
 ];
 
+export type CameraShape = "circle" | "square" | "rounded";
+
 export interface CameraSettings {
   mirrored: boolean;
   borderColor: string;
   borderWidth: number;
   shadowBlur: number;
   radius: number;
+  shape: CameraShape;
 }
 
 export const DEFAULT_CAMERA_POSITION = { x: 85, y: 85 };
