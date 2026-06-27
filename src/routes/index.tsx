@@ -1427,7 +1427,13 @@ function Index() {
       />
 
       {/* ── New feature overlays ── */}
-      <SpotlightOverlay active={isLiveStatus} />
+      <SpotlightOverlay
+        active={isLiveStatus}
+        spotlightActive={spotlightActive}
+        onSpotlightActiveChange={setSpotlightActive}
+        mode={spotlightMode}
+        onModeChange={setSpotlightMode}
+      />
       <FloatingMiniBar
         status={status}
         elapsed={elapsed}
