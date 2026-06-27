@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import type { CameraSettings } from "@/hooks/use-screen-recorder";
+import type { CameraSettings, CameraShape } from "@/hooks/use-screen-recorder";
 
 interface CameraOverlayProps {
   cameraStream: MediaStream | null;
