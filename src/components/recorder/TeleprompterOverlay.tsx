@@ -8,16 +8,7 @@ interface TeleprompterOverlayProps {
   isRecording: boolean;
 }
 
-const DEFAULT_TEXT = `Welcome to my presentation!
-
-Start typing your script here, or paste it from another document. The teleprompter will scroll automatically when you start recording.
-
-You can adjust the scroll speed using the controls below, and increase or decrease the font size for comfortable reading.
-
-Tips:
-• Keep sentences short for easy reading
-• Use line breaks to control pacing
-• Practice a few times before recording`;
+const DEFAULT_TEXT = "";
 
 export function TeleprompterOverlay({ active, onClose, isRecording }: TeleprompterOverlayProps) {
   const [text, setText] = useState(DEFAULT_TEXT);
