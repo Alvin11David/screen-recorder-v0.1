@@ -1261,6 +1261,20 @@ function Index() {
             setAnnotationsEnabled((v) => !v);
             if (!annotationsEnabled) setupAnnotationCanvas(1920, 1080);
             break;
+          case "s":
+            e.preventDefault();
+            setSpotlightActive((v) => {
+              if (!v) setSpotlightMode("spotlight");
+              return !v;
+            });
+            break;
+          case "z":
+            e.preventDefault();
+            setSpotlightActive((v) => {
+              if (!v) setSpotlightMode("zoom");
+              return !v;
+            });
+            break;
         }
         return;
       }
