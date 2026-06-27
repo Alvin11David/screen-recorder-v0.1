@@ -169,6 +169,38 @@ export function CameraOverlay({
 
             <div className="h-6 w-px bg-white/[0.06]" />
 
+            {/* Shape */}
+            <div className="flex items-center gap-1">
+              {([
+                { value: "circle" as CameraShape, label: "Circle", icon: (
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.2" /></svg>
+                )},
+                { value: "rounded" as CameraShape, label: "Rounded", icon: (
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="1.5" width="11" height="11" rx="3" stroke="currentColor" strokeWidth="1.2" /></svg>
+                )},
+                { value: "square" as CameraShape, label: "Square", icon: (
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="1.5" width="11" height="11" rx="0.5" stroke="currentColor" strokeWidth="1.2" /></svg>
+                )},
+              ] as const).map((s) => (
+                <button
+                  key={s.value}
+                  type="button"
+                  title={s.label}
+                  onClick={() => onSettingsChange({ ...settings, shape: s.value })}
+                  className={cn(
+                    "flex h-6 w-6 items-center justify-center rounded-md transition-all",
+                    settings.shape === s.value
+                      ? "bg-white/15 text-white/90 ring-1 ring-white/20"
+                      : "text-white/40 hover:bg-white/[0.08] hover:text-white/60",
+                  )}
+                >
+                  {s.icon}
+                </button>
+              ))}
+            </div>
+
+            <div className="h-6 w-px bg-white/[0.06]" />
+
             {/* Border width */}
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-white/40 uppercase tracking-wider">Border</span>
