@@ -617,7 +617,13 @@ export function useScreenRecorder() {
             ctx.shadowColor = "rgba(255,255,255,0.25)";
             ctx.shadowBlur = set.shadowBlur;
             ctx.beginPath();
-            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            if (set.shape === "square") {
+              ctx.rect(cx - r, cy - r, r * 2, r * 2);
+            } else if (set.shape === "rounded") {
+              ctx.roundRect(cx - r, cy - r, r * 2, r * 2, r * 0.2);
+            } else {
+              ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            }
             ctx.strokeStyle = set.borderColor;
             ctx.lineWidth = set.borderWidth;
             ctx.stroke();
