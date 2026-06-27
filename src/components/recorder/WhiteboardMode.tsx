@@ -214,9 +214,10 @@ export function WhiteboardMode({ active, onClose }: WhiteboardModeProps) {
     if (!active) return;
 
     const lerp = () => {
+      const speed = cursorSpeedRef.current;
       setCursorPos((prev) => ({
-        x: prev.x + (targetCursor.current.x - prev.x) * 0.15,
-        y: prev.y + (targetCursor.current.y - prev.y) * 0.15,
+        x: prev.x + (targetCursor.current.x - prev.x) * speed,
+        y: prev.y + (targetCursor.current.y - prev.y) * speed,
       }));
       rafRef.current = requestAnimationFrame(lerp);
     };
