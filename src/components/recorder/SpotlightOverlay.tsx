@@ -47,36 +47,15 @@ export function SpotlightOverlay({ active, spotlightActive, onSpotlightActiveCha
     return () => cancelAnimationFrame(rafRef.current);
   }, [active, spotlightActive]);
 
-  // Keyboard: Alt+S = spotlight, Alt+Z = zoom, scroll = size
+  // Scroll wheel to resize spotlight/zoom
   useEffect(() => {
-    if (!active) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.altKey && e.key === "s") {
-        e.preventDefault();
-        setSpotlightActive((v) => {
-          if (!v) setMode("spotlight");
-          return !v;
-        });
-      }
-      if (e.altKey && e.key === "z") {
-        e.preventDefault();
-        setSpotlightActive((v) => {
-          if (!v) setMode("zoom");
-          return !v;
-        });
-      }
-    };
+    if (!active || !spotlightActive) return;
     const onWheel = (e: WheelEvent) => {
-      if (!spotlightActive) return;
       e.preventDefault();
       setSize((s) => Math.max(80, Math.min(500, s - e.deltaY * 0.5)));
     };
-    window.addEventListener("keydown", onKey);
     window.addEventListener("wheel", onWheel, { passive: false });
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("wheel", onWheel);
-    };
+    return () => window.removeEventListener("wheel", onWheel);
   }, [active, spotlightActive]);
 
   // Show hint briefly on activation
