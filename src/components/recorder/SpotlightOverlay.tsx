@@ -3,15 +3,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Crosshair, ZoomIn } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+export type SpotlightMode = "spotlight" | "zoom";
+
 interface SpotlightOverlayProps {
   active: boolean;
+  spotlightActive: boolean;
+  onSpotlightActiveChange: (v: boolean) => void;
+  mode: SpotlightMode;
+  onModeChange: (m: SpotlightMode) => void;
 }
 
-type SpotlightMode = "spotlight" | "zoom";
-
-export function SpotlightOverlay({ active }: SpotlightOverlayProps) {
-  const [mode, setMode] = useState<SpotlightMode>("spotlight");
-  const [spotlightActive, setSpotlightActive] = useState(false);
+export function SpotlightOverlay({ active, spotlightActive, onSpotlightActiveChange, mode, onModeChange }: SpotlightOverlayProps) {
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [size, setSize] = useState(220);
   const [showHint, setShowHint] = useState(false);
