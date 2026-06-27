@@ -1293,7 +1293,7 @@ function Index() {
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [status, result, source, showHistory, showShortcuts, teleprompterActive, annotationsEnabled,
+  }, [status, result, source, showHistory, showShortcuts, teleprompterActive, annotationsEnabled, spotlightActive,
       startRecording, pauseRecording, resumeRecording, stopRecording, reset, setAnnotationsEnabled, setupAnnotationCanvas]);
 
   // Scheduled recording
