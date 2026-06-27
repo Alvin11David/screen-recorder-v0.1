@@ -61,6 +61,18 @@ export function CameraOverlay({
 
   const r = settings.radius;
 
+  const shapeRadius: Record<CameraShape, string> = {
+    circle: "50%",
+    square: "0%",
+    rounded: "20%",
+  };
+
+  const shapeClipClass: Record<CameraShape, string> = {
+    circle: "rounded-full",
+    square: "",
+    rounded: "rounded-[20%]",
+  };
+
   return (
     <>
       {/* ── Draggable camera bubble ── */}
