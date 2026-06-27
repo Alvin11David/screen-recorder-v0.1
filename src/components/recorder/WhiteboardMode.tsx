@@ -64,32 +64,98 @@ function CursorPreview({
 
   const toolLabel = TOOLS.find((t) => t.id === tool)?.label ?? "";
 
+  const isShapeTool = tool === "line" || tool === "arrow" || tool === "rect" || tool === "circle";
+  const isPenTool = tool === "pen" || tool === "highlighter";
+  const isEraser = tool === "eraser";
+  const isText = tool === "text";
+
   return (
     <div className="fixed inset-0 z-[9999] pointer-events-none" aria-hidden="true">
       <div
         className="absolute -translate-x-1/2 -translate-y-1/2"
         style={{ left: pos.x, top: pos.y }}
       >
-        <div
-          className="rounded-full border-2 transition-all duration-75"
-          style={{
-            width: size * 2 + 20,
-            height: size * 2 + 20,
-            borderColor: color,
-            opacity: 0.35,
-            marginLeft: -(size + 10),
-            marginTop: -(size + 10),
-          }}
-        />
-        <div
-          className="absolute left-1/2 top-1/2 rounded-full -translate-x-1/2 -translate-y-1/2"
-          style={{
-            width: Math.max(size, 2),
-            height: Math.max(size, 2),
-            backgroundColor: color,
-            opacity: 0.8,
-          }}
-        />
+        {isPenTool && (
+          <>
+            <div
+              className="rounded-full transition-all duration-75"
+              style={{
+                width: Math.max(size, 4),
+                height: Math.max(size, 4),
+                backgroundColor: color,
+                opacity: tool === "highlighter" ? 0.4 : 0.9,
+                marginLeft: -Math.max(size, 4) / 2,
+                marginTop: -Math.max(size, 4) / 2,
+              }}
+            />
+            <div
+              className="absolute rounded-full"
+              style={{
+                width: 2,
+                height: 2,
+                backgroundColor: "#fff",
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%, -50%)",
+              }}
+            />
+          </>
+        )}
+
+        {isEraser && (
+          <div
+            className="rounded-full border-2 border-dashed transition-all duration-75"
+            style={{
+              width: size * 2 + 20,
+              height: size * 2 + 20,
+              borderColor: "rgba(255,255,255,0.4)",
+              marginLeft: -(size + 10),
+              marginTop: -(size + 10),
+            }}
+          />
+        )}
+
+        {isShapeTool && (
+          <>
+            <div
+              className="rounded-full transition-all duration-75"
+              style={{
+                width: 3,
+                height: 3,
+                backgroundColor: color,
+                marginLeft: -1.5,
+                marginTop: -1.5,
+              }}
+            />
+            <div
+              className="absolute rounded-full border transition-all duration-75"
+              style={{
+                width: 16,
+                height: 16,
+                borderColor: color,
+                opacity: 0.5,
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%, -50%)",
+              }}
+            />
+          </>
+        )}
+
+        {isText && (
+          <div
+            className="transition-all duration-75"
+            style={{
+              width: 2,
+              height: size * 5,
+              backgroundColor: color,
+              marginLeft: -1,
+              marginTop: -(size * 5) / 2,
+              opacity: 0.8,
+            }}
+          />
+        )}
+
         <div
           className="absolute left-1/2 top-full mt-2 -translate-x-1/2 rounded-md bg-black/70 px-1.5 py-0.5 ring-1 ring-white/[0.08]"
         >
