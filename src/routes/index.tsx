@@ -1151,6 +1151,8 @@ function TrustMetrics() {
 function Index() {
   const [source, setSource] = useState<CaptureSurface>("monitor");
   const [whiteboardActive, setWhiteboardActive] = useState(false);
+  const [spotlightActive, setSpotlightActive] = useState(false);
+  const [spotlightMode, setSpotlightMode] = useState<"spotlight" | "zoom">("spotlight");
   const [editorBlob, setEditorBlob] = useState<Blob | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
