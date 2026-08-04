@@ -3,9 +3,11 @@ package com.screencapture.service;
 import com.screencapture.dto.*;
 import com.screencapture.model.User;
 import com.screencapture.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
 import java.util.Map;
 
 @Service
@@ -16,6 +18,12 @@ public class AuthService {
     private final JwtService jwtService;
     private final PasswordResetService passwordResetService;
 
+    @Value("${app.github.client-id:${GITHUB_CLIENT_ID:}}")
+    private String githubClientId;
+
+    @Value("${app.github.client-secret:${GITHUB_CLIENT_SECRET:}}")
+    private String githubClientSecret;
+
     public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, PasswordResetService passwordResetService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -24,96 +32,125 @@ public class AuthService {
     }
 
     public AuthResponse register(RegisterRequest req) {
-        if (userRepository.existsByEmail(req.getEmail())) {
+        String email = normalizeEmail(req.getEmail());
+        if (userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("Email already registered");
         }
 
         var user = new User();
-        user.setName(req.getName());
-        user.setEmail(req.getEmail());
+        user.setName(req.getName().trim());
+        user.setEmail(email);
         user.setPassword(passwordEncoder.encode(req.getPassword()));
 
         user = userRepository.save(user);
 
-        String token = jwtService.generateToken(user.getEmail());
-        return new AuthResponse(token, user.getEmail(), user.getName(), user.getAvatar());
+        String token = jwtService.generateToken(email);
+        return new AuthResponse(token, email, user.getName(), user.getAvatar());
     }
 
     public AuthResponse login(LoginRequest req) {
-        var user = userRepository.findByEmail(req.getEmail())
+        String email = normalizeEmail(req.getEmail());
+        var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
 
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("Invalid email or password");
         }
 
-        String token = jwtService.generateToken(user.getEmail());
-        return new AuthResponse(token, user.getEmail(), user.getName(), user.getAvatar());
+        String token = jwtService.generateToken(email);
+        return new AuthResponse(token, email, user.getName(), user.getAvatar());
     }
 
     public AuthResponse handleGitHubCallback(String code) {
         Map<String, String> tokenData = exchangeGitHubCode(code);
         String accessToken = tokenData.get("access_token");
+        if (accessToken == null || accessToken.isBlank()) {
+            throw new IllegalArgumentException("GitHub authentication failed");
+        }
 
         Map<String, Object> userData = fetchGitHubUser(accessToken);
 
-        String githubId = userData.get("id").toString();
+        Object idValue = userData.get("id");
+        String githubId = idValue == null ? null : idValue.toString();
+        if (githubId == null || githubId.isBlank()) {
+            throw new IllegalArgumentException("GitHub authentication failed");
+        }
+
         String login = (String) userData.get("login");
+        String githubLogin = (login == null || login.isBlank()) ? "github" : login;
         String rawName = (String) userData.get("name");
         String avatarUrl = (String) userData.get("avatar_url");
         String rawEmail = (String) userData.get("email");
 
-        String resolvedName = (rawName == null || rawName.isBlank()) ? login : rawName;
+        String resolvedName = (rawName == null || rawName.isBlank()) ? githubLogin : rawName;
 
         if (rawEmail == null || rawEmail.isBlank()) {
             rawEmail = fetchPrimaryGitHubEmail(accessToken);
         }
 
-        String resolvedEmail = (rawEmail == null || rawEmail.isBlank()) ? login + "@github.com" : rawEmail;
+        String email = (rawEmail == null || rawEmail.isBlank()) ? githubLogin + "@github.com" : rawEmail;
+        String normalizedEmail = normalizeEmail(email);
 
-        String email = resolvedEmail;
-        var user = userRepository.findByEmail(email).orElseGet(() -> {
+        var user = userRepository.findByEmail(normalizedEmail).orElseGet(() -> {
             var newUser = new User();
             newUser.setName(resolvedName);
-            newUser.setEmail(email);
+            newUser.setEmail(normalizedEmail);
             newUser.setPassword(passwordEncoder.encode(githubId));
             newUser.setAvatar(avatarUrl);
-            newUser.setGithubUsername(login);
+            newUser.setGithubUsername(githubLogin);
             return userRepository.save(newUser);
         });
 
-        String token = jwtService.generateToken(user.getEmail());
-        return new AuthResponse(token, user.getEmail(), user.getName(), user.getAvatar());
+        user.setAvatar(avatarUrl);
+        user.setGithubUsername(githubLogin);
+        if (resolvedName != null && !resolvedName.isBlank()) {
+            user.setName(resolvedName);
+        }
+        userRepository.save(user);
+
+        String token = jwtService.generateToken(normalizedEmail);
+        return new AuthResponse(token, normalizedEmail, user.getName(), user.getAvatar());
     }
 
     public void sendResetLink(ForgotPasswordRequest req) {
-        if (!userRepository.existsByEmail(req.getEmail())) return;
-        passwordResetService.generateAndStoreCode(req.getEmail());
+        String email = normalizeEmail(req.getEmail());
+        if (!userRepository.existsByEmail(email)) return;
+        passwordResetService.generateAndStoreCode(email);
     }
 
     public void verifyResetCode(VerifyResetCodeRequest req) {
-        if (!passwordResetService.verifyCode(req.getEmail(), req.getCode())) {
+        if (!passwordResetService.verifyCode(normalizeEmail(req.getEmail()), req.getCode())) {
             throw new IllegalArgumentException("Invalid or expired code");
         }
     }
 
     public void resetPassword(ResetPasswordRequest req) {
-        if (!passwordResetService.verifyCode(req.getEmail(), req.getCode())) {
+        String email = normalizeEmail(req.getEmail());
+        if (!passwordResetService.verifyCode(email, req.getCode())) {
             throw new IllegalArgumentException("Invalid or expired code");
         }
-        var user = userRepository.findByEmail(req.getEmail())
+        var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         user.setPassword(passwordEncoder.encode(req.getNewPassword()));
         userRepository.save(user);
-        passwordResetService.consumeCode(req.getEmail());
+        passwordResetService.consumeCode(email);
+    }
+
+    private String normalizeEmail(String email) {
+        return email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
     }
 
     @SuppressWarnings("unchecked")
     private Map<String, String> exchangeGitHubCode(String code) {
         try {
+            if (githubClientId == null || githubClientId.isBlank()
+                    || githubClientSecret == null || githubClientSecret.isBlank()) {
+                throw new IllegalStateException("GitHub OAuth credentials are not configured");
+            }
+
             var body = new java.util.LinkedHashMap<String, Object>();
-            body.put("client_id", System.getenv("GITHUB_CLIENT_ID"));
-            body.put("client_secret", System.getenv("GITHUB_CLIENT_SECRET"));
+            body.put("client_id", githubClientId);
+            body.put("client_secret", githubClientSecret);
             body.put("code", code);
 
             var request = java.net.HttpURLConnection.class.cast(
