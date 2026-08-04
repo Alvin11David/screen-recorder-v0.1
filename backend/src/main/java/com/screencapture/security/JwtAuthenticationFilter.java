@@ -1,5 +1,6 @@
 package com.screencapture.security;
 
+import com.screencapture.repository.UserRepository;
 import com.screencapture.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -17,9 +18,11 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final UserRepository userRepository;
 
-    public JwtAuthenticationFilter(JwtService jwtService) {
+    public JwtAuthenticationFilter(JwtService jwtService, UserRepository userRepository) {
         this.jwtService = jwtService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -31,8 +34,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = header.substring(7);
             if (jwtService.isValid(token)) {
                 String email = jwtService.extractEmail(token);
-                var auth = new UsernamePasswordAuthenticationToken(email, null, List.of());
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                if (userRepository.findByEmail(email).isPresent()) {
+                    var auth = new UsernamePasswordAuthenticationToken(email, null, List.of());
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
             }
         }
         chain.doFilter(request, response);
