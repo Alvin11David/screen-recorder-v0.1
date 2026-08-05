@@ -9,17 +9,40 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WebcamRecorderRouteImport } from './routes/webcam-recorder'
+import { Route as VideoRecorderRouteImport } from './routes/video-recorder'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ScreenRecorderRouteImport } from './routes/screen-recorder'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as OnlineScreenRecorderRouteImport } from './routes/online-screen-recorder'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as FreeScreenRecorderRouteImport } from './routes/free-screen-recorder'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DemoRouteImport } from './routes/demo'
+import { Route as R4kScreenRecorderRouteImport } from './routes/4k-screen-recorder'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GuidesHowToRecordYourScreenRouteImport } from './routes/guides/how-to-record-your-screen'
+import { Route as GuidesBestFreeScreenRecordersRouteImport } from './routes/guides/best-free-screen-recorders'
 import { Route as AuthGithubCallbackRouteImport } from './routes/auth/github/callback'
 
+const WebcamRecorderRoute = WebcamRecorderRouteImport.update({
+  id: '/webcam-recorder',
+  path: '/webcam-recorder',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VideoRecorderRoute = VideoRecorderRouteImport.update({
+  id: '/video-recorder',
+  path: '/video-recorder',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScreenRecorderRoute = ScreenRecorderRouteImport.update({
+  id: '/screen-recorder',
+  path: '/screen-recorder',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegisterRoute = RegisterRouteImport.update({
@@ -27,9 +50,19 @@ const RegisterRoute = RegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OnlineScreenRecorderRoute = OnlineScreenRecorderRouteImport.update({
+  id: '/online-screen-recorder',
+  path: '/online-screen-recorder',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FreeScreenRecorderRoute = FreeScreenRecorderRouteImport.update({
+  id: '/free-screen-recorder',
+  path: '/free-screen-recorder',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
@@ -42,11 +75,28 @@ const DemoRoute = DemoRouteImport.update({
   path: '/demo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const R4kScreenRecorderRoute = R4kScreenRecorderRouteImport.update({
+  id: '/4k-screen-recorder',
+  path: '/4k-screen-recorder',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuidesHowToRecordYourScreenRoute =
+  GuidesHowToRecordYourScreenRouteImport.update({
+    id: '/guides/how-to-record-your-screen',
+    path: '/guides/how-to-record-your-screen',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const GuidesBestFreeScreenRecordersRoute =
+  GuidesBestFreeScreenRecordersRouteImport.update({
+    id: '/guides/best-free-screen-recorders',
+    path: '/guides/best-free-screen-recorders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthGithubCallbackRoute = AuthGithubCallbackRouteImport.update({
   id: '/auth/github/callback',
   path: '/auth/github/callback',
@@ -55,79 +105,156 @@ const AuthGithubCallbackRoute = AuthGithubCallbackRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/4k-screen-recorder': typeof R4kScreenRecorderRoute
   '/demo': typeof DemoRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/free-screen-recorder': typeof FreeScreenRecorderRoute
   '/login': typeof LoginRoute
+  '/online-screen-recorder': typeof OnlineScreenRecorderRoute
   '/register': typeof RegisterRoute
+  '/screen-recorder': typeof ScreenRecorderRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/video-recorder': typeof VideoRecorderRoute
+  '/webcam-recorder': typeof WebcamRecorderRoute
+  '/guides/best-free-screen-recorders': typeof GuidesBestFreeScreenRecordersRoute
+  '/guides/how-to-record-your-screen': typeof GuidesHowToRecordYourScreenRoute
   '/auth/github/callback': typeof AuthGithubCallbackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/4k-screen-recorder': typeof R4kScreenRecorderRoute
   '/demo': typeof DemoRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/free-screen-recorder': typeof FreeScreenRecorderRoute
   '/login': typeof LoginRoute
+  '/online-screen-recorder': typeof OnlineScreenRecorderRoute
   '/register': typeof RegisterRoute
+  '/screen-recorder': typeof ScreenRecorderRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/video-recorder': typeof VideoRecorderRoute
+  '/webcam-recorder': typeof WebcamRecorderRoute
+  '/guides/best-free-screen-recorders': typeof GuidesBestFreeScreenRecordersRoute
+  '/guides/how-to-record-your-screen': typeof GuidesHowToRecordYourScreenRoute
   '/auth/github/callback': typeof AuthGithubCallbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/4k-screen-recorder': typeof R4kScreenRecorderRoute
   '/demo': typeof DemoRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/free-screen-recorder': typeof FreeScreenRecorderRoute
   '/login': typeof LoginRoute
+  '/online-screen-recorder': typeof OnlineScreenRecorderRoute
   '/register': typeof RegisterRoute
+  '/screen-recorder': typeof ScreenRecorderRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/video-recorder': typeof VideoRecorderRoute
+  '/webcam-recorder': typeof WebcamRecorderRoute
+  '/guides/best-free-screen-recorders': typeof GuidesBestFreeScreenRecordersRoute
+  '/guides/how-to-record-your-screen': typeof GuidesHowToRecordYourScreenRoute
   '/auth/github/callback': typeof AuthGithubCallbackRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/4k-screen-recorder'
     | '/demo'
     | '/forgot-password'
+    | '/free-screen-recorder'
     | '/login'
+    | '/online-screen-recorder'
     | '/register'
+    | '/screen-recorder'
     | '/sitemap.xml'
+    | '/video-recorder'
+    | '/webcam-recorder'
+    | '/guides/best-free-screen-recorders'
+    | '/guides/how-to-record-your-screen'
     | '/auth/github/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/4k-screen-recorder'
     | '/demo'
     | '/forgot-password'
+    | '/free-screen-recorder'
     | '/login'
+    | '/online-screen-recorder'
     | '/register'
+    | '/screen-recorder'
     | '/sitemap.xml'
+    | '/video-recorder'
+    | '/webcam-recorder'
+    | '/guides/best-free-screen-recorders'
+    | '/guides/how-to-record-your-screen'
     | '/auth/github/callback'
   id:
     | '__root__'
     | '/'
+    | '/4k-screen-recorder'
     | '/demo'
     | '/forgot-password'
+    | '/free-screen-recorder'
     | '/login'
+    | '/online-screen-recorder'
     | '/register'
+    | '/screen-recorder'
     | '/sitemap.xml'
+    | '/video-recorder'
+    | '/webcam-recorder'
+    | '/guides/best-free-screen-recorders'
+    | '/guides/how-to-record-your-screen'
     | '/auth/github/callback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  R4kScreenRecorderRoute: typeof R4kScreenRecorderRoute
   DemoRoute: typeof DemoRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  FreeScreenRecorderRoute: typeof FreeScreenRecorderRoute
   LoginRoute: typeof LoginRoute
+  OnlineScreenRecorderRoute: typeof OnlineScreenRecorderRoute
   RegisterRoute: typeof RegisterRoute
+  ScreenRecorderRoute: typeof ScreenRecorderRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  VideoRecorderRoute: typeof VideoRecorderRoute
+  WebcamRecorderRoute: typeof WebcamRecorderRoute
+  GuidesBestFreeScreenRecordersRoute: typeof GuidesBestFreeScreenRecordersRoute
+  GuidesHowToRecordYourScreenRoute: typeof GuidesHowToRecordYourScreenRoute
   AuthGithubCallbackRoute: typeof AuthGithubCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/webcam-recorder': {
+      id: '/webcam-recorder'
+      path: '/webcam-recorder'
+      fullPath: '/webcam-recorder'
+      preLoaderRoute: typeof WebcamRecorderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/video-recorder': {
+      id: '/video-recorder'
+      path: '/video-recorder'
+      fullPath: '/video-recorder'
+      preLoaderRoute: typeof VideoRecorderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/screen-recorder': {
+      id: '/screen-recorder'
+      path: '/screen-recorder'
+      fullPath: '/screen-recorder'
+      preLoaderRoute: typeof ScreenRecorderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/register': {
@@ -137,11 +264,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/online-screen-recorder': {
+      id: '/online-screen-recorder'
+      path: '/online-screen-recorder'
+      fullPath: '/online-screen-recorder'
+      preLoaderRoute: typeof OnlineScreenRecorderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/free-screen-recorder': {
+      id: '/free-screen-recorder'
+      path: '/free-screen-recorder'
+      fullPath: '/free-screen-recorder'
+      preLoaderRoute: typeof FreeScreenRecorderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgot-password': {
@@ -158,11 +299,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/4k-screen-recorder': {
+      id: '/4k-screen-recorder'
+      path: '/4k-screen-recorder'
+      fullPath: '/4k-screen-recorder'
+      preLoaderRoute: typeof R4kScreenRecorderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/how-to-record-your-screen': {
+      id: '/guides/how-to-record-your-screen'
+      path: '/guides/how-to-record-your-screen'
+      fullPath: '/guides/how-to-record-your-screen'
+      preLoaderRoute: typeof GuidesHowToRecordYourScreenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/best-free-screen-recorders': {
+      id: '/guides/best-free-screen-recorders'
+      path: '/guides/best-free-screen-recorders'
+      fullPath: '/guides/best-free-screen-recorders'
+      preLoaderRoute: typeof GuidesBestFreeScreenRecordersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/github/callback': {
@@ -177,11 +339,19 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  R4kScreenRecorderRoute: R4kScreenRecorderRoute,
   DemoRoute: DemoRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  FreeScreenRecorderRoute: FreeScreenRecorderRoute,
   LoginRoute: LoginRoute,
+  OnlineScreenRecorderRoute: OnlineScreenRecorderRoute,
   RegisterRoute: RegisterRoute,
+  ScreenRecorderRoute: ScreenRecorderRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  VideoRecorderRoute: VideoRecorderRoute,
+  WebcamRecorderRoute: WebcamRecorderRoute,
+  GuidesBestFreeScreenRecordersRoute: GuidesBestFreeScreenRecordersRoute,
+  GuidesHowToRecordYourScreenRoute: GuidesHowToRecordYourScreenRoute,
   AuthGithubCallbackRoute: AuthGithubCallbackRoute,
 }
 export const routeTree = rootRouteImport
