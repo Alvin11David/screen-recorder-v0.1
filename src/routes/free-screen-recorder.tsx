@@ -1,5 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MonitorPlay, Ban, Infinity as InfinityIcon, ShieldCheck, Film, MousePointer2 } from "lucide-react";
+import {
+  MonitorPlay,
+  Ban,
+  Infinity as InfinityIcon,
+  ShieldCheck,
+  Film,
+  MousePointer2,
+} from "lucide-react";
 import { SeoLandingLayout } from "@/components/seo/SeoLandingLayout";
 import { seoMeta } from "@/components/seo/seo-head";
 
