@@ -70,7 +70,7 @@ function createRecorder(
     const blob = new Blob(chunks, { type: "video/webm" });
     onDone(blob);
   };
-  recorder.onerror = () => onError(recorder.error);
+  recorder.onerror = (e) => onError(e.error);
   recorder.start();
 
   return recorder;

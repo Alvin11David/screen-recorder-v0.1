@@ -197,7 +197,7 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
     setProcessing(true);
     setProcessingLabel("Merging clips\u2026");
     try {
-      const result = await mergeClips(mergeClips, { width: vidW, height: vidH, fps: 30 });
+      const result = await mergeClipsFn(mergeClips, { width: vidW, height: vidH, fps: 30 });
       setResultBlob(result);
     } catch (err) {
       console.error("Merge failed", err);
