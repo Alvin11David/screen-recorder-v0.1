@@ -6,6 +6,7 @@ export const Route = createFileRoute("/demo")({
     meta: [
       { title: "Liquid Metal Hero — ScreenFlow" },
       { name: "description", content: "Preview the liquid metal hero animation." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: LiquidMetalHeroDemo,
