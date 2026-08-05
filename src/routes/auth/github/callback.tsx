@@ -9,6 +9,9 @@ export const Route = createFileRoute("/auth/github/callback")({
     code: search.code as string | undefined,
     state: search.state as string | undefined,
   }),
+  head: () => ({
+    meta: [{ name: "robots", content: "noindex, nofollow" }],
+  }),
   component: GitHubCallbackPage,
 });
 
