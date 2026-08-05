@@ -78,7 +78,6 @@ export function ShaderAnimation({ className }: { className?: string }) {
       if (sceneRef.current.renderer) sceneRef.current.renderer.dispose();
       window.removeEventListener("resize", onWindowResizeRef.current!);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onWindowResizeRef = useRef<(() => void) | null>(null);
