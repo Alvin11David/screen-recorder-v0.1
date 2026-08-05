@@ -102,7 +102,6 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
   useEffect(() => {
     const url = URL.createObjectURL(blob);
     setVideoUrl(url);
-    setTrimEnd(duration);
     return () => URL.revokeObjectURL(url);
   }, [blob]);
 
