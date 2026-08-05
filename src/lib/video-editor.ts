@@ -314,7 +314,7 @@ export async function processWithEffects(
       if (audioCtx) audioCtx.close().catch(() => {});
       resolve(result);
     };
-    recorder.onerror = () => reject(recorder.error);
+    recorder.onerror = (e) => reject(e.error);
 
     // Position video at trim start
     if (options.trim) {
