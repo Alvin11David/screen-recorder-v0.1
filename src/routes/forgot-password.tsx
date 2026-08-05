@@ -9,6 +9,7 @@ export const Route = createFileRoute("/forgot-password")({
     meta: [
       { title: "Reset password — ScreenFlow" },
       { name: "description", content: "Reset your ScreenFlow password." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: ForgotPasswordPage,
