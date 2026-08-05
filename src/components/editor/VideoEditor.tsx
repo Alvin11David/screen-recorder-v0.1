@@ -24,7 +24,7 @@ import {
   trimVideo,
   cropVideo,
   resizeVideo,
-  mergeClips,
+  mergeClips as mergeClipsFn,
   processWithEffects,
   type CropRect,
   type CaptionEntry,
