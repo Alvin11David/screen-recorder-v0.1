@@ -57,7 +57,6 @@ void main(void) {
 export function AnimatedShaderHero({ children, className = "" }: HeroProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animRef = useRef<number>(0);
-  const rendererRef = useRef<any>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
