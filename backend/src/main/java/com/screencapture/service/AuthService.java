@@ -1,5 +1,6 @@
 package com.screencapture.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.screencapture.dto.*;
 import com.screencapture.model.User;
 import com.screencapture.repository.UserRepository;
@@ -7,16 +8,25 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.Locale;
 import java.util.Map;
 
 @Service
 public class AuthService {
 
+    private static final int GITHUB_TIMEOUT_MS = 5_000;
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final PasswordResetService passwordResetService;
+    private final ObjectMapper objectMapper;
+    private final HttpClient httpClient;
 
     @Value("${app.github.client-id:${GITHUB_CLIENT_ID:}}")
     private String githubClientId;
@@ -24,11 +34,14 @@ public class AuthService {
     @Value("${app.github.client-secret:${GITHUB_CLIENT_SECRET:}}")
     private String githubClientSecret;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, PasswordResetService passwordResetService) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService,
+                       PasswordResetService passwordResetService, ObjectMapper objectMapper, HttpClient httpClient) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.passwordResetService = passwordResetService;
+        this.objectMapper = objectMapper;
+        this.httpClient = httpClient;
     }
 
     public AuthResponse register(RegisterRequest req) {
