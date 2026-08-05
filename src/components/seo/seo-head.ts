@@ -13,7 +13,14 @@ export interface SeoPageData {
 
 const SITE = "https://screenflow26.netlify.app";
 
-export function seoMeta(page: SeoPageData) {
+type SeoMetaEntry = {
+  title?: string;
+  name?: string;
+  content?: string;
+  "script:ld+json"?: Record<string, unknown>;
+};
+
+export function seoMeta(page: SeoPageData): SeoMetaEntry[] {
   const jsonLd: Record<string, unknown>[] = [
     {
       "@context": "https://schema.org",
