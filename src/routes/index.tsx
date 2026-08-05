@@ -941,7 +941,7 @@ function RecordingResultPanel({
   const handleSave = async () => {
     setSaveState("saving");
     const suggestedName = `screencapture-pro_${new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19)}.webm`;
-    const picker = (window as any).showSaveFilePicker;
+    const picker = window.showSaveFilePicker;
     if (typeof picker === "function") {
       try {
         const handle = await picker({
