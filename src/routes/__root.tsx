@@ -75,9 +75,11 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: ({ match }) => {
+  head: ({ match, matches }) => {
     const siteUrl = "https://screenflow26.netlify.app";
-    const canonicalUrl = `${siteUrl}${match.pathname === "/" ? "/" : match.pathname.replace(/\/$/, "")}`;
+    const leafMatch = matches[matches.length - 1] ?? match;
+    const pathname = leafMatch.pathname === "/" ? "/" : leafMatch.pathname.replace(/\/$/, "");
+    const canonicalUrl = `${siteUrl}${pathname}`;
     const ogImage = `${siteUrl}/og-image.png`;
 
     return {
