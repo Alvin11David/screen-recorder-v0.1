@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://screenflow26.netlify.app/sitemap.xml
