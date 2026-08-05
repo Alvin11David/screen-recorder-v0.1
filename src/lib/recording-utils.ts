@@ -38,7 +38,7 @@ export const saveRecording = async (
   const suggestedName = defaultFileName(createdAt);
 
   // Prefer File System Access API where available.
-  const picker = (window as any).showSaveFilePicker;
+  const picker = window.showSaveFilePicker;
   if (typeof picker === "function") {
     try {
       const handle = await picker({
