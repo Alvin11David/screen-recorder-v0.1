@@ -76,7 +76,16 @@ function drawWordmark(raw, w, h, text, startX, startY, scale, color) {
         if (glyph[gy][gx] !== "1") continue;
         for (let sy = 0; sy < scale; sy++) {
           for (let sx = 0; sx < scale; sx++) {
-            setPixel(raw, w, cursor + gx * scale + sx, startY + gy * scale + sy, color[0], color[1], color[2], color[3] ?? 255);
+            setPixel(
+              raw,
+              w,
+              cursor + gx * scale + sx,
+              startY + gy * scale + sy,
+              color[0],
+              color[1],
+              color[2],
+              color[3] ?? 255,
+            );
           }
         }
       }
