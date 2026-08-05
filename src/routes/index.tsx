@@ -114,6 +114,32 @@ export const Route = createFileRoute("/")({
         content:
           "Capture your screen in HD, Full HD and 4K straight from the browser and save it locally.",
       },
+      {
+        "script:ld+json": {
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: "ScreenFlow",
+          url: "https://screenflow26.netlify.app/",
+          image: "https://screenflow26.netlify.app/og-image.png",
+          description:
+            "Record your screen in HD, Full HD and 4K directly in the browser and save it locally. No installs, no watermarks, no data leaving your machine.",
+          applicationCategory: "MultimediaApplication",
+          operatingSystem: "Any",
+          browserRequirements: "Requires a modern browser with MediaRecorder support",
+          offers: {
+            "@type": "Offer",
+            price: "0",
+            priceCurrency: "USD",
+          },
+          featureList: [
+            "4K screen recording",
+            "Webcam overlay",
+            "Microphone audio",
+            "Built-in video editor",
+            "Local-only storage",
+          ],
+        },
+      },
     ],
   }),
   component: Index,
