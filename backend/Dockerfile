@@ -19,6 +19,7 @@ ENV PORT=8080
 RUN groupadd --system app && useradd --system --gid app --home-dir /app app
 
 WORKDIR /app
+RUN mkdir -p /app/data && chown -R app:app /app
 COPY --from=build --chown=app:app /home/gradle/app/build/libs/*.jar app.jar
 
 USER app
