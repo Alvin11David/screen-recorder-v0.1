@@ -2,5 +2,5 @@ build/
 .gradle/
 data/
 *.log
-.gradle/
 gradle/wrapper/
+
