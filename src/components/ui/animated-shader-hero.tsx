@@ -122,8 +122,6 @@ void main(){gl_Position=position;}`;
 
     animRef.current = requestAnimationFrame(loop);
 
-    rendererRef.current = { gl, program, buffer, resize };
-
     return () => {
       cancelAnimationFrame(animRef.current);
       window.removeEventListener("resize", resize);
