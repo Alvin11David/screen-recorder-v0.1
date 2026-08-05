@@ -33,7 +33,10 @@ function ForgotPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!email.trim()) { setError("Email is required."); return; }
+    if (!email.trim()) {
+      setError("Email is required.");
+      return;
+    }
     const err = await sendResetLink(email);
     if (err) setError(err);
     else setSent(true);
@@ -71,23 +74,35 @@ function ForgotPasswordPage() {
 
   const handleVerifyCode = async () => {
     const fullCode = code.join("");
-    if (fullCode.length !== 5) { setCodeError("Please enter the full 5-digit code."); return; }
+    if (fullCode.length !== 5) {
+      setCodeError("Please enter the full 5-digit code.");
+      return;
+    }
     setVerifying(true);
     setCodeError(null);
     const err = await verifyResetCode(email, fullCode);
     setVerifying(false);
-    if (err) { setCodeError(err); return; }
+    if (err) {
+      setCodeError(err);
+      return;
+    }
     setCodeVerified(true);
   };
 
   const handleResetPassword = async () => {
-    if (newPassword.length < 6) { setResetError("Password must be at least 6 characters."); return; }
+    if (newPassword.length < 6) {
+      setResetError("Password must be at least 6 characters.");
+      return;
+    }
     setResetting(true);
     setResetError(null);
     const fullCode = code.join("");
     const err = await resetPassword(email, fullCode, newPassword);
     setResetting(false);
-    if (err) { setResetError(err); return; }
+    if (err) {
+      setResetError(err);
+      return;
+    }
     navigate({ to: "/login" });
   };
 
@@ -114,7 +129,10 @@ function ForgotPasswordPage() {
           </span>
         </Link>
 
-        <div className="glass-strong card-border-glow w-full rounded-2xl p-7 md:p-9 hero-fade-in-up" style={{ animationDelay: "0.2s" }}>
+        <div
+          className="glass-strong card-border-glow w-full rounded-2xl p-7 md:p-9 hero-fade-in-up"
+          style={{ animationDelay: "0.2s" }}
+        >
           <div className="mb-7 text-center">
             <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-gradient-primary" />
             <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
@@ -142,7 +160,10 @@ function ForgotPasswordPage() {
               )}
 
               <div className="flex flex-col gap-1.5 w-full">
-                <label htmlFor="new-password" className="text-xs font-medium text-muted-foreground/70 tracking-wider uppercase">
+                <label
+                  htmlFor="new-password"
+                  className="text-xs font-medium text-muted-foreground/70 tracking-wider uppercase"
+                >
                   New password
                 </label>
                 <div className="relative">
@@ -172,7 +193,11 @@ function ForgotPasswordPage() {
                 disabled={resetting}
                 className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-glow)] transition-all duration-300 hover:brightness-110 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {resetting ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />}
+                {resetting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <KeyRound className="h-4 w-4" />
+                )}
                 {resetting ? "Resetting..." : "Reset password"}
               </button>
             </div>
@@ -193,7 +218,9 @@ function ForgotPasswordPage() {
                 {code.map((digit, i) => (
                   <input
                     key={i}
-                    ref={(el) => { inputRefs.current[i] = el; }}
+                    ref={(el) => {
+                      inputRefs.current[i] = el;
+                    }}
                     type="text"
                     inputMode="numeric"
                     maxLength={1}
@@ -211,7 +238,11 @@ function ForgotPasswordPage() {
                   disabled={verifying}
                   className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-glow)] transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_0_1px_oklch(1_0_0/6%),0_0_30px_-8px_oklch(0.74_0.15_222/50%)] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:shadow-[var(--shadow-glow)]"
                 >
-                  {verifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />}
+                  {verifying ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <KeyRound className="h-4 w-4" />
+                  )}
                   {verifying ? "Verifying..." : "Verify code"}
                 </button>
 
@@ -233,7 +264,10 @@ function ForgotPasswordPage() {
               )}
 
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="reset-email" className="text-xs font-medium text-muted-foreground/70 tracking-wider uppercase">
+                <label
+                  htmlFor="reset-email"
+                  className="text-xs font-medium text-muted-foreground/70 tracking-wider uppercase"
+                >
                   Email
                 </label>
                 <div className="relative">
@@ -256,15 +290,25 @@ function ForgotPasswordPage() {
                 disabled={isLoading}
                 className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-glow)] transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_0_1px_oklch(1_0_0/6%),0_0_30px_-8px_oklch(0.74_0.15_222/50%)] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:shadow-[var(--shadow-glow)]"
               >
-                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mail className="h-4 w-4" />}
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Mail className="h-4 w-4" />
+                )}
                 {isLoading ? "Sending..." : "Send reset code"}
               </button>
             </form>
           )}
         </div>
 
-        <p className="text-xs text-muted-foreground/50 hero-fade-in-up" style={{ animationDelay: "0.4s" }}>
-          <Link to="/login" className="inline-flex items-center gap-1.5 text-primary hover:underline font-medium">
+        <p
+          className="text-xs text-muted-foreground/50 hero-fade-in-up"
+          style={{ animationDelay: "0.4s" }}
+        >
+          <Link
+            to="/login"
+            className="inline-flex items-center gap-1.5 text-primary hover:underline font-medium"
+          >
             <ArrowLeft className="h-3.5 w-3.5" />
             Back to sign in
           </Link>

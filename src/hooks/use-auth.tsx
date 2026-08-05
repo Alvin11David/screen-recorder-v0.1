@@ -80,22 +80,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const register = useCallback(async (name: string, email: string, password: string): Promise<string | null> => {
-    setState((s) => ({ ...s, isLoading: true }));
-    try {
-      const res = await fetch(apiUrl("/api/auth/register"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) return data.error || "Registration failed";
-      setUser({ email: data.email, name: data.name, avatar: data.avatar }, data.token);
-      return null;
-    } catch {
-      return "Network error — is the backend running?";
-    }
-  }, []);
+  const register = useCallback(
+    async (name: string, email: string, password: string): Promise<string | null> => {
+      setState((s) => ({ ...s, isLoading: true }));
+      try {
+        const res = await fetch(apiUrl("/api/auth/register"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password }),
+        });
+        const data = await res.json();
+        if (!res.ok) return data.error || "Registration failed";
+        setUser({ email: data.email, name: data.name, avatar: data.avatar }, data.token);
+        return null;
+      } catch {
+        return "Network error — is the backend running?";
+      }
+    },
+    [],
+  );
 
   const logout = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
@@ -103,9 +106,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setState({ user: null, isAuthenticated: false, isLoading: false });
   }, []);
 
-  const loginWithOAuth = useCallback(async (_provider: "google" | "github" | "microsoft"): Promise<string | null> => {
-    return null;
-  }, []);
+  const loginWithOAuth = useCallback(
+    async (_provider: "google" | "github" | "microsoft"): Promise<string | null> => {
+      return null;
+    },
+    [],
+  );
 
   const sendResetLink = useCallback(async (email: string): Promise<string | null> => {
     setState((s) => ({ ...s, isLoading: true }));
@@ -127,49 +133,64 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const verifyResetCode = useCallback(async (email: string, code: string): Promise<string | null> => {
-    setState((s) => ({ ...s, isLoading: true }));
-    try {
-      const res = await fetch(apiUrl("/api/auth/verify-reset-code"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, code }),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        return data.error || "Invalid code";
+  const verifyResetCode = useCallback(
+    async (email: string, code: string): Promise<string | null> => {
+      setState((s) => ({ ...s, isLoading: true }));
+      try {
+        const res = await fetch(apiUrl("/api/auth/verify-reset-code"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, code }),
+        });
+        if (!res.ok) {
+          const data = await res.json();
+          return data.error || "Invalid code";
+        }
+        return null;
+      } catch {
+        return "Network error — is the backend running?";
+      } finally {
+        setState((s) => ({ ...s, isLoading: false }));
       }
-      return null;
-    } catch {
-      return "Network error — is the backend running?";
-    } finally {
-      setState((s) => ({ ...s, isLoading: false }));
-    }
-  }, []);
+    },
+    [],
+  );
 
-  const resetPassword = useCallback(async (email: string, code: string, newPassword: string): Promise<string | null> => {
-    setState((s) => ({ ...s, isLoading: true }));
-    try {
-      const res = await fetch(apiUrl("/api/auth/reset-password"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, code, newPassword }),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        return data.error || "Failed to reset password";
+  const resetPassword = useCallback(
+    async (email: string, code: string, newPassword: string): Promise<string | null> => {
+      setState((s) => ({ ...s, isLoading: true }));
+      try {
+        const res = await fetch(apiUrl("/api/auth/reset-password"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, code, newPassword }),
+        });
+        if (!res.ok) {
+          const data = await res.json();
+          return data.error || "Failed to reset password";
+        }
+        return null;
+      } catch {
+        return "Network error — is the backend running?";
+      } finally {
+        setState((s) => ({ ...s, isLoading: false }));
       }
-      return null;
-    } catch {
-      return "Network error — is the backend running?";
-    } finally {
-      setState((s) => ({ ...s, isLoading: false }));
-    }
-  }, []);
+    },
+    [],
+  );
 
   return (
     <AuthContext.Provider
-      value={{ ...state, login, register, logout, loginWithOAuth, sendResetLink, verifyResetCode, resetPassword }}
+      value={{
+        ...state,
+        login,
+        register,
+        logout,
+        loginWithOAuth,
+        sendResetLink,
+        verifyResetCode,
+        resetPassword,
+      }}
     >
       {hydrated ? children : null}
     </AuthContext.Provider>

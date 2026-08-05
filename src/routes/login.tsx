@@ -28,8 +28,14 @@ function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!email.trim()) { setError("Email is required."); return; }
-    if (!password) { setError("Password is required."); return; }
+    if (!email.trim()) {
+      setError("Email is required.");
+      return;
+    }
+    if (!password) {
+      setError("Password is required.");
+      return;
+    }
     const err = await login(email, password);
     if (err) setError(err);
     else navigate({ to: "/" });
@@ -59,7 +65,10 @@ function LoginPage() {
         )}
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="email" className="text-xs font-medium text-muted-foreground/70 tracking-wider uppercase">
+          <label
+            htmlFor="email"
+            className="text-xs font-medium text-muted-foreground/70 tracking-wider uppercase"
+          >
             Email
           </label>
           <div className="relative">
@@ -81,10 +90,16 @@ function LoginPage() {
 
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
-            <label htmlFor="password" className="text-xs font-medium text-muted-foreground/70 tracking-wider uppercase">
+            <label
+              htmlFor="password"
+              className="text-xs font-medium text-muted-foreground/70 tracking-wider uppercase"
+            >
               Password
             </label>
-            <Link to="/forgot-password" className="text-xs text-primary/70 hover:text-primary transition-colors">
+            <Link
+              to="/forgot-password"
+              className="text-xs text-primary/70 hover:text-primary transition-colors"
+            >
               Forgot?
             </Link>
           </div>
@@ -125,7 +140,14 @@ function LoginPage() {
               viewBox="0 0 12 12"
               className="absolute h-3 w-3 text-primary-foreground opacity-0 peer-checked:opacity-100 transition-opacity duration-200 pointer-events-none"
             >
-              <path d="M2.5 6L5 8.5L9.5 3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path
+                d="M2.5 6L5 8.5L9.5 3"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </div>
           <span className="text-sm text-muted-foreground/60 group-hover:text-muted-foreground/80 transition-colors select-none">

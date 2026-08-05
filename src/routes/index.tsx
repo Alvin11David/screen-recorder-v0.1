@@ -236,10 +236,10 @@ function RecordingPreview({
           isRecording
             ? "opacity-100 bg-[radial-gradient(ellipse_at_center,oklch(0.63_0.245_27/0.18)_0%,oklch(0.74_0.15_222/0.10)_50%,transparent_80%)]"
             : isPaused
-            ? "opacity-100 bg-[radial-gradient(ellipse_at_center,oklch(0.85_0.18_80/0.14)_0%,oklch(0.74_0.15_222/0.08)_50%,transparent_80%)]"
-            : result
-            ? "opacity-100 bg-[radial-gradient(ellipse_at_center,oklch(0.72_0.16_160/0.14)_0%,oklch(0.74_0.15_222/0.08)_50%,transparent_80%)]"
-            : "opacity-50 bg-[radial-gradient(ellipse_at_top,oklch(0.74_0.15_222/0.12)_0%,transparent_70%)]",
+              ? "opacity-100 bg-[radial-gradient(ellipse_at_center,oklch(0.85_0.18_80/0.14)_0%,oklch(0.74_0.15_222/0.08)_50%,transparent_80%)]"
+              : result
+                ? "opacity-100 bg-[radial-gradient(ellipse_at_center,oklch(0.72_0.16_160/0.14)_0%,oklch(0.74_0.15_222/0.08)_50%,transparent_80%)]"
+                : "opacity-50 bg-[radial-gradient(ellipse_at_top,oklch(0.74_0.15_222/0.12)_0%,transparent_70%)]",
         )}
       />
 
@@ -251,8 +251,8 @@ function RecordingPreview({
           isRecording
             ? "shadow-[0_0_0_1.5px_oklch(0.63_0.245_27/0.55),0_0_0_4px_oklch(0.63_0.245_27/0.10),0_40px_100px_-24px_oklch(0_0_0/0.85)]"
             : isPaused
-            ? "shadow-[0_0_0_1.5px_oklch(0.85_0.18_80/0.45),0_0_0_4px_oklch(0.85_0.18_80/0.08),0_40px_100px_-24px_oklch(0_0_0/0.85)]"
-            : "shadow-[0_0_0_1px_oklch(1_0_0/0.08),0_40px_100px_-24px_oklch(0_0_0/0.80)]",
+              ? "shadow-[0_0_0_1.5px_oklch(0.85_0.18_80/0.45),0_0_0_4px_oklch(0.85_0.18_80/0.08),0_40px_100px_-24px_oklch(0_0_0/0.85)]"
+              : "shadow-[0_0_0_1px_oklch(1_0_0/0.08),0_40px_100px_-24px_oklch(0_0_0/0.80)]",
         )}
       >
         {/* ── Recording rim pulse ── */}
@@ -297,7 +297,12 @@ function RecordingPreview({
                   {isRecording && (
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
                   )}
-                  <span className={cn("relative h-1.5 w-1.5 rounded-full", isRecording ? "bg-red-400" : "bg-yellow-400")} />
+                  <span
+                    className={cn(
+                      "relative h-1.5 w-1.5 rounded-full",
+                      isRecording ? "bg-red-400" : "bg-yellow-400",
+                    )}
+                  />
                 </span>
                 {isRecording ? "Live" : "Paused"}
               </motion.div>
@@ -317,7 +322,6 @@ function RecordingPreview({
 
         {/* ── Content area ── */}
         <div className="relative h-full w-full pt-9">
-
           {/* ── Idle state ── */}
           {!isLive && !result && (
             <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden">
@@ -335,10 +339,7 @@ function RecordingPreview({
                 "bottom-3 left-3 border-b-2 border-l-2 rounded-bl-sm",
                 "bottom-3 right-3 border-b-2 border-r-2 rounded-br-sm",
               ].map((cls, i) => (
-                <div
-                  key={i}
-                  className={cn("absolute w-5 h-5 border-white/10", cls)}
-                />
+                <div key={i} className={cn("absolute w-5 h-5 border-white/10", cls)} />
               ))}
 
               {/* Center icon cluster */}
@@ -425,7 +426,9 @@ function RecordingPreview({
                     className="flex items-center gap-2.5 rounded-full bg-white/10 px-6 py-3.5 ring-1 ring-white/20 hover:bg-white/15 transition-all"
                   >
                     <Play className="h-5 w-5 text-white fill-white" />
-                    <span className="text-sm font-semibold text-white">Click to enable preview</span>
+                    <span className="text-sm font-semibold text-white">
+                      Click to enable preview
+                    </span>
                   </motion.div>
                 </button>
               )}
@@ -447,8 +450,8 @@ function RecordingPreview({
                         ? "border-t border-l border-white/20 rounded-tl"
                         : "border-t border-r border-white/20 rounded-tr"
                       : i === 2
-                      ? "border-b border-l border-white/20 rounded-bl"
-                      : "border-b border-r border-white/20 rounded-br",
+                        ? "border-b border-l border-white/20 rounded-bl"
+                        : "border-b border-r border-white/20 rounded-br",
                   )}
                 />
               ))}
@@ -518,9 +521,10 @@ function RecordingPreview({
                           className="w-[2.5px] rounded-full transition-all duration-75"
                           style={{
                             height: `${Math.max(3, barLevel * 22 + (1 - center) * 2)}px`,
-                            backgroundColor: audioLevel > 0.7
-                              ? `oklch(0.7 0.2 15 / ${Math.max(0.25, barLevel * 0.9)})`
-                              : `oklch(0.74 0.15 222 / ${Math.max(0.2, barLevel * 0.85)})`,
+                            backgroundColor:
+                              audioLevel > 0.7
+                                ? `oklch(0.7 0.2 15 / ${Math.max(0.25, barLevel * 0.9)})`
+                                : `oklch(0.74 0.15 222 / ${Math.max(0.2, barLevel * 0.85)})`,
                           }}
                         />
                       );
@@ -539,7 +543,9 @@ function RecordingPreview({
                   animate={{ opacity: 1, x: 0 }}
                   className="absolute top-[2.75rem] right-4 z-20 rounded-lg bg-black/60 px-3 py-1.5 backdrop-blur-2xl ring-1 ring-white/[0.08]"
                 >
-                  <span className="font-mono text-[9px] text-white/30 uppercase tracking-wider">60 fps</span>
+                  <span className="font-mono text-[9px] text-white/30 uppercase tracking-wider">
+                    60 fps
+                  </span>
                 </motion.div>
               )}
             </>
@@ -578,19 +584,26 @@ function SourceCards({
   onSelect?: (v: CaptureSurface) => void;
   disabled?: boolean;
 }) {
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    if (disabled) return;
-    const el = e.currentTarget;
-    const rect = el.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = (e.clientY - rect.top) / rect.height;
-    el.style.transform = `perspective(600px) rotateX(${(y - 0.5) * -12}deg) rotateY(${(x - 0.5) * 12}deg) scale3d(1.02,1.02,1.02)`;
-  }, [disabled]);
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (disabled) return;
+      const el = e.currentTarget;
+      const rect = el.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
+      el.style.transform = `perspective(600px) rotateX(${(y - 0.5) * -12}deg) rotateY(${(x - 0.5) * 12}deg) scale3d(1.02,1.02,1.02)`;
+    },
+    [disabled],
+  );
 
-  const handleMouseLeave = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    if (disabled) return;
-    e.currentTarget.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)';
-  }, [disabled]);
+  const handleMouseLeave = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (disabled) return;
+      e.currentTarget.style.transform =
+        "perspective(600px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)";
+    },
+    [disabled],
+  );
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -898,10 +911,12 @@ function ControlBar({
             )}
           >
             <Switch checked={whiteboardActive} onCheckedChange={onWhiteboardChange} />
-            <span className={cn(
-              "select-none flex items-center gap-1.5",
-              whiteboardActive ? "text-primary/80" : "text-white/50",
-            )}>
+            <span
+              className={cn(
+                "select-none flex items-center gap-1.5",
+                whiteboardActive ? "text-primary/80" : "text-white/50",
+              )}
+            >
               <Monitor className="h-3 w-3" />
               Whiteboard
             </span>
@@ -1086,61 +1101,69 @@ function TrustMetrics() {
       {/* Section label */}
       <div className="flex items-center gap-3 mb-5">
         <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/[0.07]" />
-        <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/25">Why ScreenFlow</span>
+        <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/25">
+          Why ScreenFlow
+        </span>
         <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/[0.07]" />
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {TRUST_CARDS.map(({ value, label, sub, icon: Icon, gradient, iconBg, glowColor, hoverBg, ring }, i) => (
-          <motion.div
-            key={label}
-            initial={{ opacity: 0, y: 24, scale: 0.93 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: 1.1 + i * 0.1, duration: 0.55, ease: [0.25, 0.1, 0.25, 1] }}
-            whileHover={{ y: -4, transition: { duration: 0.2, ease: "easeOut" } }}
-            className={cn(
-              "group relative overflow-hidden rounded-2xl p-5 ring-1 ring-white/[0.07] bg-white/[0.025] backdrop-blur-sm cursor-default transition-all duration-300",
-              ring,
-            )}
-          >
-            {/* Hover background glow */}
-            <div className={cn(
-              "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br rounded-2xl",
-              hoverBg,
-            )} />
-
-            {/* Bottom edge shimmer on hover */}
-            <div className="absolute bottom-0 left-0 right-0 h-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-
-            <div className="relative z-10 flex flex-col gap-3.5">
-              {/* Icon badge */}
-              <motion.div
-                whileHover={{ rotate: [0, -8, 8, 0], transition: { duration: 0.4 } }}
+        {TRUST_CARDS.map(
+          ({ value, label, sub, icon: Icon, gradient, iconBg, glowColor, hoverBg, ring }, i) => (
+            <motion.div
+              key={label}
+              initial={{ opacity: 0, y: 24, scale: 0.93 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: 1.1 + i * 0.1, duration: 0.55, ease: [0.25, 0.1, 0.25, 1] }}
+              whileHover={{ y: -4, transition: { duration: 0.2, ease: "easeOut" } }}
+              className={cn(
+                "group relative overflow-hidden rounded-2xl p-5 ring-1 ring-white/[0.07] bg-white/[0.025] backdrop-blur-sm cursor-default transition-all duration-300",
+                ring,
+              )}
+            >
+              {/* Hover background glow */}
+              <div
                 className={cn(
-                  "w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br shadow-lg transition-all duration-300",
-                  iconBg,
+                  "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br rounded-2xl",
+                  hoverBg,
                 )}
-                style={{ boxShadow: `0 0 0 1px white/10, 0 6px 24px ${glowColor}` }}
-              >
-                <Icon className="h-[18px] w-[18px] text-white" strokeWidth={2} />
-              </motion.div>
+              />
 
-              {/* Text */}
-              <div>
-                <div className="flex items-baseline gap-1.5">
-                  <span className={cn(
-                    "font-display text-3xl font-black bg-gradient-to-r bg-clip-text text-transparent leading-none",
-                    gradient,
-                  )}>
-                    {value}
-                  </span>
+              {/* Bottom edge shimmer on hover */}
+              <div className="absolute bottom-0 left-0 right-0 h-[1px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
+              <div className="relative z-10 flex flex-col gap-3.5">
+                {/* Icon badge */}
+                <motion.div
+                  whileHover={{ rotate: [0, -8, 8, 0], transition: { duration: 0.4 } }}
+                  className={cn(
+                    "w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br shadow-lg transition-all duration-300",
+                    iconBg,
+                  )}
+                  style={{ boxShadow: `0 0 0 1px white/10, 0 6px 24px ${glowColor}` }}
+                >
+                  <Icon className="h-[18px] w-[18px] text-white" strokeWidth={2} />
+                </motion.div>
+
+                {/* Text */}
+                <div>
+                  <div className="flex items-baseline gap-1.5">
+                    <span
+                      className={cn(
+                        "font-display text-3xl font-black bg-gradient-to-r bg-clip-text text-transparent leading-none",
+                        gradient,
+                      )}
+                    >
+                      {value}
+                    </span>
+                  </div>
+                  <p className="text-sm font-bold text-white/75 mt-0.5">{label}</p>
+                  <p className="text-[11px] text-white/30 mt-1.5 leading-snug">{sub}</p>
                 </div>
-                <p className="text-sm font-bold text-white/75 mt-0.5">{label}</p>
-                <p className="text-[11px] text-white/30 mt-1.5 leading-snug">{sub}</p>
               </div>
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          ),
+        )}
       </div>
 
       <div className="mt-8 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
@@ -1221,7 +1244,11 @@ function Index() {
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement)?.tagName;
-      const isInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (e.target as HTMLElement)?.isContentEditable;
+      const isInput =
+        tag === "INPUT" ||
+        tag === "TEXTAREA" ||
+        tag === "SELECT" ||
+        (e.target as HTMLElement)?.isContentEditable;
 
       // Block ALL shortcuts when user is typing in an input/textarea
       if (isInput) return;
@@ -1294,8 +1321,23 @@ function Index() {
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [status, result, source, showHistory, showShortcuts, teleprompterActive, annotationsEnabled, spotlightActive,
-      startRecording, pauseRecording, resumeRecording, stopRecording, reset, setAnnotationsEnabled, setupAnnotationCanvas]);
+  }, [
+    status,
+    result,
+    source,
+    showHistory,
+    showShortcuts,
+    teleprompterActive,
+    annotationsEnabled,
+    spotlightActive,
+    startRecording,
+    pauseRecording,
+    resumeRecording,
+    stopRecording,
+    reset,
+    setAnnotationsEnabled,
+    setupAnnotationCanvas,
+  ]);
 
   // Scheduled recording
   const handleSchedule = useCallback(() => {
@@ -1349,9 +1391,7 @@ function Index() {
         {/* Aurora beam — sweeps across the top */}
         <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent" />
         <div className="absolute top-0 left-0 right-0 h-[180px] bg-gradient-to-b from-cyan-500/[0.06] via-blue-500/[0.04] to-transparent" />
-        <div
-          className="absolute -top-[40px] left-[-10%] right-[-10%] h-[90px] bg-gradient-to-r from-transparent via-violet-500/[0.18] to-transparent blur-[32px] animate-aurora-sweep"
-        />
+        <div className="absolute -top-[40px] left-[-10%] right-[-10%] h-[90px] bg-gradient-to-r from-transparent via-violet-500/[0.18] to-transparent blur-[32px] animate-aurora-sweep" />
 
         {/* Dot grid */}
         <div className="absolute inset-0 bg-[image:radial-gradient(oklch(1_0_0/0.04)_1px,transparent_1px)] bg-[size:24px_24px]" />
@@ -1547,9 +1587,7 @@ function Index() {
 
         {/* ── Hero ── */}
         <motion.div variants={fadeUp} className="text-center mb-8 md:mb-10">
-          <motion.h1
-            className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-black tracking-tight text-white leading-[1.05] mb-5"
-          >
+          <motion.h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-black tracking-tight text-white leading-[1.05] mb-5">
             <span className="relative inline-block mb-1">
               {/* Glow halo behind headline */}
               <span className="absolute -inset-x-20 -inset-y-10 bg-gradient-to-r from-cyan-500/8 via-blue-500/10 to-violet-500/8 blur-[90px] pointer-events-none" />
@@ -1609,14 +1647,26 @@ function Index() {
                 key={label}
                 initial={{ opacity: 0, scale: 0.75, y: 12 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ delay: 0.7 + fi * 0.1, duration: 0.5, type: "spring", stiffness: 280, damping: 22 }}
+                transition={{
+                  delay: 0.7 + fi * 0.1,
+                  duration: 0.5,
+                  type: "spring",
+                  stiffness: 280,
+                  damping: 22,
+                }}
                 whileHover={{ y: -2, scale: 1.05, transition: { duration: 0.18 } }}
                 className={cn(
                   "inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold ring-1 backdrop-blur-sm cursor-default",
-                  bg, ring,
+                  bg,
+                  ring,
                 )}
               >
-                <span className={cn("flex h-5 w-5 items-center justify-center rounded-full bg-black/20", glow)}>
+                <span
+                  className={cn(
+                    "flex h-5 w-5 items-center justify-center rounded-full bg-black/20",
+                    glow,
+                  )}
+                >
                   <Icon className={cn("h-3 w-3", color)} />
                 </span>
                 <span className={color}>{label}</span>
@@ -1692,13 +1742,19 @@ function Index() {
                   {/* Active badges */}
                   <div className="flex items-center gap-1.5">
                     {fps !== 60 && (
-                      <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-mono text-primary/70">{fps}fps</span>
+                      <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-mono text-primary/70">
+                        {fps}fps
+                      </span>
                     )}
                     {noiseSuppressionEnabled && (
-                      <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] text-emerald-400/70">Noise filter</span>
+                      <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] text-emerald-400/70">
+                        Noise filter
+                      </span>
                     )}
                     {autoStopMinutes > 0 && (
-                      <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] text-amber-400/70">Auto-stop {autoStopMinutes}m</span>
+                      <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] text-amber-400/70">
+                        Auto-stop {autoStopMinutes}m
+                      </span>
                     )}
                     {scheduleActive && (
                       <span className="rounded-full bg-violet-500/15 px-2 py-0.5 text-[10px] text-violet-400/70 flex items-center gap-1">
@@ -1711,9 +1767,11 @@ function Index() {
                     )}
                   </div>
                 </div>
-                {showAdvanced
-                  ? <ChevronUp className="h-4 w-4 text-white/20" />
-                  : <ChevronDown className="h-4 w-4 text-white/20" />}
+                {showAdvanced ? (
+                  <ChevronUp className="h-4 w-4 text-white/20" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 text-white/20" />
+                )}
               </button>
 
               <AnimatePresence>
@@ -1727,14 +1785,15 @@ function Index() {
                   >
                     <div className="mt-2 rounded-xl bg-white/[0.02] p-5 ring-1 ring-white/[0.05]">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
                         {/* ── Frame Rate ── */}
                         <div className="rounded-xl bg-white/[0.025] p-4 ring-1 ring-white/[0.06] flex flex-col gap-3">
                           <div className="flex items-center gap-2">
                             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 ring-1 ring-primary/20">
                               <Gauge className="h-3.5 w-3.5 text-primary/60" />
                             </span>
-                            <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">Frame Rate</span>
+                            <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">
+                              Frame Rate
+                            </span>
                           </div>
                           <div className="flex gap-2">
                             {([30, 60] as const).map((f) => (
@@ -1760,17 +1819,23 @@ function Index() {
                         {/* ── AI Noise Suppression ── */}
                         <div className="rounded-xl bg-white/[0.025] p-4 ring-1 ring-white/[0.06] flex flex-col gap-3">
                           <div className="flex items-center gap-2">
-                            <span className={cn(
-                              "flex h-7 w-7 items-center justify-center rounded-lg ring-1 transition-all",
-                              noiseSuppressionEnabled
-                                ? "bg-emerald-500/15 ring-emerald-500/30"
-                                : "bg-white/[0.04] ring-white/[0.06]",
-                            )}>
-                              {noiseSuppressionEnabled
-                                ? <Volume2 className="h-3.5 w-3.5 text-emerald-400" />
-                                : <VolumeX className="h-3.5 w-3.5 text-white/35" />}
+                            <span
+                              className={cn(
+                                "flex h-7 w-7 items-center justify-center rounded-lg ring-1 transition-all",
+                                noiseSuppressionEnabled
+                                  ? "bg-emerald-500/15 ring-emerald-500/30"
+                                  : "bg-white/[0.04] ring-white/[0.06]",
+                              )}
+                            >
+                              {noiseSuppressionEnabled ? (
+                                <Volume2 className="h-3.5 w-3.5 text-emerald-400" />
+                              ) : (
+                                <VolumeX className="h-3.5 w-3.5 text-white/35" />
+                              )}
                             </span>
-                            <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">AI Noise Filter</span>
+                            <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">
+                              AI Noise Filter
+                            </span>
                           </div>
                           <div className="flex items-center justify-between gap-3 flex-1">
                             <div>
@@ -1784,11 +1849,15 @@ function Index() {
                               onCheckedChange={setNoiseSuppressionEnabled}
                             />
                           </div>
-                          <p className={cn(
-                            "text-[11px] leading-snug transition-colors",
-                            noiseSuppressionEnabled ? "text-emerald-400/50" : "text-white/20",
-                          )}>
-                            {noiseSuppressionEnabled ? "Active — mic noise filtered" : "Uses browser audio processing"}
+                          <p
+                            className={cn(
+                              "text-[11px] leading-snug transition-colors",
+                              noiseSuppressionEnabled ? "text-emerald-400/50" : "text-white/20",
+                            )}
+                          >
+                            {noiseSuppressionEnabled
+                              ? "Active — mic noise filtered"
+                              : "Uses browser audio processing"}
                           </p>
                         </div>
 
@@ -1799,7 +1868,9 @@ function Index() {
                               <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-500/10 ring-1 ring-amber-500/20">
                                 <Timer className="h-3.5 w-3.5 text-amber-400/70" />
                               </span>
-                              <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">Auto-Stop</span>
+                              <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">
+                                Auto-Stop
+                              </span>
                             </div>
                             {autoStopMinutes > 0 && (
                               <span className="rounded-full bg-amber-500/15 px-2.5 py-0.5 text-[11px] font-mono font-semibold text-amber-400/80 ring-1 ring-amber-500/25">
@@ -1831,15 +1902,24 @@ function Index() {
                         {/* ── Scheduled Recording ── */}
                         <div className="rounded-xl bg-white/[0.025] p-4 ring-1 ring-white/[0.06] flex flex-col gap-3">
                           <div className="flex items-center gap-2">
-                            <span className={cn(
-                              "flex h-7 w-7 items-center justify-center rounded-lg ring-1 transition-all",
-                              scheduleActive
-                                ? "bg-violet-500/15 ring-violet-500/30"
-                                : "bg-white/[0.04] ring-white/[0.06]",
-                            )}>
-                              <Calendar className={cn("h-3.5 w-3.5", scheduleActive ? "text-violet-400" : "text-white/35")} />
+                            <span
+                              className={cn(
+                                "flex h-7 w-7 items-center justify-center rounded-lg ring-1 transition-all",
+                                scheduleActive
+                                  ? "bg-violet-500/15 ring-violet-500/30"
+                                  : "bg-white/[0.04] ring-white/[0.06]",
+                              )}
+                            >
+                              <Calendar
+                                className={cn(
+                                  "h-3.5 w-3.5",
+                                  scheduleActive ? "text-violet-400" : "text-white/35",
+                                )}
+                              />
                             </span>
-                            <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">Schedule</span>
+                            <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">
+                              Schedule
+                            </span>
                             {scheduleActive && (
                               <span className="ml-auto flex items-center gap-1.5 text-[11px] text-violet-400/70">
                                 <span className="relative flex h-1.5 w-1.5">
@@ -1875,11 +1955,14 @@ function Index() {
                           )}
                           {scheduleActive && (
                             <p className="text-[11px] text-violet-400/50 leading-snug">
-                              Starts at {new Date(scheduledTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                              Starts at{" "}
+                              {new Date(scheduledTime).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
                             </p>
                           )}
                         </div>
-
                       </div>
                     </div>
                   </motion.div>
@@ -1925,7 +2008,11 @@ function Index() {
               transition={{ duration: 0.5 }}
               className="mt-4"
             >
-              <RecordingResultPanel result={result} onReset={reset} onEdit={() => setEditorBlob(result.blob)} />
+              <RecordingResultPanel
+                result={result}
+                onReset={reset}
+                onEdit={() => setEditorBlob(result.blob)}
+              />
             </motion.div>
           )}
         </AnimatePresence>
@@ -1944,9 +2031,7 @@ function Index() {
       </motion.div>
 
       {/* ── Video Editor ── */}
-      {editorBlob && (
-        <VideoEditor blob={editorBlob} onClose={() => setEditorBlob(null)} />
-      )}
+      {editorBlob && <VideoEditor blob={editorBlob} onClose={() => setEditorBlob(null)} />}
     </main>
   );
 }

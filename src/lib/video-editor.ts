@@ -29,11 +29,7 @@ export interface ProcessEffectsOptions {
 }
 
 function getSupportedMimeType(): string {
-  const types = [
-    "video/webm;codecs=vp9",
-    "video/webm;codecs=vp8",
-    "video/webm",
-  ];
+  const types = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"];
   for (const t of types) {
     if (MediaRecorder.isTypeSupported(t)) return t;
   }
@@ -81,7 +77,11 @@ async function processFrames(
   outputWidth: number,
   outputHeight: number,
   fps: number,
-  renderFrame: (video: HTMLVideoElement, ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => boolean,
+  renderFrame: (
+    video: HTMLVideoElement,
+    ctx: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+  ) => boolean,
 ): Promise<Blob> {
   const video = await loadVideo(blob);
   const canvas = document.createElement("canvas");
@@ -90,13 +90,18 @@ async function processFrames(
   const ctx = canvas.getContext("2d")!;
 
   return new Promise((resolve, reject) => {
-    const recorder = createRecorder(canvas, fps, (result) => {
-      URL.revokeObjectURL(video.src);
-      resolve(result);
-    }, (err) => {
-      URL.revokeObjectURL(video.src);
-      reject(err);
-    });
+    const recorder = createRecorder(
+      canvas,
+      fps,
+      (result) => {
+        URL.revokeObjectURL(video.src);
+        resolve(result);
+      },
+      (err) => {
+        URL.revokeObjectURL(video.src);
+        reject(err);
+      },
+    );
 
     let running = true;
 
@@ -111,13 +116,16 @@ async function processFrames(
       requestAnimationFrame(tick);
     };
 
-    video.play().then(() => {
-      requestAnimationFrame(tick);
-    }).catch((err) => {
-      running = false;
-      if (recorder.state === "recording") recorder.stop();
-      reject(err);
-    });
+    video
+      .play()
+      .then(() => {
+        requestAnimationFrame(tick);
+      })
+      .catch((err) => {
+        running = false;
+        if (recorder.state === "recording") recorder.stop();
+        reject(err);
+      });
   });
 }
 
@@ -141,13 +149,18 @@ export async function trimVideo(
   });
 
   return new Promise((resolve, reject) => {
-    const recorder = createRecorder(canvas, fps, (result) => {
-      URL.revokeObjectURL(video.src);
-      resolve(result);
-    }, (err) => {
-      URL.revokeObjectURL(video.src);
-      reject(err);
-    });
+    const recorder = createRecorder(
+      canvas,
+      fps,
+      (result) => {
+        URL.revokeObjectURL(video.src);
+        resolve(result);
+      },
+      (err) => {
+        URL.revokeObjectURL(video.src);
+        reject(err);
+      },
+    );
 
     video.play();
 
@@ -181,8 +194,14 @@ export async function cropVideo(
     if (video.ended) return false;
     ctx.drawImage(
       video,
-      cropRect.x, cropRect.y, cropRect.width, cropRect.height,
-      0, 0, outputWidth, outputHeight,
+      cropRect.x,
+      cropRect.y,
+      cropRect.width,
+      cropRect.height,
+      0,
+      0,
+      outputWidth,
+      outputHeight,
     );
     return true;
   });
@@ -202,10 +221,7 @@ export async function resizeVideo(
   });
 }
 
-export async function mergeClips(
-  blobs: Blob[],
-  options: VideoOptions,
-): Promise<Blob> {
+export async function mergeClips(blobs: Blob[], options: VideoOptions): Promise<Blob> {
   if (blobs.length === 0) throw new Error("No clips to merge");
   if (blobs.length === 1) return blobs[0];
 

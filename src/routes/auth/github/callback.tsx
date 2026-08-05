@@ -55,7 +55,9 @@ function GitHubCallbackPage() {
       }
     })();
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [search, navigate]);
 
   return (

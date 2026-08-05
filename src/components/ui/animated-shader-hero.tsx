@@ -140,9 +140,7 @@ void main(){gl_Position=position;}`;
         style={{ background: "black" }}
       />
       <div className="absolute inset-0 z-10 overflow-y-auto">
-        <div className="flex min-h-full items-center justify-center">
-          {children}
-        </div>
+        <div className="flex min-h-full items-center justify-center">{children}</div>
       </div>
     </div>
   );

@@ -88,12 +88,18 @@ export default function LiquidMetalHero({
               {title}
             </motion.h1>
 
-            <motion.p className="max-w-3xl mx-auto text-xl sm:text-2xl text-foreground/90 leading-relaxed" variants={itemVariants}>
+            <motion.p
+              className="max-w-3xl mx-auto text-xl sm:text-2xl text-foreground/90 leading-relaxed"
+              variants={itemVariants}
+            >
               {subtitle}
             </motion.p>
           </motion.div>
 
-          <motion.div className="flex flex-col sm:flex-row gap-4 justify-center items-center" variants={buttonVariants}>
+          <motion.div
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+            variants={buttonVariants}
+          >
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
                 onClick={onPrimaryCtaClick}

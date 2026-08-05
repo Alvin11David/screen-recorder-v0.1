@@ -189,29 +189,32 @@ export function useScreenRecorder() {
     ctx.drawImage(ac, 0, 0, w, h);
   }, []);
 
-  const createThrottledFrameLoop = useCallback((
-    fps: number,
-    drawFn: () => void,
-    runningRef: React.MutableRefObject<boolean>,
-    pausedRef: React.MutableRefObject<boolean>
-  ) => {
-    const frameInterval = 1000 / fps;
-    let lastFrameTime = 0;
+  const createThrottledFrameLoop = useCallback(
+    (
+      fps: number,
+      drawFn: () => void,
+      runningRef: React.MutableRefObject<boolean>,
+      pausedRef: React.MutableRefObject<boolean>,
+    ) => {
+      const frameInterval = 1000 / fps;
+      let lastFrameTime = 0;
 
-    const frame = (timestamp: number) => {
-      if (!runningRef.current) return;
-      if (!pausedRef.current) {
-        const elapsed = timestamp - lastFrameTime;
-        if (elapsed >= frameInterval) {
-          lastFrameTime = timestamp - (elapsed % frameInterval);
-          drawFn();
+      const frame = (timestamp: number) => {
+        if (!runningRef.current) return;
+        if (!pausedRef.current) {
+          const elapsed = timestamp - lastFrameTime;
+          if (elapsed >= frameInterval) {
+            lastFrameTime = timestamp - (elapsed % frameInterval);
+            drawFn();
+          }
         }
-      }
-      requestAnimationFrame(frame);
-    };
+        requestAnimationFrame(frame);
+      };
 
-    requestAnimationFrame(frame);
-  }, []);
+      requestAnimationFrame(frame);
+    },
+    [],
+  );
 
   // Request / release camera when toggled
   useEffect(() => {
@@ -257,7 +260,11 @@ export function useScreenRecorder() {
             height: { ideal: quality.height },
           } as MediaTrackConstraints,
           audio: includeAudio
-            ? { echoCancellation: noiseRef.current, noiseSuppression: noiseRef.current, sampleRate: 44100 }
+            ? {
+                echoCancellation: noiseRef.current,
+                noiseSuppression: noiseRef.current,
+                sampleRate: 44100,
+              }
             : false,
         };
         const displayStream = await navigator.mediaDevices.getDisplayMedia(constraints);
@@ -761,7 +768,11 @@ export function useScreenRecorder() {
       const newStream = await navigator.mediaDevices.getDisplayMedia({
         video: { frameRate: { ideal: fpsRef.current, max: fpsRef.current } },
         audio: includeAudio
-          ? { echoCancellation: noiseRef.current, noiseSuppression: noiseRef.current, sampleRate: 44100 }
+          ? {
+              echoCancellation: noiseRef.current,
+              noiseSuppression: noiseRef.current,
+              sampleRate: 44100,
+            }
           : false,
       } as DisplayMediaStreamOptions);
       const updated = [...multiStreamsRef.current, newStream];

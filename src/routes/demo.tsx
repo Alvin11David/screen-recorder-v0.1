@@ -21,11 +21,7 @@ function LiquidMetalHeroDemo() {
       secondaryCtaLabel="View Examples"
       onPrimaryCtaClick={() => alert("Primary CTA clicked!")}
       onSecondaryCtaClick={() => alert("Secondary CTA clicked!")}
-      features={[
-        "Seamless Animations",
-        "Responsive Excellence",
-        "Modern Architecture",
-      ]}
+      features={["Seamless Animations", "Responsive Excellence", "Modern Architecture"]}
     />
   );
 }

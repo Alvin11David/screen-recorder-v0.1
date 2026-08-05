@@ -27,9 +27,18 @@ function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!name.trim()) { setError("Name is required."); return; }
-    if (!email.trim()) { setError("Email is required."); return; }
-    if (password.length < 6) { setError("Password must be at least 6 characters."); return; }
+    if (!name.trim()) {
+      setError("Name is required.");
+      return;
+    }
+    if (!email.trim()) {
+      setError("Email is required.");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
     const err = await register(name, email, password);
     if (err) setError(err);
     else navigate({ to: "/" });
@@ -59,7 +68,10 @@ function RegisterPage() {
         )}
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="name" className="text-xs font-medium text-muted-foreground/70 tracking-wider uppercase">
+          <label
+            htmlFor="name"
+            className="text-xs font-medium text-muted-foreground/70 tracking-wider uppercase"
+          >
             Name
           </label>
           <div className="relative">
@@ -78,7 +90,10 @@ function RegisterPage() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="email" className="text-xs font-medium text-muted-foreground/70 tracking-wider uppercase">
+          <label
+            htmlFor="email"
+            className="text-xs font-medium text-muted-foreground/70 tracking-wider uppercase"
+          >
             Email
           </label>
           <div className="relative">
@@ -96,7 +111,10 @@ function RegisterPage() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="password" className="text-xs font-medium text-muted-foreground/70 tracking-wider uppercase">
+          <label
+            htmlFor="password"
+            className="text-xs font-medium text-muted-foreground/70 tracking-wider uppercase"
+          >
             Password
           </label>
           <div className="relative">
@@ -126,7 +144,11 @@ function RegisterPage() {
           disabled={isLoading}
           className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-primary text-sm font-semibold text-primary-foreground shadow-[var(--shadow-glow)] transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_0_1px_oklch(1_0_0/6%),0_0_30px_-8px_oklch(0.74_0.15_222/50%)] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:shadow-[var(--shadow-glow)]"
         >
-          {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserPlus className="h-4 w-4" />}
+          {isLoading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <UserPlus className="h-4 w-4" />
+          )}
           {isLoading ? "Creating account..." : "Create account"}
         </button>
 

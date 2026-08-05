@@ -109,19 +109,15 @@ const AetherFlowHero = ({ children }: AetherFlowHeroProps) => {
       for (let a = 0; a < particles.length; a++) {
         for (let b = a; b < particles.length; b++) {
           const distance =
-            (particles[a].x - particles[b].x) *
-              (particles[a].x - particles[b].x) +
-            (particles[a].y - particles[b].y) *
-              (particles[a].y - particles[b].y);
+            (particles[a].x - particles[b].x) * (particles[a].x - particles[b].x) +
+            (particles[a].y - particles[b].y) * (particles[a].y - particles[b].y);
 
           if (distance < (canvas!.width / 7) * (canvas!.height / 7)) {
             const opacityValue = 1 - distance / 20000;
 
             const dxMouseA = particles[a].x - (mouse.x ?? 0);
             const dyMouseA = particles[a].y - (mouse.y ?? 0);
-            const distanceMouseA = Math.sqrt(
-              dxMouseA * dxMouseA + dyMouseA * dyMouseA,
-            );
+            const distanceMouseA = Math.sqrt(dxMouseA * dxMouseA + dyMouseA * dyMouseA);
 
             if (mouse.x !== null && distanceMouseA < mouse.radius) {
               ctx.strokeStyle = `rgba(255, 255, 255, ${opacityValue})`;
@@ -189,10 +185,7 @@ const AetherFlowHero = ({ children }: AetherFlowHeroProps) => {
 
   return (
     <div className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden">
-      <canvas
-        ref={canvasRef}
-        className="absolute top-0 left-0 w-full h-full"
-      />
+      <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full" />
 
       <div className="relative z-10 w-full">
         {children ? (
@@ -207,9 +200,7 @@ const AetherFlowHero = ({ children }: AetherFlowHeroProps) => {
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 mb-6 backdrop-blur-sm"
             >
               <Zap className="h-4 w-4 text-purple-400" />
-              <span className="text-sm font-medium text-gray-200">
-                Dynamic Rendering Engine
-              </span>
+              <span className="text-sm font-medium text-gray-200">Dynamic Rendering Engine</span>
             </motion.div>
 
             <motion.h1
@@ -229,9 +220,8 @@ const AetherFlowHero = ({ children }: AetherFlowHeroProps) => {
               animate="visible"
               className="max-w-2xl mx-auto text-lg text-gray-400 mb-10"
             >
-              An intelligent, adaptive framework for creating fluid digital
-              experiences that feel alive and respond to user interaction in
-              real-time.
+              An intelligent, adaptive framework for creating fluid digital experiences that feel
+              alive and respond to user interaction in real-time.
             </motion.p>
 
             <motion.div custom={3} variants={fadeUpVariants} initial="hidden" animate="visible">
