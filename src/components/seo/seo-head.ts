@@ -27,7 +27,12 @@ export function seoMeta(page: SeoPageData): SeoMetaEntry[] {
       "@type": "BreadcrumbList",
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "Home", item: `${SITE}/` },
-        { "@type": "ListItem", position: 2, name: page.breadcrumbName, item: `${SITE}${page.path}` },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: page.breadcrumbName,
+          item: `${SITE}${page.path}`,
+        },
       ],
     },
   ];
