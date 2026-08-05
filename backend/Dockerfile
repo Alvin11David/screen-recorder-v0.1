@@ -25,6 +25,6 @@ USER app
 EXPOSE 8080
 
 HEALTHCHECK --interval=15s --timeout=3s --start-period=40s --retries=3 \
-    CMD sh -c 'exec 3<>/dev/tcp/127.0.0.1/8080 && printf "GET /actuator/health HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n" >&3 && cat <&3 >/dev/null'
+    CMD bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080 && printf "GET /actuator/health HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n" >&3 && cat <&3 >/dev/null'
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
