@@ -104,7 +104,9 @@ export function SeoLandingLayout({
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15 text-primary">
                     <f.icon className="h-5 w-5" />
                   </div>
-                  <h3 className="mt-4 font-display text-base font-semibold text-white">{f.title}</h3>
+                  <h3 className="mt-4 font-display text-base font-semibold text-white">
+                    {f.title}
+                  </h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{f.text}</p>
                 </div>
               ))}
@@ -120,11 +122,16 @@ export function SeoLandingLayout({
             </h2>
             <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
               {steps.map((s, i) => (
-                <div key={s.title} className="relative rounded-2xl border border-white/5 bg-white/[0.02] p-6">
+                <div
+                  key={s.title}
+                  className="relative rounded-2xl border border-white/5 bg-white/[0.02] p-6"
+                >
                   <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-primary font-display text-sm font-bold text-primary-foreground">
                     {i + 1}
                   </span>
-                  <h3 className="mt-4 font-display text-base font-semibold text-white">{s.title}</h3>
+                  <h3 className="mt-4 font-display text-base font-semibold text-white">
+                    {s.title}
+                  </h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.text}</p>
                 </div>
               ))}
@@ -140,14 +147,18 @@ export function SeoLandingLayout({
             </h2>
             <div className="mt-8 space-y-3">
               {faqs.map((f) => (
-                <details
-                  key={f.q}
-                  className="glass-card group rounded-2xl px-6 py-5 open:pb-6"
-                >
+                <details key={f.q} className="glass-card group rounded-2xl px-6 py-5 open:pb-6">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left font-display text-sm font-semibold text-white [&::-webkit-details-marker]:hidden">
                     {f.q}
                     <span className="shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-45">
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                      >
                         <path d="M8 2v12M2 8h12" strokeLinecap="round" />
                       </svg>
                     </span>
@@ -175,7 +186,9 @@ export function SeoLandingLayout({
                   <h3 className="font-display text-base font-semibold text-white group-hover:text-primary transition-colors">
                     {r.name}
                   </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{r.description}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {r.description}
+                  </p>
                 </Link>
               ))}
             </div>
@@ -190,8 +203,8 @@ export function SeoLandingLayout({
               Start recording in seconds
             </h2>
             <p className="relative mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-              Open ScreenFlow, hit record, and capture your screen in up to 4K. Free forever — no account
-              needed, everything stays on your device.
+              Open ScreenFlow, hit record, and capture your screen in up to 4K. Free forever — no
+              account needed, everything stays on your device.
             </p>
             <Link
               to={ctaTo}
@@ -218,16 +231,27 @@ function SeoNav() {
               <circle cx="12" cy="12" r="2" fill="oklch(0.15 0.025 264)" />
             </svg>
           </span>
-          <span className="font-display text-base font-bold tracking-tight text-white">ScreenFlow</span>
+          <span className="font-display text-base font-bold tracking-tight text-white">
+            ScreenFlow
+          </span>
         </Link>
         <nav className="hidden items-center gap-1 md:flex">
-          <Link to="/" className="rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-white">
+          <Link
+            to="/"
+            className="rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-white"
+          >
             Home
           </Link>
-          <Link to="/screen-recorder" className="rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-white">
+          <Link
+            to="/screen-recorder"
+            className="rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-white"
+          >
             Recorder
           </Link>
-          <Link to="/guides/how-to-record-your-screen" className="rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-white">
+          <Link
+            to="/guides/how-to-record-your-screen"
+            className="rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-white"
+          >
             Guides
           </Link>
         </nav>

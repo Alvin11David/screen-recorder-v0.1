@@ -27,20 +27,27 @@ export function SeoFooter() {
                   <circle cx="12" cy="12" r="2" fill="oklch(0.15 0.025 264)" />
                 </svg>
               </span>
-              <span className="font-display text-sm font-bold tracking-tight text-white">ScreenFlow</span>
+              <span className="font-display text-sm font-bold tracking-tight text-white">
+                ScreenFlow
+              </span>
             </div>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">
-              Record your screen, webcam, and audio in up to 4K directly in the browser. No installs, no
-              watermarks, no data leaving your machine.
+              Record your screen, webcam, and audio in up to 4K directly in the browser. No
+              installs, no watermarks, no data leaving your machine.
             </p>
           </div>
 
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-white/70">Recorders</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-white/70">
+              Recorders
+            </h3>
             <ul className="mt-4 space-y-2.5">
               {EXPLORE_LINKS.map((l) => (
                 <li key={l.path}>
-                  <Link to={l.path} className="text-sm text-muted-foreground transition-colors hover:text-primary">
+                  <Link
+                    to={l.path}
+                    className="text-sm text-muted-foreground transition-colors hover:text-primary"
+                  >
                     {l.name}
                   </Link>
                 </li>
@@ -53,13 +60,19 @@ export function SeoFooter() {
             <ul className="mt-4 space-y-2.5">
               {GUIDE_LINKS.map((l) => (
                 <li key={l.path}>
-                  <Link to={l.path} className="text-sm text-muted-foreground transition-colors hover:text-primary">
+                  <Link
+                    to={l.path}
+                    className="text-sm text-muted-foreground transition-colors hover:text-primary"
+                  >
                     {l.name}
                   </Link>
                 </li>
               ))}
               <li>
-                <Link to="/" className="text-sm text-muted-foreground transition-colors hover:text-primary">
+                <Link
+                  to="/"
+                  className="text-sm text-muted-foreground transition-colors hover:text-primary"
+                >
                   Start Recording
                 </Link>
               </li>
