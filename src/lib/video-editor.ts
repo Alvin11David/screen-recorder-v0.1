@@ -399,5 +399,6 @@ export async function processWithEffects(
     };
 
     requestAnimationFrame(tick);
+    }
   });
 }
