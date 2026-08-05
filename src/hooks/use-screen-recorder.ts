@@ -1026,7 +1026,9 @@ export function useScreenRecorder() {
     return () => {
       if (countdownRef.current) clearInterval(countdownRef.current);
       clearTimer();
-      recorderRef.current?.state !== "inactive" && recorderRef.current?.stop();
+      if (recorderRef.current && recorderRef.current.state !== "inactive") {
+        recorderRef.current.stop();
+      }
       stream?.getTracks().forEach((t) => t.stop());
       cameraStream?.getTracks().forEach((t) => t.stop());
       pendingStreamRef.current?.getTracks().forEach((t) => t.stop());
