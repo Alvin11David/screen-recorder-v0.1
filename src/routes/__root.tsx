@@ -75,45 +75,69 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "ScreenFlow — High-Quality Browser Screen Recorder" },
-      {
-        name: "description",
-        content:
-          "Record your screen in stunning HD, Full HD and 4K directly in your browser and save it locally. No installs, no watermarks.",
-      },
-      { name: "author", content: "ScreenFlow" },
-      { property: "og:title", content: "ScreenFlow" },
-      {
-        property: "og:description",
-        content: "High-quality browser screen recording with local saving.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "theme-color", content: "#0f0f1a" },
-      { name: "apple-mobile-web-app-capable", content: "yes" },
-      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-      { name: "mobile-web-app-capable", content: "yes" },
-    ],
-    links: [
-      { rel: "manifest", href: "/manifest.webmanifest" },
-      { rel: "apple-touch-icon", href: "/pwa-192x192.png" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Space+Grotesk:wght@500;600;700&display=swap",
-      },
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
-  }),
+  head: ({ match }) => {
+    const siteUrl = "https://screenflow26.netlify.app";
+    const canonicalUrl = `${siteUrl}${match.pathname === "/" ? "/" : match.pathname.replace(/\/$/, "")}`;
+    const ogImage = `${siteUrl}/og-image.png`;
+
+    return {
+      meta: [
+        { charSet: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { title: "ScreenFlow — High-Quality Browser Screen Recorder" },
+        {
+          name: "description",
+          content:
+            "Record your screen in stunning HD, Full HD and 4K directly in your browser and save it locally. No installs, no watermarks.",
+        },
+        { name: "author", content: "ScreenFlow" },
+        { property: "og:title", content: "ScreenFlow — Record Your Screen in 4K" },
+        {
+          property: "og:description",
+          content:
+            "Record your screen in HD, Full HD and 4K directly in your browser and save it locally. No installs, no watermarks.",
+        },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: canonicalUrl },
+        { property: "og:image", content: ogImage },
+        { property: "og:image:width", content: "1200" },
+        { property: "og:image:height", content: "630" },
+        { property: "og:image:alt", content: "ScreenFlow — Record your screen in 4K" },
+        { property: "og:site_name", content: "ScreenFlow" },
+        { property: "og:locale", content: "en_US" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: "ScreenFlow — Record Your Screen in 4K" },
+        {
+          name: "twitter:description",
+          content:
+            "Record your screen in HD, Full HD and 4K directly in your browser and save it locally. No installs, no watermarks.",
+        },
+        { name: "twitter:image", content: ogImage },
+        { name: "twitter:site", content: "@ScreenFlow" },
+        { name: "theme-color", content: "#0f0f1a" },
+        { name: "apple-mobile-web-app-capable", content: "yes" },
+        { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+        { name: "mobile-web-app-capable", content: "yes" },
+      ],
+      links: [
+        { rel: "canonical", href: canonicalUrl },
+        { rel: "manifest", href: "/manifest.webmanifest" },
+        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+        { rel: "icon", type: "image/png", sizes: "192x192", href: "/pwa-192x192.png" },
+        { rel: "apple-touch-icon", href: "/pwa-192x192.png" },
+        { rel: "preconnect", href: "https://fonts.googleapis.com" },
+        { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Space+Grotesk:wght@500;600;700&display=swap",
+        },
+        {
+          rel: "stylesheet",
+          href: appCss,
+        },
+      ],
+    };
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
