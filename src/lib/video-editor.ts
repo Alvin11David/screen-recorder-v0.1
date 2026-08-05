@@ -281,7 +281,6 @@ export async function processWithEffects(
         cleanupUrls.push(musicUrl);
         audioEl.src = musicUrl;
         audioEl.loop = false;
-        audioEl.playsInline = true;
         audioEl.volume = 1;
         const source = audioCtx.createMediaElementSource(audioEl);
         const gain = audioCtx.createGain();
