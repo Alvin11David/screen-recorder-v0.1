@@ -2,19 +2,48 @@
 
 import { useEffect, useRef } from "react";
 
+interface ThreeScene {
+  add: (object: unknown) => void;
+}
+
+interface ThreeRenderer {
+  domElement: HTMLCanvasElement;
+  setPixelRatio: (ratio: number) => void;
+  setSize: (width: number, height: number) => void;
+  dispose: () => void;
+  render: (scene: ThreeScene, camera: { position: { z: number } }) => void;
+}
+
+interface ThreeUniforms {
+  time: { type: string; value: number };
+  resolution: { type: string; value: { x: number; y: number } };
+}
+
 declare global {
   interface Window {
-    THREE: any;
+    THREE: {
+      Camera: new () => { position: { z: number } };
+      Scene: new () => ThreeScene;
+      PlaneBufferGeometry: new (width: number, height: number) => unknown;
+      Vector2: new (x?: number, y?: number) => { x: number; y: number };
+      ShaderMaterial: new (options: {
+        uniforms: ThreeUniforms;
+        vertexShader: string;
+        fragmentShader: string;
+      }) => unknown;
+      Mesh: new (geometry: unknown, material: unknown) => { position: { z: number } };
+      WebGLRenderer: new (options: { antialias: boolean }) => ThreeRenderer;
+    };
   }
 }
 
 export function ShaderAnimation({ className }: { className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<{
-    camera: any;
-    scene: any;
-    renderer: any;
-    uniforms: any;
+    camera: { position: { z: number } } | null;
+    scene: ThreeScene | null;
+    renderer: ThreeRenderer | null;
+    uniforms: ThreeUniforms | null;
     animationId: number | null;
   }>({
     camera: null,
