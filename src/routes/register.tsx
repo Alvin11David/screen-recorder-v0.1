@@ -10,6 +10,7 @@ export const Route = createFileRoute("/register")({
     meta: [
       { title: "Create account — ScreenFlow" },
       { name: "description", content: "Create your ScreenFlow account." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: RegisterPage,
