@@ -10,6 +10,7 @@ export const Route = createFileRoute("/login")({
     meta: [
       { title: "Sign in — ScreenFlow" },
       { name: "description", content: "Sign in to your ScreenFlow account." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: LoginPage,
