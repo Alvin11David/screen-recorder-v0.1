@@ -2,6 +2,7 @@ package com.screencapture.security;
 
 import com.screencapture.repository.UserRepository;
 import com.screencapture.service.JwtService;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
