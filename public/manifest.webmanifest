@@ -1,11 +1,6 @@
 {
-<<<<<<< HEAD
   "name": "ScreenFlow",
   "short_name": "ScreenFlow",
-=======
-  "name": "ScreenCapture Pro",
-  "short_name": "ScreenCap Pro",
->>>>>>> e236b7fff10a3818b80b05695781cedcdbb3e201
   "description": "Record your screen in HD, Full HD and 4K directly from the browser. No installs, no watermarks, no data leaving your machine.",
   "start_url": "/",
   "scope": "/",
@@ -48,7 +43,7 @@
     {
       "name": "Start Recording",
       "short_name": "Record",
-      "description": "Open ScreenCapture Pro and start recording immediately",
+      "description": "Open ScreenFlow and start recording immediately",
       "url": "/?action=record",
       "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
     }
@@ -59,14 +54,14 @@
       "sizes": "512x512",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "ScreenCapture Pro — Record your screen in 4K"
+      "label": "ScreenFlow — Record your screen in 4K"
     },
     {
       "src": "/pwa-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "ScreenCapture Pro on mobile"
+      "label": "ScreenFlow on mobile"
     }
   ],
   "prefer_related_applications": false
