@@ -6,7 +6,7 @@ WORKDIR /home/gradle/app
 
 COPY --chown=gradle:gradle . .
 
-RUN --mount=type=cache,target=/home/gradle/.gradle/caches \
+RUN --mount=type=cache,id=gradle-caches,target=/home/gradle/.gradle/caches \
     gradle bootJar --no-daemon -x test -Dorg.gradle.console=plain
 
 # ---- Runtime stage ----
