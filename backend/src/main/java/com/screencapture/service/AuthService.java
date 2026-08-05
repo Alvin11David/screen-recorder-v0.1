@@ -166,20 +166,15 @@ public class AuthService {
             body.put("client_secret", githubClientSecret);
             body.put("code", code);
 
-            var request = java.net.HttpURLConnection.class.cast(
-                    new java.net.URL("https://github.com/login/oauth/access_token").openConnection()
-            );
-            request.setRequestMethod("POST");
-            request.setRequestProperty("Content-Type", "application/json");
-            request.setRequestProperty("Accept", "application/json");
-            request.setDoOutput(true);
-            try (var os = request.getOutputStream()) {
-                os.write(new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsBytes(body));
-            }
+            var request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://github.com/login/oauth/access_token"))
+                    .timeout(Duration.ofMillis(GITHUB_TIMEOUT_MS))
+                    .header("Content-Type", "application/json")
+                    .header("Accept", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(body)))
+                    .build();
 
-            try (var is = request.getInputStream()) {
-                return new com.fasterxml.jackson.databind.ObjectMapper().readValue(is, Map.class);
-            }
+            return objectMapper.readValue(send(request), Map.class);
         } catch (Exception e) {
             throw new RuntimeException("Failed to exchange GitHub code", e);
         }
@@ -188,14 +183,16 @@ public class AuthService {
     @SuppressWarnings("unchecked")
     private Map<String, Object> fetchGitHubUser(String accessToken) {
         try {
-            var request = java.net.HttpURLConnection.class.cast(
-                    new java.net.URL("https://api.github.com/user").openConnection()
-            );
-            request.setRequestProperty("Authorization", "Bearer " + accessToken);
-            request.setRequestProperty("Accept", "application/json");
-            try (var is = request.getInputStream()) {
-                return new com.fasterxml.jackson.databind.ObjectMapper().readValue(is, Map.class);
-            }
+            var request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://api.github.com/user"))
+                    .timeout(Duration.ofMillis(GITHUB_TIMEOUT_MS))
+                    .header("Authorization", "Bearer " + accessToken)
+                    .header("Accept", "application/json")
+                    .header("User-Agent", "ScreenFlow-Backend")
+                    .GET()
+                    .build();
+
+            return objectMapper.readValue(send(request), Map.class);
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch GitHub user", e);
         }
@@ -203,27 +200,36 @@ public class AuthService {
 
     private String fetchPrimaryGitHubEmail(String accessToken) {
         try {
-            var request = java.net.HttpURLConnection.class.cast(
-                    new java.net.URL("https://api.github.com/user/emails").openConnection()
-            );
-            request.setRequestProperty("Authorization", "Bearer " + accessToken);
-            request.setRequestProperty("Accept", "application/json");
-            try (var is = request.getInputStream()) {
-                var mapper = new com.fasterxml.jackson.databind.ObjectMapper();
-                var emails = mapper.readValue(is, java.util.List.class);
-                for (var item : emails) {
-                    var email = (Map<String, Object>) item;
-                    if (Boolean.TRUE.equals(email.get("primary"))) {
-                        return (String) email.get("email");
-                    }
+            var request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://api.github.com/user/emails"))
+                    .timeout(Duration.ofMillis(GITHUB_TIMEOUT_MS))
+                    .header("Authorization", "Bearer " + accessToken)
+                    .header("Accept", "application/json")
+                    .header("User-Agent", "ScreenFlow-Backend")
+                    .GET()
+                    .build();
+
+            var emails = objectMapper.readValue(send(request), java.util.List.class);
+            for (var item : emails) {
+                var email = (Map<String, Object>) item;
+                if (Boolean.TRUE.equals(email.get("primary"))) {
+                    return (String) email.get("email");
                 }
-                if (!emails.isEmpty()) {
-                    return (String) ((Map<String, Object>) emails.get(0)).get("email");
-                }
+            }
+            if (!emails.isEmpty()) {
+                return (String) ((Map<String, Object>) emails.get(0)).get("email");
             }
         } catch (Exception e) {
             // fall through
         }
         return null;
+    }
+
+    private String send(HttpRequest request) throws Exception {
+        var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() < 200 || response.statusCode() >= 300) {
+            throw new IllegalStateException("GitHub API returned HTTP " + response.statusCode());
+        }
+        return response.body();
     }
 }
