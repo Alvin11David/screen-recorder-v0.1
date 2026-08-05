@@ -39,12 +39,11 @@ public class JwtService {
     }
 
     public boolean isValid(String token) {
-        try {
-            parseClaims(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        return parseClaimsOrNull(token) != null;
+    }
+
+    public Claims extractClaimsOrNull(String token) {
+        return parseClaimsOrNull(token);
     }
 
     private Claims parseClaims(String token) {
@@ -53,5 +52,13 @@ public class JwtService {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+
+    private Claims parseClaimsOrNull(String token) {
+        try {
+            return parseClaims(token);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
