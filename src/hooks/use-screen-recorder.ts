@@ -531,7 +531,7 @@ export function useScreenRecorder() {
         setStatus("idle");
       }
     },
-    [includeAudio, quality, includeCamera, cameraStream, startTimer, stopComposite],
+    [includeAudio, quality, includeCamera, cameraStream, startTimer, stopComposite, overlayAnnotations, setupAnnotationCanvas],
   );
 
   const confirmCrop = useCallback(
@@ -749,7 +749,7 @@ export function useScreenRecorder() {
       setStatus("recording");
       startTimer();
     },
-    [includeAudio, includeCamera, cameraStream, startTimer, stopComposite],
+    [includeAudio, includeCamera, cameraStream, startTimer, stopComposite, overlayAnnotations, setupAnnotationCanvas],
   );
 
   const cancelCrop = useCallback(() => {
