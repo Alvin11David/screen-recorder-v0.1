@@ -74,10 +74,7 @@ export function CursorFX({
   const isWhiteboard = whiteboardActive;
 
   return (
-    <div
-      className="fixed inset-0 z-[9999] pointer-events-none"
-      aria-hidden="true"
-    >
+    <div className="fixed inset-0 z-[9999] pointer-events-none" aria-hidden="true">
       {/* Trail dots */}
       {isWhiteboard &&
         trailRef.current.slice(1).map((t, i) => (

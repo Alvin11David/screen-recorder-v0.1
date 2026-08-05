@@ -74,7 +74,6 @@ export function PwaInstallPrompt() {
           <div className="absolute -inset-4 rounded-3xl bg-[radial-gradient(ellipse,oklch(0.74_0.15_222/0.15)_0%,transparent_70%)] blur-xl pointer-events-none" />
 
           <div className="relative rounded-2xl bg-[oklch(0.14_0.025_264/0.95)] backdrop-blur-2xl ring-1 ring-white/[0.1] shadow-[0_24px_64px_-16px_oklch(0_0_0/0.7),0_0_0_1px_oklch(1_0_0/0.05)]">
-
             <div className="h-[2px] w-full rounded-t-2xl bg-gradient-to-r from-transparent via-[oklch(0.74_0.15_222)] to-transparent opacity-60" />
 
             <div className="p-5">
@@ -84,12 +83,8 @@ export function PwaInstallPrompt() {
                     <Download className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-white leading-tight">
-                      Install ScreenFlow
-                    </p>
-                    <p className="text-[11px] text-white/40 mt-0.5">
-                      Add to your desktop
-                    </p>
+                    <p className="text-sm font-bold text-white leading-tight">Install ScreenFlow</p>
+                    <p className="text-[11px] text-white/40 mt-0.5">Add to your desktop</p>
                   </div>
                 </div>
                 <button

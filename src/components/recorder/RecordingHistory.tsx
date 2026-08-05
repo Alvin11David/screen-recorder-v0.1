@@ -51,8 +51,18 @@ interface RecordingHistoryProps {
 }
 
 const STATS = [
-  { icon: Clock, key: "durationSeconds" as const, label: "Duration", fmt: (v: number) => formatTimer(v) },
-  { icon: Monitor, key: "width" as const, label: "Resolution", fmt: (_: number, e: HistoryEntry) => formatResolution(e.width, e.height) },
+  {
+    icon: Clock,
+    key: "durationSeconds" as const,
+    label: "Duration",
+    fmt: (v: number) => formatTimer(v),
+  },
+  {
+    icon: Monitor,
+    key: "width" as const,
+    label: "Resolution",
+    fmt: (_: number, e: HistoryEntry) => formatResolution(e.width, e.height),
+  },
   { icon: HardDrive, key: "sizeBytes" as const, label: "Size", fmt: (v: number) => formatBytes(v) },
 ];
 
@@ -68,11 +78,14 @@ export function RecordingHistory({ open, onClose }: RecordingHistoryProps) {
     setEntries([]);
   }, []);
 
-  const deleteEntry = useCallback((id: string) => {
-    const updated = entries.filter((e) => e.id !== id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    setEntries(updated);
-  }, [entries]);
+  const deleteEntry = useCallback(
+    (id: string) => {
+      const updated = entries.filter((e) => e.id !== id);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      setEntries(updated);
+    },
+    [entries],
+  );
 
   return (
     <AnimatePresence>
@@ -98,7 +111,6 @@ export function RecordingHistory({ open, onClose }: RecordingHistoryProps) {
             className="fixed right-0 top-0 bottom-0 z-[9971] flex w-full max-w-sm flex-col"
           >
             <div className="relative flex h-full flex-col overflow-hidden bg-[oklch(0.12_0.025_264/0.97)] backdrop-blur-2xl shadow-2xl ring-1 ring-white/[0.07]">
-
               {/* Header */}
               <div className="flex items-center justify-between border-b border-white/[0.05] px-5 py-4">
                 <div className="flex items-center gap-3">
@@ -106,8 +118,12 @@ export function RecordingHistory({ open, onClose }: RecordingHistoryProps) {
                     <History className="h-4 w-4 text-white/50" />
                   </div>
                   <div>
-                    <h2 className="font-display text-sm font-semibold text-white">Recording History</h2>
-                    <p className="text-[11px] text-white/30">{entries.length} session{entries.length !== 1 ? "s" : ""}</p>
+                    <h2 className="font-display text-sm font-semibold text-white">
+                      Recording History
+                    </h2>
+                    <p className="text-[11px] text-white/30">
+                      {entries.length} session{entries.length !== 1 ? "s" : ""}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -137,7 +153,9 @@ export function RecordingHistory({ open, onClose }: RecordingHistoryProps) {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-white/30">No recordings yet</p>
-                      <p className="mt-1 text-xs text-white/15">Your recording sessions will appear here</p>
+                      <p className="mt-1 text-xs text-white/15">
+                        Your recording sessions will appear here
+                      </p>
                     </div>
                   </div>
                 ) : (
@@ -180,7 +198,9 @@ export function RecordingHistory({ open, onClose }: RecordingHistoryProps) {
                           <div key={label} className="rounded-lg bg-white/[0.03] p-2">
                             <div className="flex items-center gap-1 mb-0.5">
                               <Icon className="h-2.5 w-2.5 text-white/20" />
-                              <span className="text-[9px] uppercase tracking-wider text-white/20">{label}</span>
+                              <span className="text-[9px] uppercase tracking-wider text-white/20">
+                                {label}
+                              </span>
                             </div>
                             <p className="text-[11px] font-semibold text-white/60">
                               {key === "width" ? fmt(entry[key], entry) : fmt(entry[key])}
@@ -189,7 +209,11 @@ export function RecordingHistory({ open, onClose }: RecordingHistoryProps) {
                         ))}
                       </div>
                       <p className="mt-2 text-[10px] text-white/25 font-mono uppercase">
-                        {entry.mimeType.includes("vp9") ? "VP9" : entry.mimeType.includes("vp8") ? "VP8" : "WebM"}
+                        {entry.mimeType.includes("vp9")
+                          ? "VP9"
+                          : entry.mimeType.includes("vp8")
+                            ? "VP8"
+                            : "WebM"}
                         {" · "}WebM container
                       </p>
                     </motion.div>

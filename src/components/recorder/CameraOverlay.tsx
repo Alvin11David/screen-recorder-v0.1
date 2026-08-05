@@ -99,19 +99,13 @@ export function CameraOverlay({
               ref={videoRef}
               muted
               playsInline
-              className={cn(
-                "h-full w-full object-cover",
-                settings.mirrored && "scale-x-[-1]",
-              )}
+              className={cn("h-full w-full object-cover", settings.mirrored && "scale-x-[-1]")}
             />
           </div>
 
           {/* Border ring */}
           <div
-            className={cn(
-              "pointer-events-none absolute inset-0",
-              shapeClipClass[settings.shape],
-            )}
+            className={cn("pointer-events-none absolute inset-0", shapeClipClass[settings.shape])}
             style={{
               boxShadow: `0 0 0 ${settings.borderWidth}px ${settings.borderColor}, 0 0 ${settings.shadowBlur}px rgba(255,255,255,0.2)`,
             }}
@@ -138,7 +132,15 @@ export function CameraOverlay({
             className="flex h-6 w-6 items-center justify-center rounded-full bg-black/50 text-white/60 backdrop-blur-sm ring-1 ring-white/[0.1] transition-all hover:bg-white/[0.1] hover:text-white/90"
             title="Camera settings"
           >
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            >
               <circle cx="8" cy="8" r="2.5" />
               <path d="M8 2v1.5M8 12.5V14M14 8h-1.5M3.5 8H2M12.1 3.9l-1.1 1.1M5 11l-1.1 1.1M12.1 12.1l-1.1-1.1M5 5L3.9 3.9" />
             </svg>
@@ -171,17 +173,53 @@ export function CameraOverlay({
 
             {/* Shape */}
             <div className="flex items-center gap-1">
-              {([
-                { value: "circle" as CameraShape, label: "Circle", icon: (
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.2" /></svg>
-                )},
-                { value: "rounded" as CameraShape, label: "Rounded", icon: (
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="1.5" width="11" height="11" rx="3" stroke="currentColor" strokeWidth="1.2" /></svg>
-                )},
-                { value: "square" as CameraShape, label: "Square", icon: (
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="1.5" width="11" height="11" rx="0.5" stroke="currentColor" strokeWidth="1.2" /></svg>
-                )},
-              ] as const).map((s) => (
+              {(
+                [
+                  {
+                    value: "circle" as CameraShape,
+                    label: "Circle",
+                    icon: (
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.2" />
+                      </svg>
+                    ),
+                  },
+                  {
+                    value: "rounded" as CameraShape,
+                    label: "Rounded",
+                    icon: (
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <rect
+                          x="1.5"
+                          y="1.5"
+                          width="11"
+                          height="11"
+                          rx="3"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                        />
+                      </svg>
+                    ),
+                  },
+                  {
+                    value: "square" as CameraShape,
+                    label: "Square",
+                    icon: (
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <rect
+                          x="1.5"
+                          y="1.5"
+                          width="11"
+                          height="11"
+                          rx="0.5"
+                          stroke="currentColor"
+                          strokeWidth="1.2"
+                        />
+                      </svg>
+                    ),
+                  },
+                ] as const
+              ).map((s) => (
                 <button
                   key={s.value}
                   type="button"
@@ -210,7 +248,9 @@ export function CameraOverlay({
                 max={6}
                 step={1}
                 value={settings.borderWidth}
-                onChange={(e) => onSettingsChange({ ...settings, borderWidth: Number(e.target.value) })}
+                onChange={(e) =>
+                  onSettingsChange({ ...settings, borderWidth: Number(e.target.value) })
+                }
                 className="w-16 h-1 accent-white/50"
               />
             </div>
@@ -226,7 +266,9 @@ export function CameraOverlay({
                 max={40}
                 step={2}
                 value={settings.shadowBlur}
-                onChange={(e) => onSettingsChange({ ...settings, shadowBlur: Number(e.target.value) })}
+                onChange={(e) =>
+                  onSettingsChange({ ...settings, shadowBlur: Number(e.target.value) })
+                }
                 className="w-16 h-1 accent-white/50"
               />
             </div>

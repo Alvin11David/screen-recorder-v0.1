@@ -630,9 +630,7 @@ export function DrawingOverlay({
           <textarea
             autoFocus
             value={textInput.value}
-            onChange={(e) =>
-              setTextInput({ ...textInput, value: e.target.value })
-            }
+            onChange={(e) => setTextInput({ ...textInput, value: e.target.value })}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();

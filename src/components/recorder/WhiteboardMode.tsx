@@ -156,10 +156,10 @@ function CursorPreview({
           />
         )}
 
-        <div
-          className="absolute left-1/2 top-full mt-2 -translate-x-1/2 rounded-md bg-black/70 px-1.5 py-0.5 ring-1 ring-white/[0.08]"
-        >
-          <span className="text-[10px] font-medium text-white/70 whitespace-nowrap">{toolLabel}</span>
+        <div className="absolute left-1/2 top-full mt-2 -translate-x-1/2 rounded-md bg-black/70 px-1.5 py-0.5 ring-1 ring-white/[0.08]">
+          <span className="text-[10px] font-medium text-white/70 whitespace-nowrap">
+            {toolLabel}
+          </span>
         </div>
       </div>
     </div>
@@ -336,76 +336,161 @@ export function WhiteboardMode({ active, onClose }: WhiteboardModeProps) {
   }, []);
 
   // ── Pointer handlers ──
-  const handlePointerDown = useCallback((e: React.PointerEvent) => {
-    e.preventDefault();
-    const canvas = canvasRef.current;
-    const ctx = ctxRef.current;
-    if (!canvas || !ctx) return;
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      e.preventDefault();
+      const canvas = canvasRef.current;
+      const ctx = ctxRef.current;
+      if (!canvas || !ctx) return;
 
-    const t = toolRef.current;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+      const t = toolRef.current;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
 
-    if (t === "text") {
-      setTextInput({ x, y, value: "" });
-      return;
-    }
+      if (t === "text") {
+        setTextInput({ x, y, value: "" });
+        return;
+      }
 
-    drawing.current = true;
-    startPos.current = { x, y };
-    lastPos.current = { x, y };
+      drawing.current = true;
+      startPos.current = { x, y };
+      lastPos.current = { x, y };
 
-    if (t === "pen" || t === "highlighter" || t === "eraser") {
-      saveSnapshot();
-      getCtxProps(ctx);
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-    }
-  }, [saveSnapshot, getCtxProps]);
+      if (t === "pen" || t === "highlighter" || t === "eraser") {
+        saveSnapshot();
+        getCtxProps(ctx);
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+      }
+    },
+    [saveSnapshot, getCtxProps],
+  );
 
-  const handlePointerMove = useCallback((e: React.PointerEvent) => {
-    if (!drawing.current) return;
-    e.preventDefault();
-    const canvas = canvasRef.current;
-    const ctx = ctxRef.current;
-    if (!canvas || !ctx) return;
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      if (!drawing.current) return;
+      e.preventDefault();
+      const canvas = canvasRef.current;
+      const ctx = ctxRef.current;
+      if (!canvas || !ctx) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const t = toolRef.current;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const t = toolRef.current;
 
-    if (t === "pen" || t === "highlighter" || t === "eraser") {
-      getCtxProps(ctx);
-      ctx.lineTo(x, y);
-      ctx.stroke();
-    } else {
-      ctx.save();
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      const dpr = window.devicePixelRatio || 1;
-      ctx.scale(dpr, dpr);
-      ctx.restore();
-      ctx.save();
-      getCtxProps(ctx);
-      ctx.globalAlpha = 1;
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
+      if (t === "pen" || t === "highlighter" || t === "eraser") {
+        getCtxProps(ctx);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      } else {
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        const dpr = window.devicePixelRatio || 1;
+        ctx.scale(dpr, dpr);
+        ctx.restore();
+        ctx.save();
+        getCtxProps(ctx);
+        ctx.globalAlpha = 1;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
 
+        const x1 = startPos.current.x;
+        const y1 = startPos.current.y;
+        const sx = sizeRef.current;
+        const c = colorRef.current;
+
+        // Clear and redraw base
+        const dpr2 = window.devicePixelRatio || 1;
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.restore();
+
+        // Redraw everything from undo snapshot + shape preview
+        // We use a simpler approach: clear, redraw from saved state, draw shape
+        const prev = undoStack.current[undoStack.current.length - 1];
+        if (prev) {
+          ctx.putImageData(prev, 0, 0);
+        }
+
+        ctx.save();
+        getCtxProps(ctx);
+        ctx.globalAlpha = 1;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+
+        switch (t) {
+          case "line":
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            break;
+          case "arrow": {
+            const angle = Math.atan2(y - y1, x - x1);
+            const headLen = 12;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(
+              x - headLen * Math.cos(angle - Math.PI / 6),
+              y - headLen * Math.sin(angle - Math.PI / 6),
+            );
+            ctx.moveTo(x, y);
+            ctx.lineTo(
+              x - headLen * Math.cos(angle + Math.PI / 6),
+              y - headLen * Math.sin(angle + Math.PI / 6),
+            );
+            ctx.stroke();
+            break;
+          }
+          case "rect":
+            ctx.strokeRect(Math.min(x1, x), Math.min(y1, y), Math.abs(x - x1), Math.abs(y - y1));
+            break;
+          case "circle": {
+            const cx = (x1 + x) / 2;
+            const cy = (y1 + y) / 2;
+            const rx = Math.abs(x - x1) / 2;
+            const ry = Math.abs(y - y1) / 2;
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            break;
+          }
+        }
+        ctx.restore();
+      }
+
+      lastPos.current = { x, y };
+    },
+    [getCtxProps],
+  );
+
+  const handlePointerUp = useCallback(
+    (e: React.PointerEvent) => {
+      if (!drawing.current) return;
+      drawing.current = false;
+      const canvas = canvasRef.current;
+      const ctx = ctxRef.current;
+      if (!canvas || !ctx) return;
+
+      const t = toolRef.current;
+      if (t === "pen" || t === "highlighter" || t === "eraser") return;
+
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
       const x1 = startPos.current.x;
       const y1 = startPos.current.y;
-      const sx = sizeRef.current;
-      const c = colorRef.current;
 
-      // Clear and redraw base
-      const dpr2 = window.devicePixelRatio || 1;
-      ctx.save();
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.restore();
+      saveSnapshot();
 
-      // Redraw everything from undo snapshot + shape preview
-      // We use a simpler approach: clear, redraw from saved state, draw shape
-      const prev = undoStack.current[undoStack.current.length - 1];
+      // Redraw base
+      const prev = undoStack.current[undoStack.current.length - 2];
       if (prev) {
         ctx.putImageData(prev, 0, 0);
       }
@@ -432,9 +517,15 @@ export function WhiteboardMode({ active, onClose }: WhiteboardModeProps) {
           ctx.stroke();
           ctx.beginPath();
           ctx.moveTo(x, y);
-          ctx.lineTo(x - headLen * Math.cos(angle - Math.PI / 6), y - headLen * Math.sin(angle - Math.PI / 6));
+          ctx.lineTo(
+            x - headLen * Math.cos(angle - Math.PI / 6),
+            y - headLen * Math.sin(angle - Math.PI / 6),
+          );
           ctx.moveTo(x, y);
-          ctx.lineTo(x - headLen * Math.cos(angle + Math.PI / 6), y - headLen * Math.sin(angle + Math.PI / 6));
+          ctx.lineTo(
+            x - headLen * Math.cos(angle + Math.PI / 6),
+            y - headLen * Math.sin(angle + Math.PI / 6),
+          );
           ctx.stroke();
           break;
         }
@@ -453,79 +544,9 @@ export function WhiteboardMode({ active, onClose }: WhiteboardModeProps) {
         }
       }
       ctx.restore();
-    }
-
-    lastPos.current = { x, y };
-  }, [getCtxProps]);
-
-  const handlePointerUp = useCallback((e: React.PointerEvent) => {
-    if (!drawing.current) return;
-    drawing.current = false;
-    const canvas = canvasRef.current;
-    const ctx = ctxRef.current;
-    if (!canvas || !ctx) return;
-
-    const t = toolRef.current;
-    if (t === "pen" || t === "highlighter" || t === "eraser") return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const x1 = startPos.current.x;
-    const y1 = startPos.current.y;
-
-    saveSnapshot();
-
-    // Redraw base
-    const prev = undoStack.current[undoStack.current.length - 2];
-    if (prev) {
-      ctx.putImageData(prev, 0, 0);
-    }
-
-    ctx.save();
-    getCtxProps(ctx);
-    ctx.globalAlpha = 1;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-
-    switch (t) {
-      case "line":
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-        break;
-      case "arrow": {
-        const angle = Math.atan2(y - y1, x - x1);
-        const headLen = 12;
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x - headLen * Math.cos(angle - Math.PI / 6), y - headLen * Math.sin(angle - Math.PI / 6));
-        ctx.moveTo(x, y);
-        ctx.lineTo(x - headLen * Math.cos(angle + Math.PI / 6), y - headLen * Math.sin(angle + Math.PI / 6));
-        ctx.stroke();
-        break;
-      }
-      case "rect":
-        ctx.strokeRect(Math.min(x1, x), Math.min(y1, y), Math.abs(x - x1), Math.abs(y - y1));
-        break;
-      case "circle": {
-        const cx = (x1 + x) / 2;
-        const cy = (y1 + y) / 2;
-        const rx = Math.abs(x - x1) / 2;
-        const ry = Math.abs(y - y1) / 2;
-        ctx.beginPath();
-        ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-        ctx.stroke();
-        break;
-      }
-    }
-    ctx.restore();
-  }, [saveSnapshot, getCtxProps]);
+    },
+    [saveSnapshot, getCtxProps],
+  );
 
   const handleClear = useCallback(() => {
     const canvas = canvasRef.current;
@@ -536,24 +557,27 @@ export function WhiteboardMode({ active, onClose }: WhiteboardModeProps) {
   }, [saveSnapshot]);
 
   // ── Commit text ──
-  const commitText = useCallback((text: string, x: number, y: number) => {
-    if (!text.trim()) return;
-    const canvas = canvasRef.current;
-    const ctx = ctxRef.current;
-    if (!canvas || !ctx) return;
-    saveSnapshot();
-    ctx.save();
-    ctx.font = `${sizeRef.current * 5}px sans-serif`;
-    ctx.fillStyle = colorRef.current;
-    ctx.globalAlpha = 1;
-    ctx.textBaseline = "top";
-    const lines = text.split("\n");
-    const lineH = sizeRef.current * 6;
-    lines.forEach((line, i) => {
-      ctx.fillText(line, x, y + i * lineH);
-    });
-    ctx.restore();
-  }, [saveSnapshot]);
+  const commitText = useCallback(
+    (text: string, x: number, y: number) => {
+      if (!text.trim()) return;
+      const canvas = canvasRef.current;
+      const ctx = ctxRef.current;
+      if (!canvas || !ctx) return;
+      saveSnapshot();
+      ctx.save();
+      ctx.font = `${sizeRef.current * 5}px sans-serif`;
+      ctx.fillStyle = colorRef.current;
+      ctx.globalAlpha = 1;
+      ctx.textBaseline = "top";
+      const lines = text.split("\n");
+      const lineH = sizeRef.current * 6;
+      lines.forEach((line, i) => {
+        ctx.fillText(line, x, y + i * lineH);
+      });
+      ctx.restore();
+    },
+    [saveSnapshot],
+  );
 
   if (!active) return null;
 
@@ -632,9 +656,7 @@ export function WhiteboardMode({ active, onClose }: WhiteboardModeProps) {
                 onClick={() => setBrushSize(s)}
                 className={cn(
                   "flex items-center justify-center rounded-lg transition-all",
-                  brushSize === s
-                    ? "bg-white/[0.1]"
-                    : "hover:bg-white/[0.04]",
+                  brushSize === s ? "bg-white/[0.1]" : "hover:bg-white/[0.04]",
                 )}
                 style={{ width: 20, height: 20 }}
               >

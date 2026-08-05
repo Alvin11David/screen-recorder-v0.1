@@ -131,7 +131,10 @@ export function TeleprompterOverlay({ active, onClose, isRecording }: Teleprompt
 
           {/* Edit / preview toggle */}
           <button
-            onClick={() => { setEditing(!editing); if (editing) reset(); }}
+            onClick={() => {
+              setEditing(!editing);
+              if (editing) reset();
+            }}
             className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
               editing
                 ? "bg-primary/15 text-primary/80 ring-1 ring-primary/25"
@@ -146,13 +149,22 @@ export function TeleprompterOverlay({ active, onClose, isRecording }: Teleprompt
               <div className="h-5 w-px bg-white/[0.08]" />
 
               {/* Scroll controls */}
-              <button onClick={reset} className="flex h-7 w-7 items-center justify-center rounded-lg text-white/30 hover:bg-white/[0.07] hover:text-white/70 transition-all">
+              <button
+                onClick={reset}
+                className="flex h-7 w-7 items-center justify-center rounded-lg text-white/30 hover:bg-white/[0.07] hover:text-white/70 transition-all"
+              >
                 <RotateCcw className="h-3.5 w-3.5" />
               </button>
-              <button onClick={() => nudge("up")} className="flex h-7 w-7 items-center justify-center rounded-lg text-white/30 hover:bg-white/[0.07] hover:text-white/70 transition-all">
+              <button
+                onClick={() => nudge("up")}
+                className="flex h-7 w-7 items-center justify-center rounded-lg text-white/30 hover:bg-white/[0.07] hover:text-white/70 transition-all"
+              >
                 <ChevronUp className="h-4 w-4" />
               </button>
-              <button onClick={() => nudge("down")} className="flex h-7 w-7 items-center justify-center rounded-lg text-white/30 hover:bg-white/[0.07] hover:text-white/70 transition-all">
+              <button
+                onClick={() => nudge("down")}
+                className="flex h-7 w-7 items-center justify-center rounded-lg text-white/30 hover:bg-white/[0.07] hover:text-white/70 transition-all"
+              >
                 <ChevronDown className="h-4 w-4" />
               </button>
               <button
@@ -175,7 +187,11 @@ export function TeleprompterOverlay({ active, onClose, isRecording }: Teleprompt
           <div className="flex items-center gap-2">
             <span className="text-[10px] text-white/25 uppercase tracking-wider">Size</span>
             <input
-              type="range" min={18} max={60} step={2} value={fontSize}
+              type="range"
+              min={18}
+              max={60}
+              step={2}
+              value={fontSize}
               onChange={(e) => setFontSize(Number(e.target.value))}
               className="w-20 h-1 accent-primary/70"
             />
@@ -187,7 +203,11 @@ export function TeleprompterOverlay({ active, onClose, isRecording }: Teleprompt
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-white/25 uppercase tracking-wider">Speed</span>
               <input
-                type="range" min={10} max={120} step={5} value={speed}
+                type="range"
+                min={10}
+                max={120}
+                step={5}
+                value={speed}
                 onChange={(e) => setSpeed(Number(e.target.value))}
                 className="w-20 h-1 accent-primary/70"
               />
@@ -199,7 +219,11 @@ export function TeleprompterOverlay({ active, onClose, isRecording }: Teleprompt
           <div className="flex items-center gap-2 ml-auto">
             <span className="text-[10px] text-white/25 uppercase tracking-wider">Opacity</span>
             <input
-              type="range" min={40} max={100} step={5} value={opacity}
+              type="range"
+              min={40}
+              max={100}
+              step={5}
+              value={opacity}
               onChange={(e) => setOpacity(Number(e.target.value))}
               className="w-16 h-1 accent-primary/70"
             />

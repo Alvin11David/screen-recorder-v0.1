@@ -73,14 +73,15 @@ export function KeyboardShortcutsPanel({ open, onClose }: KeyboardShortcutsPanel
             className="fixed inset-0 z-[9961] flex items-center justify-center p-4 pointer-events-none"
           >
             <div className="pointer-events-auto w-full max-w-lg rounded-2xl bg-[oklch(0.13_0.025_264/0.97)] backdrop-blur-2xl shadow-2xl ring-1 ring-white/[0.08] overflow-hidden">
-
               {/* Header */}
               <div className="flex items-center justify-between border-b border-white/[0.06] px-6 py-4">
                 <div className="flex items-center gap-3">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 ring-1 ring-primary/20">
                     <Keyboard className="h-4 w-4 text-primary/70" />
                   </div>
-                  <h2 className="font-display text-sm font-semibold text-white">Keyboard Shortcuts</h2>
+                  <h2 className="font-display text-sm font-semibold text-white">
+                    Keyboard Shortcuts
+                  </h2>
                 </div>
                 <button
                   onClick={onClose}

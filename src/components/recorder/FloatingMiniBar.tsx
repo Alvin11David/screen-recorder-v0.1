@@ -34,34 +34,39 @@ export function FloatingMiniBar({
 
   // Clean up drag listeners on unmount
   useEffect(() => {
-    return () => { cleanupDragRef.current?.(); };
+    return () => {
+      cleanupDragRef.current?.();
+    };
   }, []);
 
-  const handleDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    setDragging(true);
-    dragStart.current = { mx: e.clientX, my: e.clientY, px: pos.x, py: pos.y };
-    const onMove = (ev: MouseEvent) => {
-      const dx = ((ev.clientX - dragStart.current.mx) / window.innerWidth) * 100;
-      const dy = ((ev.clientY - dragStart.current.my) / window.innerHeight) * 100;
-      setPos({
-        x: Math.max(5, Math.min(95, dragStart.current.px + dx)),
-        y: Math.max(5, Math.min(95, dragStart.current.py + dy)),
-      });
-    };
-    const onUp = () => {
-      setDragging(false);
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
-      cleanupDragRef.current = null;
-    };
-    cleanupDragRef.current = () => {
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
-    };
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
-  }, [pos]);
+  const handleDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      setDragging(true);
+      dragStart.current = { mx: e.clientX, my: e.clientY, px: pos.x, py: pos.y };
+      const onMove = (ev: MouseEvent) => {
+        const dx = ((ev.clientX - dragStart.current.mx) / window.innerWidth) * 100;
+        const dy = ((ev.clientY - dragStart.current.my) / window.innerHeight) * 100;
+        setPos({
+          x: Math.max(5, Math.min(95, dragStart.current.px + dx)),
+          y: Math.max(5, Math.min(95, dragStart.current.py + dy)),
+        });
+      };
+      const onUp = () => {
+        setDragging(false);
+        window.removeEventListener("mousemove", onMove);
+        window.removeEventListener("mouseup", onUp);
+        cleanupDragRef.current = null;
+      };
+      cleanupDragRef.current = () => {
+        window.removeEventListener("mousemove", onMove);
+        window.removeEventListener("mouseup", onUp);
+      };
+      window.addEventListener("mousemove", onMove);
+      window.addEventListener("mouseup", onUp);
+    },
+    [pos],
+  );
 
   if (!visible) return null;
 
@@ -104,7 +109,9 @@ export function FloatingMiniBar({
             onMouseDown={handleDown}
             className={cn(
               "flex h-6 w-6 cursor-grab active:cursor-grabbing items-center justify-center rounded-full transition-colors",
-              isRecording ? "text-red-400/60 hover:text-red-300" : "text-yellow-400/60 hover:text-yellow-300",
+              isRecording
+                ? "text-red-400/60 hover:text-red-300"
+                : "text-yellow-400/60 hover:text-yellow-300",
             )}
             title="Drag to move"
           >
@@ -132,10 +139,12 @@ export function FloatingMiniBar({
           </span>
 
           {/* Timer */}
-          <span className={cn(
-            "font-mono text-sm tabular-nums font-semibold tracking-wider",
-            isRecording ? "text-red-200" : "text-yellow-200",
-          )}>
+          <span
+            className={cn(
+              "font-mono text-sm tabular-nums font-semibold tracking-wider",
+              isRecording ? "text-red-200" : "text-yellow-200",
+            )}
+          >
             {formatTimer(elapsed)}
           </span>
 

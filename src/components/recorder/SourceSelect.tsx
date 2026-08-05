@@ -9,11 +9,22 @@ interface Props {
   disabled?: boolean;
 }
 
-const SOURCES: { id: CaptureSurface; label: string; description: string; icon: typeof Monitor }[] = [
-  { id: "monitor", label: "Entire Screen", description: "Everything on your display", icon: Monitor },
-  { id: "window", label: "Specific Window", description: "A single application", icon: AppWindow },
-  { id: "browser", label: "Browser Tab", description: "One browser tab", icon: Globe },
-];
+const SOURCES: { id: CaptureSurface; label: string; description: string; icon: typeof Monitor }[] =
+  [
+    {
+      id: "monitor",
+      label: "Entire Screen",
+      description: "Everything on your display",
+      icon: Monitor,
+    },
+    {
+      id: "window",
+      label: "Specific Window",
+      description: "A single application",
+      icon: AppWindow,
+    },
+    { id: "browser", label: "Browser Tab", description: "One browser tab", icon: Globe },
+  ];
 
 export function SourceSelect({ value, onChange, onSelect, disabled }: Props) {
   return (
@@ -25,7 +36,10 @@ export function SourceSelect({ value, onChange, onSelect, disabled }: Props) {
             key={id}
             type="button"
             disabled={disabled}
-            onClick={() => { onChange(id); onSelect?.(id); }}
+            onClick={() => {
+              onChange(id);
+              onSelect?.(id);
+            }}
             className={cn(
               "group relative flex flex-col gap-2.5 rounded-xl p-4 text-left transition-all duration-300",
               "bg-background/40 backdrop-blur-sm",

@@ -36,17 +36,25 @@ export function AuthLayout({ title, subtitle, children, footer, background = "sh
           </span>
         </Link>
 
-        <div className="glass-strong card-border-glow w-full rounded-2xl p-7 md:p-9 hero-fade-in-up" style={{ animationDelay: "0.2s" }}>
+        <div
+          className="glass-strong card-border-glow w-full rounded-2xl p-7 md:p-9 hero-fade-in-up"
+          style={{ animationDelay: "0.2s" }}
+        >
           <div className="mb-7 text-center">
             <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-gradient-primary" />
-            <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">{title}</h1>
+            <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
+              {title}
+            </h1>
             <p className="mt-2 text-sm text-muted-foreground/80">{subtitle}</p>
           </div>
 
           {children}
         </div>
 
-        <p className="text-xs text-muted-foreground/70 hero-fade-in-up" style={{ animationDelay: "0.4s" }}>
+        <p
+          className="text-xs text-muted-foreground/70 hero-fade-in-up"
+          style={{ animationDelay: "0.4s" }}
+        >
           {footer}
         </p>
       </div>

@@ -21,9 +21,7 @@ self.addEventListener("activate", (e) => {
   e.waitUntil(
     caches
       .keys()
-      .then((keys) =>
-        Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))),
-      )
+      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
       .then(() => self.clients.claim()),
   );
 });
@@ -35,8 +33,7 @@ self.addEventListener("fetch", (e) => {
   const url = new URL(e.request.url);
   const isSameOrigin = url.origin === self.location.origin;
   const isNavigation = e.request.mode === "navigate";
-  const isAsset =
-    url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|webp|ico|woff2?|ttf)$/);
+  const isAsset = url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|webp|ico|woff2?|ttf)$/);
 
   if (!isSameOrigin) return;
 
@@ -49,9 +46,7 @@ self.addEventListener("fetch", (e) => {
           caches.open(CACHE).then((c) => c.put(e.request, clone));
           return res;
         })
-        .catch(() =>
-          caches.match(OFFLINE_URL).then((cached) => cached || new Response("Offline")),
-        ),
+        .catch(() => caches.match(OFFLINE_URL).then((cached) => cached || new Response("Offline"))),
     );
     return;
   }

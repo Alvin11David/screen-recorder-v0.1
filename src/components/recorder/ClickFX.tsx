@@ -14,7 +14,10 @@ export function ClickFX({ active }: { active: boolean }) {
 
   const handleDown = useCallback((e: MouseEvent) => {
     const id = ++idRef.current;
-    setRipples((prev) => [...prev.slice(-24), { id, x: e.clientX, y: e.clientY, start: performance.now() }]);
+    setRipples((prev) => [
+      ...prev.slice(-24),
+      { id, x: e.clientX, y: e.clientY, start: performance.now() },
+    ]);
   }, []);
 
   useEffect(() => {
@@ -35,10 +38,7 @@ export function ClickFX({ active }: { active: boolean }) {
   if (!active) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-[9999] pointer-events-none"
-      aria-hidden="true"
-    >
+    <div className="fixed inset-0 z-[9999] pointer-events-none" aria-hidden="true">
       {ripples.map((r) => {
         const age = performance.now() - r.start;
         const duration = 600;

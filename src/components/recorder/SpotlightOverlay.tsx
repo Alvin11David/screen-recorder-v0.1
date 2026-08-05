@@ -13,7 +13,13 @@ interface SpotlightOverlayProps {
   onModeChange: (m: SpotlightMode) => void;
 }
 
-export function SpotlightOverlay({ active, spotlightActive, onSpotlightActiveChange, mode, onModeChange }: SpotlightOverlayProps) {
+export function SpotlightOverlay({
+  active,
+  spotlightActive,
+  onSpotlightActiveChange,
+  mode,
+  onModeChange,
+}: SpotlightOverlayProps) {
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [size, setSize] = useState(220);
   const [showHint, setShowHint] = useState(false);
@@ -108,7 +114,8 @@ export function SpotlightOverlay({ active, spotlightActive, onSpotlightActiveCha
               height: size,
               backdropFilter: `url('#zoom-filter')`,
               background: "oklch(0 0 0 / 0.1)",
-              boxShadow: "0 0 0 2px oklch(1 0 0 / 0.2), 0 20px 60px oklch(0 0 0 / 0.5), inset 0 0 0 1px oklch(1 0 0 / 0.1)",
+              boxShadow:
+                "0 0 0 2px oklch(1 0 0 / 0.2), 0 20px 60px oklch(0 0 0 / 0.5), inset 0 0 0 1px oklch(1 0 0 / 0.1)",
             }}
           >
             {/* Zoom crosshair */}
@@ -155,10 +162,14 @@ export function SpotlightOverlay({ active, spotlightActive, onSpotlightActiveCha
             className="fixed top-4 left-1/2 -translate-x-1/2 z-[9995] flex items-center gap-2 rounded-full bg-black/75 px-4 py-2 backdrop-blur-xl ring-1 ring-white/[0.1]"
           >
             <span className="text-[11px] text-white/60">
-              <kbd className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[10px] text-white/50">Alt+S</kbd>
-              {" "}Spotlight ·{" "}
-              <kbd className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[10px] text-white/50">Alt+Z</kbd>
-              {" "}Zoom · scroll to resize
+              <kbd className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[10px] text-white/50">
+                Alt+S
+              </kbd>{" "}
+              Spotlight ·{" "}
+              <kbd className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[10px] text-white/50">
+                Alt+Z
+              </kbd>{" "}
+              Zoom · scroll to resize
             </span>
           </motion.div>
         )}
@@ -167,9 +178,11 @@ export function SpotlightOverlay({ active, spotlightActive, onSpotlightActiveCha
       {/* Status indicator */}
       {spotlightActive && (
         <div className="fixed top-4 right-4 z-[9995] flex items-center gap-2 rounded-full bg-black/70 px-3 py-1.5 backdrop-blur-xl ring-1 ring-white/[0.08]">
-          {isSpotlight
-            ? <Crosshair className="h-3.5 w-3.5 text-primary/70" />
-            : <ZoomIn className="h-3.5 w-3.5 text-primary/70" />}
+          {isSpotlight ? (
+            <Crosshair className="h-3.5 w-3.5 text-primary/70" />
+          ) : (
+            <ZoomIn className="h-3.5 w-3.5 text-primary/70" />
+          )}
           <span className="text-[10px] font-mono text-white/50 uppercase tracking-wider">
             {isSpotlight ? "Spotlight" : "Zoom"} · Alt+{isSpotlight ? "S" : "Z"} to exit
           </span>

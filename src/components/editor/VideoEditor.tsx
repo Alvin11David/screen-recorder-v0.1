@@ -221,11 +221,21 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
     };
     if (rect.width < 16 || rect.height < 16) return;
     setProcessing(true);
-    setProcessingLabel(outputW === vidW && outputH === vidH ? "Cropping video\u2026" : "Resizing video\u2026");
+    setProcessingLabel(
+      outputW === vidW && outputH === vidH ? "Cropping video\u2026" : "Resizing video\u2026",
+    );
     try {
-      const cropped = await cropVideo(blob, rect, rect.width, rect.height, { width: vidW, height: vidH, fps: 30 });
+      const cropped = await cropVideo(blob, rect, rect.width, rect.height, {
+        width: vidW,
+        height: vidH,
+        fps: 30,
+      });
       if (outputW !== rect.width || outputH !== rect.height) {
-        const resized = await resizeVideo(cropped, outputW, outputH, { width: outputW, height: outputH, fps: 30 });
+        const resized = await resizeVideo(cropped, outputW, outputH, {
+          width: outputW,
+          height: outputH,
+          fps: 30,
+        });
         setResultBlob(resized);
       } else {
         setResultBlob(cropped);
@@ -393,7 +403,11 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
                 onClick={togglePlay}
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/[0.04] hover:bg-white/[0.08] transition-all ring-1 ring-white/[0.06]"
               >
-                {playing ? <Pause className="h-3.5 w-3.5 text-white/60" /> : <Play className="h-3.5 w-3.5 text-white/60 ml-0.5" />}
+                {playing ? (
+                  <Pause className="h-3.5 w-3.5 text-white/60" />
+                ) : (
+                  <Play className="h-3.5 w-3.5 text-white/60 ml-0.5" />
+                )}
               </button>
               <input
                 type="range"
@@ -499,9 +513,7 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
 
               <div className="flex items-center justify-between text-xs">
                 <span className="font-mono text-white/40">Start: {formatTime(trimStart)}</span>
-                <span className="font-mono text-white/60">
-                  {formatTime(trimEnd - trimStart)}
-                </span>
+                <span className="font-mono text-white/60">{formatTime(trimEnd - trimStart)}</span>
                 <span className="font-mono text-white/40">End: {formatTime(trimEnd)}</span>
               </div>
 
@@ -537,7 +549,11 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
                 disabled={processing || trimEnd - trimStart < 0.5}
                 className="w-full gap-2"
               >
-                {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Scissors className="h-4 w-4" />}
+                {processing ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Scissors className="h-4 w-4" />
+                )}
                 {processing ? "Processing\u2026" : "Apply Effects"}
               </Button>
             </div>
@@ -601,7 +617,11 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
                   disabled={processing || mergeClips.length < 2}
                   className="flex-1 gap-2"
                 >
-                  {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Layers className="h-4 w-4" />}
+                  {processing ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Layers className="h-4 w-4" />
+                  )}
                   {processing ? "Merging\u2026" : `Merge ${mergeClips.length} clips`}
                 </Button>
               </div>
@@ -640,7 +660,9 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
                               step={0.1}
                               min={0}
                               value={c.start}
-                              onChange={(e) => updateCaption(c.id, { start: Number(e.target.value) })}
+                              onChange={(e) =>
+                                updateCaption(c.id, { start: Number(e.target.value) })
+                              }
                               className="w-20 rounded bg-white/[0.06] px-2 py-1 text-[10px] font-mono text-white/50 outline-none ring-1 ring-white/[0.06]"
                             />
                             <input
@@ -667,7 +689,11 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
                         onClick={() => setEditingCaptionId(editingCaptionId === c.id ? null : c.id)}
                         className="flex h-7 w-7 items-center justify-center rounded text-white/20 hover:text-primary/60 hover:bg-white/[0.06] transition-all"
                       >
-                        {editingCaptionId === c.id ? <Check className="h-3 w-3" /> : <Pencil className="h-3 w-3" />}
+                        {editingCaptionId === c.id ? (
+                          <Check className="h-3 w-3" />
+                        ) : (
+                          <Pencil className="h-3 w-3" />
+                        )}
                       </button>
                       <button
                         onClick={() => removeCaption(c.id)}
@@ -687,7 +713,9 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
                   placeholder="Caption text\u2026"
                   value={newCaptionText}
                   onChange={(e) => setNewCaptionText(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter") addCaption(); }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") addCaption();
+                  }}
                   className="w-full rounded-lg bg-white/[0.04] px-3 py-2 text-sm text-white/70 ring-1 ring-white/[0.06] outline-none placeholder:text-white/15"
                 />
                 <div className="flex items-center gap-2">
@@ -733,7 +761,8 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
             /* ── Music ── */
             <div className="space-y-4">
               <p className="text-xs text-white/30">
-                Add background music to your video. The music plays at normal speed alongside the video.
+                Add background music to your video. The music plays at normal speed alongside the
+                video.
               </p>
 
               {!musicBlob ? (
@@ -823,7 +852,9 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
                     onChange={(e) => setCropX(Number(e.target.value))}
                     className="w-full h-1 accent-primary/60"
                   />
-                  <span className="text-[10px] font-mono text-white/20">{Math.round(cropX * vidW)}px</span>
+                  <span className="text-[10px] font-mono text-white/20">
+                    {Math.round(cropX * vidW)}px
+                  </span>
                 </div>
                 <div>
                   <label className="text-[10px] uppercase tracking-wider text-white/20 mb-1 block">
@@ -838,7 +869,9 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
                     onChange={(e) => setCropY(Number(e.target.value))}
                     className="w-full h-1 accent-primary/60"
                   />
-                  <span className="text-[10px] font-mono text-white/20">{Math.round(cropY * vidH)}px</span>
+                  <span className="text-[10px] font-mono text-white/20">
+                    {Math.round(cropY * vidH)}px
+                  </span>
                 </div>
                 <div>
                   <label className="text-[10px] uppercase tracking-wider text-white/20 mb-1 block">
@@ -857,7 +890,9 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
                     }}
                     className="w-full h-1 accent-primary/60"
                   />
-                  <span className="text-[10px] font-mono text-white/20">{Math.round(cropW * vidW)}px</span>
+                  <span className="text-[10px] font-mono text-white/20">
+                    {Math.round(cropW * vidW)}px
+                  </span>
                 </div>
                 <div>
                   <label className="text-[10px] uppercase tracking-wider text-white/20 mb-1 block">
@@ -876,7 +911,9 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
                     }}
                     className="w-full h-1 accent-primary/60"
                   />
-                  <span className="text-[10px] font-mono text-white/20">{Math.round(cropH * vidH)}px</span>
+                  <span className="text-[10px] font-mono text-white/20">
+                    {Math.round(cropH * vidH)}px
+                  </span>
                 </div>
               </div>
 
@@ -892,7 +929,7 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
                       onClick={() => setAspect(a.w, a.h)}
                       className={cn(
                         "rounded-lg px-3 py-1.5 text-xs font-medium transition-all ring-1",
-                        Math.abs((cropW / cropH) - (a.w / a.h)) < 0.01
+                        Math.abs(cropW / cropH - a.w / a.h) < 0.01
                           ? "bg-primary/15 ring-primary/30 text-primary/80"
                           : "bg-white/[0.03] ring-white/[0.06] text-white/30 hover:text-white/50",
                       )}
@@ -951,7 +988,11 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
                 disabled={processing}
                 className="w-full gap-2"
               >
-                {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Crop className="h-4 w-4" />}
+                {processing ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Crop className="h-4 w-4" />
+                )}
                 {processing ? "Processing\u2026" : "Apply Crop & Resize"}
               </Button>
             </div>

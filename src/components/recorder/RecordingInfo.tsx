@@ -20,7 +20,11 @@ export function RecordingInfo({ result, onReset }: Props) {
 
   const stats = [
     { icon: Clock, label: "Duration", value: formatTimer(result.durationSeconds) },
-    { icon: MonitorPlay, label: "Resolution", value: formatResolution(result.width, result.height) },
+    {
+      icon: MonitorPlay,
+      label: "Resolution",
+      value: formatResolution(result.width, result.height),
+    },
     { icon: HardDrive, label: "File size", value: formatBytes(result.sizeBytes) },
     {
       icon: Calendar,
@@ -66,9 +70,18 @@ export function RecordingInfo({ result, onReset }: Props) {
         >
           <span className="absolute inset-0 -z-10 translate-y-full bg-white/10 transition-transform duration-300 group-hover:translate-y-0" />
           {saveState === "done" ? <Check className="h-4 w-4" /> : <Download className="h-4 w-4" />}
-          {saveState === "done" ? "Saved" : saveState === "saving" ? "Saving\u2026" : "Save Recording"}
+          {saveState === "done"
+            ? "Saved"
+            : saveState === "saving"
+              ? "Saving\u2026"
+              : "Save Recording"}
         </Button>
-        <Button variant="glass" size="lg" onClick={onReset} className="group relative overflow-hidden">
+        <Button
+          variant="glass"
+          size="lg"
+          onClick={onReset}
+          className="group relative overflow-hidden"
+        >
           <span className="absolute inset-0 -z-10 translate-y-full bg-white/5 transition-transform duration-300 group-hover:translate-y-0" />
           <RotateCcw className="h-4 w-4" />
           New Recording
