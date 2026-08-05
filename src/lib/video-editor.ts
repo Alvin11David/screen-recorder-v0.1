@@ -282,12 +282,15 @@ export async function processWithEffects(
   const captionList = options.captions ?? [];
   const hasMusic = !!options.music;
 
-  return new Promise<Blob>(async (resolve, reject) => {
-    let audioTrack: MediaStreamTrack | null = null;
-    let audioCtx: AudioContext | null = null;
-    let audioEl: HTMLAudioElement | null = null;
-    let cleanupUrls: string[] = [];
-    let audioStarted = false;
+  return new Promise<Blob>((resolve, reject) => {
+    run().catch(reject);
+
+    async function run() {
+      let audioTrack: MediaStreamTrack | null = null;
+      let audioCtx: AudioContext | null = null;
+      let audioEl: HTMLAudioElement | null = null;
+      const cleanupUrls: string[] = [];
+      let audioStarted = false;
 
     if (hasMusic && options.music) {
       try {
