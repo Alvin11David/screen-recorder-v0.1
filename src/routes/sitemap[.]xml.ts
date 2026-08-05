@@ -14,12 +14,62 @@ export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {
+        const today = new Date().toISOString().slice(0, 10);
+
         const entries: SitemapEntry[] = [
           {
             path: "/",
-            lastmod: new Date().toISOString().slice(0, 10),
+            lastmod: today,
             changefreq: "weekly",
             priority: "1.0",
+          },
+          {
+            path: "/screen-recorder",
+            lastmod: today,
+            changefreq: "monthly",
+            priority: "0.9",
+          },
+          {
+            path: "/video-recorder",
+            lastmod: today,
+            changefreq: "monthly",
+            priority: "0.9",
+          },
+          {
+            path: "/free-screen-recorder",
+            lastmod: today,
+            changefreq: "monthly",
+            priority: "0.9",
+          },
+          {
+            path: "/online-screen-recorder",
+            lastmod: today,
+            changefreq: "monthly",
+            priority: "0.9",
+          },
+          {
+            path: "/4k-screen-recorder",
+            lastmod: today,
+            changefreq: "monthly",
+            priority: "0.8",
+          },
+          {
+            path: "/webcam-recorder",
+            lastmod: today,
+            changefreq: "monthly",
+            priority: "0.8",
+          },
+          {
+            path: "/guides/how-to-record-your-screen",
+            lastmod: today,
+            changefreq: "monthly",
+            priority: "0.7",
+          },
+          {
+            path: "/guides/best-free-screen-recorders",
+            lastmod: today,
+            changefreq: "monthly",
+            priority: "0.7",
           },
         ];
 
