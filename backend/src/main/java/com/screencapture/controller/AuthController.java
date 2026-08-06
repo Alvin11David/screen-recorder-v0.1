@@ -43,6 +43,15 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/google/callback")
+    public ResponseEntity<?> googleCallback(@Valid @RequestBody GoogleCallbackRequest req) {
+        try {
+            return ResponseEntity.ok(authService.handleGoogleCallback(req.getCode(), req.getRedirectUri()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest req) {
         authService.sendResetLink(req);
