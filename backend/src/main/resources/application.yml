@@ -73,5 +73,26 @@ app:
   http:
     connect-timeout-ms: 3000
     read-timeout-ms: 5000
+  security:
+    reset-code:
+      length: ${RESET_CODE_LENGTH:4}
+      ttl-seconds: ${RESET_CODE_TTL_SECONDS:300}
+      max-attempts: ${RESET_CODE_MAX_ATTEMPTS:5}
+      cooldown-seconds: ${RESET_CODE_COOLDOWN_SECONDS:60}
+      max-per-window: ${RESET_CODE_MAX_PER_WINDOW:5}
+      window-minutes: ${RESET_CODE_WINDOW_MINUTES:15}
+      cleanup-interval-ms: ${RESET_CODE_CLEANUP_INTERVAL_MS:60000}
+  mail:
+    enabled: ${MAIL_ENABLED:false}
+    host: ${SMTP_HOST:}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USERNAME:}
+    password: ${SMTP_PASSWORD:}
+    auth: ${SMTP_AUTH:true}
+    starttls: ${SMTP_STARTTLS:true}
+    from: ${MAIL_FROM:}
+    from-name: ${MAIL_FROM_NAME:ScreenFlow}
+    console-fallback: ${MAIL_CONSOLE_FALLBACK:true}
+    subject: ${MAIL_SUBJECT:Your ScreenFlow password reset code}
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:*,http://127.0.0.1:*,https://screenflow26.netlify.app}
