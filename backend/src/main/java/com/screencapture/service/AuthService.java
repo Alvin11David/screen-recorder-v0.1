@@ -131,6 +131,53 @@ public class AuthService {
         return new AuthResponse(token, normalizedEmail, user.getName(), user.getAvatar());
     }
 
+    public AuthResponse handleGoogleCallback(String code, String redirectUri) {
+        Map<String, String> tokenData = exchangeGoogleCode(code, redirectUri);
+        String accessToken = tokenData.get("access_token");
+        if (accessToken == null || accessToken.isBlank()) {
+            throw new IllegalArgumentException("Google authentication failed");
+        }
+
+        Map<String, Object> userData = fetchGoogleUser(accessToken);
+
+        Object idValue = userData.get("sub");
+        String googleId = idValue == null ? null : idValue.toString();
+        if (googleId == null || googleId.isBlank()) {
+            throw new IllegalArgumentException("Google authentication failed");
+        }
+
+        String rawEmail = (String) userData.get("email");
+        if (rawEmail == null || rawEmail.isBlank()) {
+            throw new IllegalArgumentException("Google account has no verified email");
+        }
+        if (!Boolean.TRUE.equals(userData.get("email_verified"))) {
+            throw new IllegalArgumentException("Google email is not verified");
+        }
+
+        String normalizedEmail = normalizeEmail(rawEmail);
+        String rawName = (String) userData.get("name");
+        String avatarUrl = (String) userData.get("picture");
+        String resolvedName = (rawName == null || rawName.isBlank()) ? rawEmail : rawName;
+
+        var user = userRepository.findByEmail(normalizedEmail).orElseGet(() -> {
+            var newUser = new User();
+            newUser.setName(resolvedName);
+            newUser.setEmail(normalizedEmail);
+            newUser.setPassword(passwordEncoder.encode(googleId));
+            newUser.setAvatar(avatarUrl);
+            return userRepository.save(newUser);
+        });
+
+        user.setAvatar(avatarUrl);
+        if (resolvedName != null && !resolvedName.isBlank()) {
+            user.setName(resolvedName);
+        }
+        userRepository.save(user);
+
+        String token = jwtService.generateToken(normalizedEmail);
+        return new AuthResponse(token, normalizedEmail, user.getName(), user.getAvatar());
+    }
+
     public void sendResetLink(ForgotPasswordRequest req) {
         String email = normalizeEmail(req.getEmail());
         // The throttle runs before the existence check so registered and unregistered
