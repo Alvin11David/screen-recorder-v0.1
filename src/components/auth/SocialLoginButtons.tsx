@@ -57,7 +57,7 @@ const PROVIDERS = [
   },
 ];
 
-export function SocialLoginButtons({ onSuccess }: Props) {
+export function SocialLoginButtons({ onSuccess, mode = "signin" }: Props) {
   const { loginWithOAuth, isLoading } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
@@ -68,8 +68,8 @@ export function SocialLoginButtons({ onSuccess }: Props) {
       try {
         const url =
           provider.id === "github"
-            ? getGitHubAuthUrl(window.location.origin)
-            : getGoogleAuthUrl(window.location.origin);
+            ? getGitHubAuthUrl(window.location.origin, mode)
+            : getGoogleAuthUrl(window.location.origin, mode);
         window.location.href = url;
       } catch (err) {
         setError(err instanceof Error ? err.message : `Failed to initiate ${provider.label} sign in.`);
