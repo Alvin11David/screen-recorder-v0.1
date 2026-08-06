@@ -13,6 +13,7 @@ interface AuthState {
 }
 
 interface AuthContextType extends AuthState {
+  setUser: (user: User, token: string) => void;
   login: (email: string, password: string) => Promise<string | null>;
   register: (name: string, email: string, password: string) => Promise<string | null>;
   logout: () => void;
