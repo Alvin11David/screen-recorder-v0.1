@@ -66,7 +66,7 @@ public class PasswordResetService {
                 return current;
             }
             long windowStart = current.windowStartMillis();
-            long count = current.count();
+            int count = current.count();
             if (now - windowStart > props.windowMillis()) {
                 windowStart = now;
                 count = 0;
