@@ -63,12 +63,15 @@ export function SocialLoginButtons({ onSuccess }: Props) {
   const handleClick = async (provider: (typeof PROVIDERS)[number]) => {
     setError(null);
 
-    if (provider.id === "github") {
+    if (provider.id === "github" || provider.id === "google") {
       try {
-        const url = getGitHubAuthUrl(window.location.origin);
+        const url =
+          provider.id === "github"
+            ? getGitHubAuthUrl(window.location.origin)
+            : getGoogleAuthUrl(window.location.origin);
         window.location.href = url;
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to initiate GitHub sign in.");
+        setError(err instanceof Error ? err.message : `Failed to initiate ${provider.label} sign in.`);
       }
       return;
     }
