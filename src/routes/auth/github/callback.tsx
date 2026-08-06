@@ -93,12 +93,20 @@ function GitHubCallbackPage() {
               <AlertCircle className="h-7 w-7 text-destructive" />
             </div>
             <p className="text-sm text-destructive font-medium">{error}</p>
-            <button
-              onClick={() => navigate({ to: "/login" })}
-              className="mt-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:brightness-110 active:scale-[0.98]"
-            >
-              Back to sign in
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => navigate({ to: "/login" })}
+                className="mt-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:brightness-110 active:scale-[0.98]"
+              >
+                Back to sign in
+              </button>
+              <button
+                onClick={() => navigate({ to: "/register" })}
+                className="mt-2 rounded-xl bg-white/[0.06] px-5 py-2.5 text-sm font-medium ring-1 ring-border/40 transition-all hover:bg-white/[0.1] active:scale-[0.98]"
+              >
+                Sign up
+              </button>
+            </div>
           </>
         )}
       </div>
