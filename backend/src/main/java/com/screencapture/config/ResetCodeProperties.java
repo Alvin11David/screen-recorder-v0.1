@@ -1,11 +1,13 @@
 package com.screencapture.config;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 /**
  * Security policy for password-reset verification codes.
  * All values are configurable via environment, with sane production defaults.
  */
+@ConfigurationProperties(prefix = "app.security.reset-code")
 public record ResetCodeProperties(
         @DefaultValue("4") int length,
         @DefaultValue("300") long ttlSeconds,
