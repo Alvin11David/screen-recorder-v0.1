@@ -23,6 +23,7 @@ import { Route as R4kScreenRecorderRouteImport } from './routes/4k-screen-record
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GuidesHowToRecordYourScreenRouteImport } from './routes/guides/how-to-record-your-screen'
 import { Route as GuidesBestFreeScreenRecordersRouteImport } from './routes/guides/best-free-screen-recorders'
+import { Route as AuthGoogleCallbackRouteImport } from './routes/auth/google/callback'
 import { Route as AuthGithubCallbackRouteImport } from './routes/auth/github/callback'
 
 const WebcamRecorderRoute = WebcamRecorderRouteImport.update({
@@ -97,6 +98,11 @@ const GuidesBestFreeScreenRecordersRoute =
     path: '/guides/best-free-screen-recorders',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthGoogleCallbackRoute = AuthGoogleCallbackRouteImport.update({
+  id: '/auth/google/callback',
+  path: '/auth/google/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthGithubCallbackRoute = AuthGithubCallbackRouteImport.update({
   id: '/auth/github/callback',
   path: '/auth/github/callback',
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/guides/best-free-screen-recorders': typeof GuidesBestFreeScreenRecordersRoute
   '/guides/how-to-record-your-screen': typeof GuidesHowToRecordYourScreenRoute
   '/auth/github/callback': typeof AuthGithubCallbackRoute
+  '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -136,6 +143,7 @@ export interface FileRoutesByTo {
   '/guides/best-free-screen-recorders': typeof GuidesBestFreeScreenRecordersRoute
   '/guides/how-to-record-your-screen': typeof GuidesHowToRecordYourScreenRoute
   '/auth/github/callback': typeof AuthGithubCallbackRoute
+  '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -154,6 +162,7 @@ export interface FileRoutesById {
   '/guides/best-free-screen-recorders': typeof GuidesBestFreeScreenRecordersRoute
   '/guides/how-to-record-your-screen': typeof GuidesHowToRecordYourScreenRoute
   '/auth/github/callback': typeof AuthGithubCallbackRoute
+  '/auth/google/callback': typeof AuthGoogleCallbackRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -173,6 +182,7 @@ export interface FileRouteTypes {
     | '/guides/best-free-screen-recorders'
     | '/guides/how-to-record-your-screen'
     | '/auth/github/callback'
+    | '/auth/google/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -190,6 +200,7 @@ export interface FileRouteTypes {
     | '/guides/best-free-screen-recorders'
     | '/guides/how-to-record-your-screen'
     | '/auth/github/callback'
+    | '/auth/google/callback'
   id:
     | '__root__'
     | '/'
@@ -207,6 +218,7 @@ export interface FileRouteTypes {
     | '/guides/best-free-screen-recorders'
     | '/guides/how-to-record-your-screen'
     | '/auth/github/callback'
+    | '/auth/google/callback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -225,6 +237,7 @@ export interface RootRouteChildren {
   GuidesBestFreeScreenRecordersRoute: typeof GuidesBestFreeScreenRecordersRoute
   GuidesHowToRecordYourScreenRoute: typeof GuidesHowToRecordYourScreenRoute
   AuthGithubCallbackRoute: typeof AuthGithubCallbackRoute
+  AuthGoogleCallbackRoute: typeof AuthGoogleCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -327,6 +340,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidesBestFreeScreenRecordersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/google/callback': {
+      id: '/auth/google/callback'
+      path: '/auth/google/callback'
+      fullPath: '/auth/google/callback'
+      preLoaderRoute: typeof AuthGoogleCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/github/callback': {
       id: '/auth/github/callback'
       path: '/auth/github/callback'
@@ -353,6 +373,7 @@ const rootRouteChildren: RootRouteChildren = {
   GuidesBestFreeScreenRecordersRoute: GuidesBestFreeScreenRecordersRoute,
   GuidesHowToRecordYourScreenRoute: GuidesHowToRecordYourScreenRoute,
   AuthGithubCallbackRoute: AuthGithubCallbackRoute,
+  AuthGoogleCallbackRoute: AuthGoogleCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
