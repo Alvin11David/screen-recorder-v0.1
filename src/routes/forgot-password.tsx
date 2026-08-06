@@ -141,7 +141,7 @@ function ForgotPasswordPage() {
             </h1>
             <p className="mt-2 text-sm text-muted-foreground/80">
               {sent
-                ? `Enter the 5-digit code sent to ${email}`
+                ? `Enter the 4-digit code sent to ${email}`
                 : "Enter your email and we'll send you a reset code."}
             </p>
           </div>
