@@ -32,7 +32,9 @@ function GoogleCallbackPage() {
     }
 
     const savedState = sessionStorage.getItem("google_oauth_state");
+    const savedAction = sessionStorage.getItem("google_oauth_action") as "signin" | "signup" | null;
     sessionStorage.removeItem("google_oauth_state");
+    sessionStorage.removeItem("google_oauth_action");
 
     if (state && savedState && state !== savedState) {
       setStatus("error");
@@ -45,7 +47,9 @@ function GoogleCallbackPage() {
     (async () => {
       try {
         const redirectUri = `${window.location.origin}/auth/google/callback`;
-        const user = await exchangeGoogleCode({ data: { code, redirectUri } });
+        const user = await exchangeGoogleCode({
+          data: { code, redirectUri, action: savedAction ?? "signin" },
+        });
         if (cancelled) return;
         setUser(user, user.token);
         setStatus("success");
