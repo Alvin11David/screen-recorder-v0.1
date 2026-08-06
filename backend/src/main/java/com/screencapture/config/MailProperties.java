@@ -1,5 +1,6 @@
 package com.screencapture.config;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 /**
@@ -7,6 +8,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
  * When {@code enabled} is false, codes are printed to the application log
  * instead (local development only).
  */
+@ConfigurationProperties(prefix = "app.mail")
 public record MailProperties(
         @DefaultValue("false") boolean enabled,
         @DefaultValue("") String host,
