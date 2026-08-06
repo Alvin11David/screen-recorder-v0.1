@@ -80,7 +80,7 @@ public class AuthService {
         return new AuthResponse(token, email, user.getName(), user.getAvatar());
     }
 
-    public AuthResponse handleGitHubCallback(String code) {
+    public AuthResponse handleGitHubCallback(String code, String action) {
         Map<String, String> tokenData = exchangeGitHubCode(code);
         String accessToken = tokenData.get("access_token");
         if (accessToken == null || accessToken.isBlank()) {
@@ -110,15 +110,24 @@ public class AuthService {
         String email = (rawEmail == null || rawEmail.isBlank()) ? githubLogin + "@github.com" : rawEmail;
         String normalizedEmail = normalizeEmail(email);
 
-        var user = userRepository.findByEmail(normalizedEmail).orElseGet(() -> {
-            var newUser = new User();
-            newUser.setName(resolvedName);
-            newUser.setEmail(normalizedEmail);
-            newUser.setPassword(passwordEncoder.encode(githubId));
-            newUser.setAvatar(avatarUrl);
-            newUser.setGithubUsername(githubLogin);
-            return userRepository.save(newUser);
-        });
+        boolean isSignup = "signup".equalsIgnoreCase(action);
+
+        User user;
+        if (isSignup) {
+            if (userRepository.existsByEmail(normalizedEmail)) {
+                throw new IllegalArgumentException("An account already exists for this email. Please sign in instead.");
+            }
+            user = new User();
+            user.setName(resolvedName);
+            user.setEmail(normalizedEmail);
+            user.setPassword(passwordEncoder.encode(githubId));
+            user.setAvatar(avatarUrl);
+            user.setGithubUsername(githubLogin);
+        } else {
+            user = userRepository.findByEmail(normalizedEmail)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "No account found for this email. Please sign up first."));
+        }
 
         user.setAvatar(avatarUrl);
         user.setGithubUsername(githubLogin);
