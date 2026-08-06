@@ -36,15 +36,16 @@ export interface GitHubUser {
 }
 
 export const exchangeGitHubCode = createServerFn({ method: "POST" })
-  .validator((code: string) => code)
+  .validator((data: { code: string; action?: OAuthAction }) => data)
   .handler(async (ctx): Promise<GitHubUser> => {
-    const code = ctx.data;
+    const code = ctx.data.code;
+    const action = ctx.data.action || "signin";
     const apiBase = process.env.API_URL || "http://localhost:8080";
 
     const res = await fetch(`${apiBase}/api/auth/github/callback`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code }),
+      body: JSON.stringify({ code, action }),
     });
 
     if (!res.ok) {
