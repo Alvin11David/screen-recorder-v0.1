@@ -50,7 +50,7 @@ function ForgotPasswordPage() {
     setCode(newCode);
     setCodeError(null);
 
-    if (value && index < 4) {
+    if (value && index < 3) {
       inputRefs.current[index + 1]?.focus();
     }
   };
