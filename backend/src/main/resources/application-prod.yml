@@ -6,10 +6,9 @@ spring:
     password: ${PGPASSWORD:}
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
   flyway:
-    enabled: true
-    locations: classpath:db/migration
+    enabled: false
   h2:
     console:
       enabled: false
