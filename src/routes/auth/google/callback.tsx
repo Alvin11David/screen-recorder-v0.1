@@ -47,8 +47,7 @@ function GoogleCallbackPage() {
         const redirectUri = `${window.location.origin}/auth/google/callback`;
         const user = await exchangeGoogleCode({ data: { code, redirectUri } });
         if (cancelled) return;
-        localStorage.setItem("sc-auth-user", JSON.stringify(user));
-        localStorage.setItem("sc-auth-token", user.token);
+        setUser(user, user.token);
         setStatus("success");
         await new Promise((r) => setTimeout(r, 800));
         if (!cancelled) navigate({ to: "/" });

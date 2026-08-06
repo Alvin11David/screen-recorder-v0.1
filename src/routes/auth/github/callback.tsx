@@ -18,7 +18,7 @@ export const Route = createFileRoute("/auth/github/callback")({
 function GitHubCallbackPage() {
   const navigate = useNavigate();
   const search = Route.useSearch();
-  const { register: _, ...auth } = useAuth();
+  const { setUser } = useAuth();
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [error, setError] = useState<string | null>(null);
 
