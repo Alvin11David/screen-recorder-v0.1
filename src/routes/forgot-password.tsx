@@ -75,8 +75,8 @@ function ForgotPasswordPage() {
 
   const handleVerifyCode = async () => {
     const fullCode = code.join("");
-    if (fullCode.length !== 5) {
-      setCodeError("Please enter the full 5-digit code.");
+    if (fullCode.length !== 4) {
+      setCodeError("Please enter the full 4-digit code.");
       return;
     }
     setVerifying(true);
@@ -109,7 +109,7 @@ function ForgotPasswordPage() {
 
   const handleSendAgain = () => {
     setSent(false);
-    setCode(["", "", "", "", ""]);
+    setCode(["", "", "", ""]);
     setCodeError(null);
     sendResetLink(email);
   };
