@@ -63,13 +63,13 @@ function ForgotPasswordPage() {
 
   const handleCodePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
-    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 5);
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 4);
     const newCode = [...code];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 4; i++) {
       newCode[i] = pasted[i] || "";
     }
     setCode(newCode);
-    const nextIndex = Math.min(pasted.length, 4);
+    const nextIndex = Math.min(pasted.length, 3);
     inputRefs.current[nextIndex]?.focus();
   };
 
