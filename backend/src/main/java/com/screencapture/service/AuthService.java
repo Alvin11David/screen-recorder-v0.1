@@ -177,7 +177,7 @@ public class AuthService {
 
             var request = HttpRequest.newBuilder()
                     .uri(URI.create("https://github.com/login/oauth/access_token"))
-                    .timeout(Duration.ofMillis(GITHUB_TIMEOUT_MS))
+                    .timeout(Duration.ofMillis(OAUTH_TIMEOUT_MS))
                     .header("Content-Type", "application/json")
                     .header("Accept", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(body)))
@@ -194,7 +194,7 @@ public class AuthService {
         try {
             var request = HttpRequest.newBuilder()
                     .uri(URI.create("https://api.github.com/user"))
-                    .timeout(Duration.ofMillis(GITHUB_TIMEOUT_MS))
+                    .timeout(Duration.ofMillis(OAUTH_TIMEOUT_MS))
                     .header("Authorization", "Bearer " + accessToken)
                     .header("Accept", "application/json")
                     .header("User-Agent", "ScreenFlow-Backend")
@@ -211,7 +211,7 @@ public class AuthService {
         try {
             var request = HttpRequest.newBuilder()
                     .uri(URI.create("https://api.github.com/user/emails"))
-                    .timeout(Duration.ofMillis(GITHUB_TIMEOUT_MS))
+                    .timeout(Duration.ofMillis(OAUTH_TIMEOUT_MS))
                     .header("Authorization", "Bearer " + accessToken)
                     .header("Accept", "application/json")
                     .header("User-Agent", "ScreenFlow-Backend")
