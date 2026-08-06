@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 import { getGitHubAuthUrl } from "@/lib/github-auth";
+import { getGoogleAuthUrl } from "@/lib/google-auth";
 
 interface Props {
   onSuccess?: () => void;
