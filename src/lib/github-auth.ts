@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
+import type { OAuthAction } from "@/lib/google-auth";
 
-export function getGitHubAuthUrl(origin: string): string {
+export function getGitHubAuthUrl(origin: string, action: OAuthAction = "signin"): string {
   const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
   if (!clientId) {
     throw new Error(
@@ -14,6 +15,7 @@ export function getGitHubAuthUrl(origin: string): string {
   const state = crypto.randomUUID();
 
   sessionStorage.setItem("github_oauth_state", state);
+  sessionStorage.setItem("github_oauth_action", action);
 
   const params = new URLSearchParams({
     client_id: clientId,
