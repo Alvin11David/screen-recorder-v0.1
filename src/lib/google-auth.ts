@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 
-export function getGoogleAuthUrl(origin: string): string {
+export type OAuthAction = "signin" | "signup";
+
+export function getGoogleAuthUrl(origin: string, action: OAuthAction = "signin"): string {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   if (!clientId) {
     throw new Error(
@@ -13,6 +15,7 @@ export function getGoogleAuthUrl(origin: string): string {
   const state = crypto.randomUUID();
 
   sessionStorage.setItem("google_oauth_state", state);
+  sessionStorage.setItem("google_oauth_action", action);
 
   const params = new URLSearchParams({
     client_id: clientId,
