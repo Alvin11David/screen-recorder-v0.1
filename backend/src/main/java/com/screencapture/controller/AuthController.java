@@ -37,7 +37,7 @@ public class AuthController {
     @PostMapping("/github/callback")
     public ResponseEntity<?> githubCallback(@Valid @RequestBody GitHubCallbackRequest req) {
         try {
-            return ResponseEntity.ok(authService.handleGitHubCallback(req.getCode()));
+            return ResponseEntity.ok(authService.handleGitHubCallback(req.getCode(), req.getAction()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
         }
@@ -46,7 +46,7 @@ public class AuthController {
     @PostMapping("/google/callback")
     public ResponseEntity<?> googleCallback(@Valid @RequestBody GoogleCallbackRequest req) {
         try {
-            return ResponseEntity.ok(authService.handleGoogleCallback(req.getCode(), req.getRedirectUri()));
+            return ResponseEntity.ok(authService.handleGoogleCallback(req.getCode(), req.getRedirectUri(), req.getAction()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
         }
