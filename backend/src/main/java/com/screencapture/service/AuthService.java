@@ -140,7 +140,7 @@ public class AuthService {
         return new AuthResponse(token, normalizedEmail, user.getName(), user.getAvatar());
     }
 
-    public AuthResponse handleGoogleCallback(String code, String redirectUri) {
+    public AuthResponse handleGoogleCallback(String code, String redirectUri, String action) {
         Map<String, String> tokenData = exchangeGoogleCode(code, redirectUri);
         String accessToken = tokenData.get("access_token");
         if (accessToken == null || accessToken.isBlank()) {
@@ -168,14 +168,23 @@ public class AuthService {
         String avatarUrl = (String) userData.get("picture");
         String resolvedName = (rawName == null || rawName.isBlank()) ? rawEmail : rawName;
 
-        var user = userRepository.findByEmail(normalizedEmail).orElseGet(() -> {
-            var newUser = new User();
-            newUser.setName(resolvedName);
-            newUser.setEmail(normalizedEmail);
-            newUser.setPassword(passwordEncoder.encode(googleId));
-            newUser.setAvatar(avatarUrl);
-            return userRepository.save(newUser);
-        });
+        boolean isSignup = "signup".equalsIgnoreCase(action);
+
+        User user;
+        if (isSignup) {
+            if (userRepository.existsByEmail(normalizedEmail)) {
+                throw new IllegalArgumentException("An account already exists for this email. Please sign in instead.");
+            }
+            user = new User();
+            user.setName(resolvedName);
+            user.setEmail(normalizedEmail);
+            user.setPassword(passwordEncoder.encode(googleId));
+            user.setAvatar(avatarUrl);
+        } else {
+            user = userRepository.findByEmail(normalizedEmail)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "No account found for this email. Please sign up first."));
+        }
 
         user.setAvatar(avatarUrl);
         if (resolvedName != null && !resolvedName.isBlank()) {
