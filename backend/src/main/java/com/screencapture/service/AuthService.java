@@ -281,10 +281,67 @@ public class AuthService {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
+    private Map<String, String> exchangeGoogleCode(String code, String redirectUri) {
+        try {
+            if (googleClientId == null || googleClientId.isBlank()
+                    || googleClientSecret == null || googleClientSecret.isBlank()) {
+                throw new IllegalStateException("Google OAuth credentials are not configured");
+            }
+
+            var body = new java.util.LinkedHashMap<String, Object>();
+            body.put("client_id", googleClientId);
+            body.put("client_secret", googleClientSecret);
+            body.put("code", code);
+            body.put("grant_type", "authorization_code");
+            body.put("redirect_uri", redirectUri);
+
+            var request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://oauth2.googleapis.com/token"))
+                    .timeout(Duration.ofMillis(OAUTH_TIMEOUT_MS))
+                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .header("Accept", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(toFormBody(body)))
+                    .build();
+
+            return objectMapper.readValue(send(request), Map.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to exchange Google code", e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> fetchGoogleUser(String accessToken) {
+        try {
+            var request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://www.googleapis.com/oauth2/v3/userinfo"))
+                    .timeout(Duration.ofMillis(OAUTH_TIMEOUT_MS))
+                    .header("Authorization", "Bearer " + accessToken)
+                    .header("Accept", "application/json")
+                    .GET()
+                    .build();
+
+            return objectMapper.readValue(send(request), Map.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to fetch Google user", e);
+        }
+    }
+
+    private String toFormBody(Map<String, Object> params) throws java.io.IOException {
+        var encoded = new StringBuilder();
+        for (var entry : params.entrySet()) {
+            if (encoded.length() > 0) encoded.append('&');
+            encoded.append(java.net.URLEncoder.encode(entry.getKey(), java.nio.charset.StandardCharsets.UTF_8))
+                    .append('=')
+                    .append(java.net.URLEncoder.encode(String.valueOf(entry.getValue()), java.nio.charset.StandardCharsets.UTF_8));
+        }
+        return encoded.toString();
+    }
+
     private String send(HttpRequest request) throws Exception {
         var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() < 200 || response.statusCode() >= 300) {
-            throw new IllegalStateException("GitHub API returned HTTP " + response.statusCode());
+            throw new IllegalStateException("OAuth API returned HTTP " + response.statusCode());
         }
         return response.body();
     }
