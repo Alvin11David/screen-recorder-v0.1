@@ -19,7 +19,7 @@ import java.util.Map;
 @Service
 public class AuthService {
 
-    private static final int GITHUB_TIMEOUT_MS = 5_000;
+    private static final int OAUTH_TIMEOUT_MS = 5_000;
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -33,6 +33,12 @@ public class AuthService {
 
     @Value("${app.github.client-secret:${GITHUB_CLIENT_SECRET:}}")
     private String githubClientSecret;
+
+    @Value("${app.google.client-id:${GOOGLE_CLIENT_ID:}}")
+    private String googleClientId;
+
+    @Value("${app.google.client-secret:${GOOGLE_CLIENT_SECRET:}}")
+    private String googleClientSecret;
 
     public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService,
                        PasswordResetService passwordResetService, ObjectMapper objectMapper, HttpClient httpClient) {
