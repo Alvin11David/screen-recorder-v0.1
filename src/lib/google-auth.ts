@@ -37,15 +37,16 @@ export interface GoogleUser {
 }
 
 export const exchangeGoogleCode = createServerFn({ method: "POST" })
-  .validator((data: { code: string; redirectUri: string }) => data)
+  .validator((data: { code: string; redirectUri: string; action?: OAuthAction }) => data)
   .handler(async (ctx): Promise<GoogleUser> => {
     const { code, redirectUri } = ctx.data;
+    const action = ctx.data.action || "signin";
     const apiBase = process.env.API_URL || "http://localhost:8080";
 
     const res = await fetch(`${apiBase}/api/auth/google/callback`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code, redirectUri }),
+      body: JSON.stringify({ code, redirectUri, action }),
     });
 
     if (!res.ok) {
