@@ -153,7 +153,7 @@ function RegisterPage() {
           {isLoading ? "Creating account..." : "Create account"}
         </button>
 
-        <SocialLoginButtons onSuccess={handleOAuthSuccess} />
+        <SocialLoginButtons onSuccess={handleOAuthSuccess} mode="signup" />
       </form>
     </AuthLayout>
   );

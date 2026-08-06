@@ -165,7 +165,7 @@ function LoginPage() {
           {isLoading ? "Signing in..." : "Sign in"}
         </button>
 
-        <SocialLoginButtons onSuccess={handleOAuthSuccess} />
+        <SocialLoginButtons onSuccess={handleOAuthSuccess} mode="signin" />
       </form>
     </AuthLayout>
   );
