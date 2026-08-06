@@ -32,7 +32,9 @@ function GitHubCallbackPage() {
     }
 
     const savedState = sessionStorage.getItem("github_oauth_state");
+    const savedAction = sessionStorage.getItem("github_oauth_action") as "signin" | "signup" | null;
     sessionStorage.removeItem("github_oauth_state");
+    sessionStorage.removeItem("github_oauth_action");
 
     if (state && savedState && state !== savedState) {
       setStatus("error");
