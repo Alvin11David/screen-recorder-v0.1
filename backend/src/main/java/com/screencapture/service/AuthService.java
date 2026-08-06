@@ -127,8 +127,11 @@ public class AuthService {
 
     public void sendResetLink(ForgotPasswordRequest req) {
         String email = normalizeEmail(req.getEmail());
+        // The throttle runs before the existence check so registered and unregistered
+        // addresses consume send slots identically — the endpoint cannot enumerate users.
+        if (!passwordResetService.tryAcquireSend(email)) return;
         if (!userRepository.existsByEmail(email)) return;
-        passwordResetService.generateAndStoreCode(email);
+        passwordResetService.issueCode(email);
     }
 
     public void verifyResetCode(VerifyResetCodeRequest req) {
