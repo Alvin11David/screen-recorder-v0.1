@@ -85,15 +85,14 @@ public class EmailJsPasswordResetMailer implements PasswordResetMailer {
         }
     }
 
-    private String formatExpiry(Duration validity, String timezone) {
-        Instant expiry = Instant.now().plus(validity);
+    private String formatTime(Instant instant, String timezone) {
         if (timezone != null && !timezone.isBlank()) {
             try {
-                return EXPIRY_FORMAT.format(expiry.atZone(ZoneId.of(timezone)));
+                return EXPIRY_FORMAT.format(instant.atZone(ZoneId.of(timezone)));
             } catch (Exception e) {
                 log.warn("Unrecognized timezone '{}'; falling back to server timezone", timezone);
             }
         }
-        return EXPIRY_FORMAT.format(expiry.atZone(ZoneId.systemDefault()));
+        return EXPIRY_FORMAT.format(instant.atZone(ZoneId.systemDefault()));
     }
 }
