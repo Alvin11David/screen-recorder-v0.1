@@ -27,6 +27,7 @@ import {
   Zap,
   Lock,
   Expand,
+  Crop,
   Film,
   History,
   Keyboard,
