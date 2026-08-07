@@ -31,8 +31,7 @@ import java.util.Map;
 public class EmailJsPasswordResetMailer implements PasswordResetMailer {
 
     private static final Logger log = LoggerFactory.getLogger(EmailJsPasswordResetMailer.class);
-    private static final DateTimeFormatter EXPIRY_FORMAT =
-            DateTimeFormatter.ofPattern("h:mm a").withZone(ZoneId.systemDefault());
+    private static final DateTimeFormatter EXPIRY_FORMAT = DateTimeFormatter.ofPattern("h:mm a");
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
