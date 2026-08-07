@@ -2,6 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 export type RecorderStatus = "idle" | "countdown" | "crop" | "multi-setup" | "recording" | "paused";
 export type CaptureSurface = "monitor" | "window" | "browser" | "multi-monitor";
+export type CaptureMode = "full" | "region";
+
+const MIN_MEANINGFUL_DURATION = 1; // seconds
+const MIN_MEANINGFUL_BYTES = 50 * 1024;
 
 export interface CropRect {
   x: number;
