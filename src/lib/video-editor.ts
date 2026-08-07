@@ -273,37 +273,71 @@ export async function mergeClips(blobs: Blob[], options: VideoOptions): Promise<
   const ctx = canvas.getContext("2d")!;
 
   return new Promise((resolve, reject) => {
-    const recorder = createRecorder(canvas, fps, resolve, reject);
-    let index = 0;
-    const video = document.createElement("video");
-    video.muted = true;
-    video.playsInline = true;
+    const audioCtx = new AudioContext();
+    const dest = audioCtx.createMediaStreamDestination();
+    const canvasStream = canvas.captureStream(fps);
+    canvasStream.addTrack(dest.stream.getAudioTracks()[0]);
+    const mimeType = getSupportedMimeType();
+    const recorder = new MediaRecorder(canvasStream, { mimeType });
+    const chunks: Blob[] = [];
     const urls: string[] = [];
+
+    recorder.ondataavailable = (e) => {
+      if (e.data.size > 0) chunks.push(e.data);
+    };
+    recorder.onstop = () => {
+      urls.forEach((u) => URL.revokeObjectURL(u));
+      audioCtx.close().catch(() => {});
+      if (failed) {
+        reject(new Error("A clip failed to load"));
+      } else {
+        resolve(new Blob(chunks, { type: "video/webm" }));
+      }
+    };
+    recorder.onerror = (e) => reject(e.error);
+
+    let failed = false;
+    let currentVideo: HTMLVideoElement | null = null;
+    let index = 0;
 
     const playNext = () => {
       if (index >= blobs.length) {
         if (recorder.state === "recording") recorder.stop();
-        urls.forEach((u) => URL.revokeObjectURL(u));
         return;
+      }
+      const video = document.createElement("video");
+      video.playsInline = true;
+      currentVideo = video;
+      try {
+        const src = audioCtx.createMediaElementSource(video);
+        src.connect(dest);
+      } catch (err) {
+        console.warn("Clip audio setup failed, continuing without clip audio", err);
       }
       const url = URL.createObjectURL(blobs[index]);
       urls.push(url);
+      video.onloadedmetadata = () => video.play().catch(() => {});
+      video.onerror = () => {
+        failed = true;
+        if (recorder.state === "recording") recorder.stop();
+      };
       video.src = url;
-      video.onloadedmetadata = () => video.play();
       index++;
     };
 
     const tick = () => {
       if (recorder.state !== "recording") return;
-      if (!video.paused && !video.ended && video.readyState >= 2) {
+      const video = currentVideo;
+      if (video && !video.paused && !video.ended && video.readyState >= 2) {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       }
-      if (video.ended) {
+      if (video && video.ended) {
         playNext();
       }
       requestAnimationFrame(tick);
     };
 
+    recorder.start();
     playNext();
     requestAnimationFrame(tick);
   });
