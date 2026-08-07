@@ -79,7 +79,7 @@ app:
   security:
     reset-code:
       length: ${RESET_CODE_LENGTH:4}
-      ttl-seconds: ${RESET_CODE_TTL_SECONDS:900}
+      ttl-seconds: ${RESET_CODE_TTL_SECONDS:300}
       max-attempts: ${RESET_CODE_MAX_ATTEMPTS:5}
       cooldown-seconds: ${RESET_CODE_COOLDOWN_SECONDS:60}
       max-per-window: ${RESET_CODE_MAX_PER_WINDOW:5}
