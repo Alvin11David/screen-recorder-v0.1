@@ -105,7 +105,8 @@ async function processFrames(
     canvas: HTMLCanvasElement,
   ) => boolean,
 ): Promise<Blob> {
-  const video = await loadVideo(blob);
+  const video = await loadVideo(blob, false);
+  const audio = createVideoAudioTrack(video);
   const canvas = document.createElement("canvas");
   canvas.width = outputWidth;
   canvas.height = outputHeight;
@@ -117,15 +118,24 @@ async function processFrames(
       fps,
       (result) => {
         URL.revokeObjectURL(video.src);
+        if (audio) audio.ctx.close().catch(() => {});
         resolve(result);
       },
       (err) => {
         URL.revokeObjectURL(video.src);
+        if (audio) audio.ctx.close().catch(() => {});
         reject(err);
       },
+      audio ? [audio.track] : [],
     );
 
     let running = true;
+
+    video.onerror = () => {
+      running = false;
+      if (recorder.state === "recording") recorder.stop();
+      reject(new Error("Failed to decode video while processing"));
+    };
 
     const tick = () => {
       if (!running) return;
