@@ -29,7 +29,7 @@ class PasswordResetServiceTest {
         record Mail(String email, String code, Duration validity) {}
 
         @Override
-        public void sendCode(String email, String code, Duration validity) {
+        public void sendCode(String email, String code, Duration validity, String timezone) {
             sent.add(new Mail(email, code, validity));
         }
     }
