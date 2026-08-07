@@ -107,12 +107,12 @@ export function KeyboardShortcutsPanel({ open, onClose }: KeyboardShortcutsPanel
                         >
                           <span className="text-sm text-white/55">{label}</span>
                           <div className="flex items-center gap-1">
-                            {keys.map((key, i) => (
-                              <span key={i} className="flex items-center gap-1">
-                                {i > 0 && <span className="text-[10px] text-white/20">+</span>}
-                                <Kbd>{key}</Kbd>
-                              </span>
-                            ))}
+                                {keys.map((key, i) => (
+                                  <span key={i} className="flex items-center gap-1">
+                                    {i > 0 && <span className="text-[10px] text-white/20">+</span>}
+                                    <Kbd>{key === "Alt" ? MODIFIER_LABEL : key}</Kbd>
+                                  </span>
+                                ))}
                           </div>
                         </div>
                       ))}
