@@ -70,6 +70,7 @@ import { RecordingHistory, saveToHistory } from "@/components/recorder/Recording
 import { KeyboardShortcutsPanel } from "@/components/recorder/KeyboardShortcutsPanel";
 import { TeleprompterOverlay } from "@/components/recorder/TeleprompterOverlay";
 import { ScreenFlowLogo } from "@/components/ui/ScreenFlowLogo";
+import ParticleBackground from "@/components/ui/particle-background";
 
 const SOURCES: {
   id: CaptureSurface;
