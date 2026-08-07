@@ -1,6 +1,5 @@
 package com.screencapture.service.mail;
 
-import com.screencapture.config.MailProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
@@ -19,12 +18,10 @@ public class FailoverPasswordResetMailer implements PasswordResetMailer {
 
     private final PasswordResetMailer primary;
     private final PasswordResetMailer fallback;
-    private final MailProperties props;
 
-    public FailoverPasswordResetMailer(PasswordResetMailer primary, PasswordResetMailer fallback, MailProperties props) {
+    public FailoverPasswordResetMailer(PasswordResetMailer primary, PasswordResetMailer fallback) {
         this.primary = primary;
         this.fallback = fallback;
-        this.props = props;
     }
 
     @Override
