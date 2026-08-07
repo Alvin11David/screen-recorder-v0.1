@@ -36,6 +36,7 @@ public record MailProperties(
             @DefaultValue("https://api.emailjs.com/api/v1.0/email/send") String apiUrl,
             @DefaultValue("") String serviceId,
             @DefaultValue("") String publicKey,
+            @DefaultValue("") String privateKey,
             @DefaultValue("") String templateId
     ) {
         public boolean configured() {
