@@ -1324,6 +1324,9 @@ function Index() {
       // Block ALL shortcuts when user is typing in an input/textarea
       if (isInput) return;
 
+      // Block ALL shortcuts while the video editor modal is open
+      if (editorBlob) return;
+
       if (e.altKey) {
         switch (e.key.toLowerCase()) {
           case "r":
