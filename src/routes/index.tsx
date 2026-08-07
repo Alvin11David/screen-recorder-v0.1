@@ -1750,6 +1750,22 @@ function Index() {
           )}
         </AnimatePresence>
 
+        {/* ── Capture mode (Entire Screen only) ── */}
+        <AnimatePresence>
+          {isIdle && !result && source === "monitor" && (
+            <motion.div
+              key="capture-mode"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3 }}
+              className="mb-4"
+            >
+              <CaptureModeSelector value={captureMode} onChange={setCaptureMode} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* ── Advanced Settings ── */}
         <AnimatePresence>
           {isIdle && !result && (
