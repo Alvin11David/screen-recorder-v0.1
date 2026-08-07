@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useRef } from "react";
-import { Mail, AlertCircle, Loader2, ArrowLeft, Video, KeyRound, Lock } from "lucide-react";
+import { Mail, AlertCircle, Loader2, ArrowLeft, KeyRound, Lock } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { ScreenFlowLogo } from "@/components/ui/ScreenFlowLogo";
 import AetherFlowHero from "@/components/ui/aether-flow-hero";
 
 export const Route = createFileRoute("/forgot-password")({
@@ -123,7 +124,7 @@ function ForgotPasswordPage() {
       <div className="relative z-10 flex flex-col items-center justify-center gap-8 w-full max-w-md px-4 py-12 min-h-screen mx-auto">
         <Link to="/" className="flex items-center gap-2.5 hero-fade-in-down group">
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-primary shadow-[var(--shadow-glow)] ring-1 ring-white/10 group-hover:ring-white/20 transition-all duration-300">
-            <Video className="h-5 w-5 text-primary-foreground" />
+            <ScreenFlowLogo className="h-5 w-5 text-primary-foreground" />
           </span>
           <span className="font-display text-lg font-bold tracking-tight text-white/90 group-hover:text-white transition-colors duration-300">
             ScreenFlow
