@@ -1055,6 +1055,7 @@ export function useScreenRecorder() {
   }, [startTimer]);
 
   const stopRecording = useCallback(() => {
+    stopReasonRef.current = "user";
     const recorder = recorderRef.current;
     if (recorder && recorder.state !== "inactive") {
       if (recorder.state === "recording") {
