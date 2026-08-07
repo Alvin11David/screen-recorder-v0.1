@@ -25,12 +25,12 @@ public class FailoverPasswordResetMailer implements PasswordResetMailer {
     }
 
     @Override
-    public void sendCode(String email, String code, Duration validity) {
+    public void sendCode(String email, String code, Duration validity, String timezone) {
         try {
-            primary.sendCode(email, code, validity);
+            primary.sendCode(email, code, validity, timezone);
         } catch (MailException e) {
             log.warn("SMTP delivery failed for {}; falling back to console", email, e);
-            fallback.sendCode(email, code, validity);
+            fallback.sendCode(email, code, validity, timezone);
         }
     }
 }
