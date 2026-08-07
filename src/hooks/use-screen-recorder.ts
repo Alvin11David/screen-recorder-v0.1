@@ -349,11 +349,14 @@ export function useScreenRecorder() {
 
         if (annotationsEnabledRef.current) setupAnnotationCanvas(width, height);
 
-        // ── Crop mode for entire-screen capture ───────────────────────
-        if (surface === "monitor") {
+        // ── Crop mode for entire-screen capture (region mode only) ──
+        if (surface === "monitor" && captureModeRef.current === "region") {
           pendingStreamRef.current = displayStream;
           setStream(displayStream);
           setStatus("crop");
+          videoTrack.addEventListener("ended", () =>
+            handlePendingCaptureEnded(displayStream, "crop"),
+          );
           return;
         }
 
@@ -363,6 +366,9 @@ export function useScreenRecorder() {
           setMultiStreams([displayStream]);
           setStream(displayStream);
           setStatus("multi-setup");
+          videoTrack.addEventListener("ended", () =>
+            handlePendingCaptureEnded(displayStream, "multi-setup"),
+          );
           return;
         }
 
