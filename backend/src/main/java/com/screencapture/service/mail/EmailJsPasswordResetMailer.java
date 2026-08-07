@@ -56,7 +56,9 @@ public class EmailJsPasswordResetMailer implements PasswordResetMailer {
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("email", email);
         params.put("passcode", code);
-        params.put("time", formatExpiry(validity, timezone));
+        params.put("time", formatTime(Instant.now(), timezone));
+        params.put("expiry", formatTime(Instant.now().plus(validity), timezone));
+        params.put("minutes", String.valueOf(validity.toMinutes()));
         payload.put("template_params", params);
 
         try {
