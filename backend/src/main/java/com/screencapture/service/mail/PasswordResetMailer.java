@@ -9,5 +9,5 @@ import java.time.Duration;
  */
 public interface PasswordResetMailer {
 
-    void sendCode(String email, String code, Duration validity);
+    void sendCode(String email, String code, Duration validity, String timezone);
 }
