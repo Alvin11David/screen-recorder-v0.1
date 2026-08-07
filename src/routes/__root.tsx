@@ -118,6 +118,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { name: "twitter:site", content: "@ScreenFlow" },
         { name: "theme-color", content: "#0f0f1a" },
         { name: "apple-mobile-web-app-capable", content: "yes" },
+        { name: "apple-mobile-web-app-title", content: "ScreenFlow" },
         { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
         { name: "mobile-web-app-capable", content: "yes" },
       ],
