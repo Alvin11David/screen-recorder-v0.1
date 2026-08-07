@@ -22,7 +22,7 @@ public class ConsolePasswordResetMailer implements PasswordResetMailer {
     }
 
     @Override
-    public void sendCode(String email, String code, Duration validity) {
+    public void sendCode(String email, String code, Duration validity, String timezone) {
         if (props.consoleFallback()) {
             log.warn("""
                     ==========================================================
