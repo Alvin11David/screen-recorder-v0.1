@@ -758,6 +758,67 @@ function QualitySelector({
   );
 }
 
+function CaptureModeSelector({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: CaptureMode;
+  onChange: (v: CaptureMode) => void;
+  disabled?: boolean;
+}) {
+  const modes: {
+    id: CaptureMode;
+    label: string;
+    description: string;
+    icon: typeof Crop;
+  }[] = [
+    {
+      id: "full",
+      label: "Full Screen",
+      description: "Record the entire display in one click",
+      icon: Expand,
+    },
+    {
+      id: "region",
+      label: "Select Region",
+      description: "Drag to choose a specific area",
+      icon: Crop,
+    },
+  ];
+
+  return (
+    <div className="flex items-center justify-center gap-3">
+      <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/20">
+        Capture
+      </span>
+      <div className="flex items-center rounded-xl bg-white/[0.03] p-1 ring-1 ring-white/[0.06]">
+        {modes.map(({ id, label, description, icon: Icon }) => {
+          const active = value === id;
+          return (
+            <button
+              key={id}
+              type="button"
+              disabled={disabled}
+              onClick={() => onChange(id)}
+              title={description}
+              className={cn(
+                "flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold transition-all",
+                active
+                  ? "bg-primary/20 text-primary ring-1 ring-primary/30 shadow-[0_0_12px_oklch(0.74_0.15_222/0.2)]"
+                  : "text-white/40 hover:text-white/70 hover:bg-white/[0.05]",
+              )}
+            >
+              <Icon className="h-3.5 w-3.5" strokeWidth={1.75} />
+              {label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function ControlBar({
   status,
   includeAudio,
