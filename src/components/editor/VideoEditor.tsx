@@ -774,7 +774,9 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
                   <Music className="h-8 w-8 text-white/15" />
                   <div className="text-center">
                     <p className="text-sm text-white/40 font-medium">Choose a music file</p>
-                    <p className="text-[10px] text-white/20 mt-0.5">MP3, M4A, WAV, OGG {"\u2026"}</p>
+                    <p className="text-[10px] text-white/20 mt-0.5">
+                      MP3, M4A, WAV, OGG {"\u2026"}
+                    </p>
                   </div>
                 </div>
               ) : (
