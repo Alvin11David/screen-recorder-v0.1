@@ -202,7 +202,7 @@ public class AuthService {
         // addresses consume send slots identically — the endpoint cannot enumerate users.
         if (!passwordResetService.tryAcquireSend(email)) return;
         if (!userRepository.existsByEmail(email)) return;
-        passwordResetService.issueCode(email);
+        passwordResetService.issueCode(email, req.getTimezone());
     }
 
     public void verifyResetCode(VerifyResetCodeRequest req) {
