@@ -1,7 +1,7 @@
 export function isMacPlatform(): boolean {
   if (typeof navigator === "undefined") return false;
-  const ua = navigator.userAgentData as { platform?: string } | undefined;
-  const platform = ua?.platform ?? navigator.platform ?? "";
+  const nav = navigator as Navigator & { userAgentData?: { platform?: string } };
+  const platform = nav.userAgentData?.platform ?? navigator.platform ?? "";
   return /Mac|iPhone|iPad|iPod/i.test(platform) || /Macintosh/i.test(navigator.userAgent);
 }
 
