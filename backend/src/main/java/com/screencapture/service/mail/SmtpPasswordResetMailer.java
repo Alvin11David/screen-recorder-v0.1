@@ -5,6 +5,7 @@ import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
@@ -14,8 +15,9 @@ import java.util.Date;
 
 /**
  * Production mailer backed by a JavaMailSender SMTP session.
- * Delivery failures are logged server-side but never surfaced to the caller,
- * which keeps the forgot-password endpoint from leaking whether an account exists.
+ * Delivery failures are logged and rethrown so a {@link FailoverPasswordResetMailer}
+ * can fall back to another delivery path (e.g. console) without surfacing the
+ * failure to the caller.
  */
 public class SmtpPasswordResetMailer implements PasswordResetMailer {
 
