@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Video,
   ShieldCheck,
   Sparkles,
   AlertCircle,
@@ -1550,7 +1549,7 @@ function Index() {
         <motion.div variants={fadeUp} className="flex items-center justify-between mb-8 md:mb-12">
           <div className="flex items-center gap-2.5">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-primary shadow-[0_0_20px_-4px_oklch(0.74_0.15_222/0.3)]">
-              <Video className="h-4 w-4 text-white" />
+              <ScreenFlowLogo className="h-4 w-4 text-white" />
             </span>
             <span className="font-display text-base font-bold tracking-tight text-white/80">
               ScreenFlow
