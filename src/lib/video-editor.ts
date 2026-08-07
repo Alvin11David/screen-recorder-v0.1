@@ -334,7 +334,12 @@ export async function mergeClips(blobs: Blob[], options: VideoOptions): Promise<
       }
       const url = URL.createObjectURL(blobs[index]);
       urls.push(url);
-      video.onloadedmetadata = () => video.play().catch(() => {});
+      video.onloadedmetadata = () => {
+        video.play().catch(() => {
+          failed = true;
+          if (recorder.state === "recording") recorder.stop();
+        });
+      };
       video.onerror = () => {
         failed = true;
         if (recorder.state === "recording") recorder.stop();
