@@ -1256,6 +1256,9 @@ function Index() {
   const scheduleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [mounted, setMounted] = useState(false);
   const modifierLabel = mounted ? MODIFIER_LABEL : "Alt";
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const { isAuthenticated, user, logout } = useAuth();
   const {
