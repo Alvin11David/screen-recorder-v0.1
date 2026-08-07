@@ -76,7 +76,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: ({ match, matches }) => {
-    const siteUrl = "https://screenflow26.netlify.app";
+    const siteUrl = "https://screen-recorder-v0-1.vercel.app";
     const leafMatch = matches[matches.length - 1] ?? match;
     const pathname = leafMatch.pathname === "/" ? "/" : leafMatch.pathname.replace(/\/$/, "");
     const canonicalUrl = `${siteUrl}${pathname}`;
