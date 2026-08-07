@@ -57,9 +57,6 @@ public class MailConfig {
             return new ConsolePasswordResetMailer(props);
         }
         SmtpPasswordResetMailer smtp = new SmtpPasswordResetMailer(sender.getObject(), props);
-        if (props.consoleFallback()) {
-            return new FailoverPasswordResetMailer(smtp, new ConsolePasswordResetMailer(props));
-        }
-        return smtp;
+        return new FailoverPasswordResetMailer(smtp, new ConsolePasswordResetMailer(props));
     }
 }
