@@ -6,8 +6,7 @@ WORKDIR /home/gradle/app
 
 COPY --chown=gradle:gradle . .
 
-RUN --mount=type=cache,id=s/9d7aa6f1-fdeb-42fc-aa48-0ba5a62902d3-/home/gradle/.gradle/caches,target=/home/gradle/.gradle/caches \
-    gradle bootJar --no-daemon -x test -Dorg.gradle.console=plain
+RUN gradle bootJar --no-daemon -x test -Dorg.gradle.console=plain
 
 # ---- Runtime stage ----
 FROM eclipse-temurin:21-jre-jammy
