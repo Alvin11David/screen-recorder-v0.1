@@ -105,4 +105,4 @@ app:
       private-key: ${EMAILJS_PRIVATE_KEY:}
       template-id: ${EMAILJS_TEMPLATE_ID:}
   cors:
-    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:*,http://127.0.0.1:*,https://screenflow26.netlify.app}
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:*,http://127.0.0.1:*,https://screen-recorder-v0-1.vercel.app}

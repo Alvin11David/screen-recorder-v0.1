@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://screenflow26.netlify.app/sitemap.xml
+Sitemap: https://screen-recorder-v0-1.vercel.app/sitemap.xml
