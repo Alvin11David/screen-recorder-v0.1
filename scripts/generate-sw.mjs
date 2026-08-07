@@ -1,12 +1,14 @@
 import { readdirSync, writeFileSync, statSync, existsSync } from "fs";
 import { join } from "path";
 
-const CLIENT_DIR = "dist/client";
+const CLIENT_DIR = existsSync(".vercel/output/static")
+  ? ".vercel/output/static"
+  : "dist/client";
 const SW_PATH = join(CLIENT_DIR, "sw.js");
 const CACHE = "screencapture-v1";
 
 if (!existsSync(CLIENT_DIR)) {
-  console.log("No dist/client directory found — skipping SW generation.");
+  console.log("No client directory found — skipping SW generation.");
   process.exit(0);
 }
 
