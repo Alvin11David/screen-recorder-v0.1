@@ -842,10 +842,13 @@ export function useScreenRecorder() {
       const updated = [...multiStreamsRef.current, newStream];
       multiStreamsRef.current = updated;
       setMultiStreams(updated);
+      newStream.getVideoTracks()[0]?.addEventListener("ended", () =>
+        handlePendingCaptureEnded(newStream, "multi-setup"),
+      );
     } catch {
       // user dismissed the picker — do nothing
     }
-  }, [includeAudio]);
+  }, [includeAudio, handlePendingCaptureEnded]);
 
   const startMultiRecording = useCallback(async () => {
     const streams = multiStreamsRef.current;
