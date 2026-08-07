@@ -82,7 +82,15 @@ export function SeoFooter() {
 
         <div className="mt-10 flex flex-col gap-2 border-t border-white/5 pt-6 text-xs text-muted-foreground/60 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} ScreenFlow. All rights reserved.</p>
-          <p>Record privately — everything stays on your device.</p>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-6">
+            <a
+              href="mailto:screenflowcom@gmail.com"
+              className="transition-colors hover:text-primary"
+            >
+              Questions or support: screenflowcom@gmail.com
+            </a>
+            <p>Record privately — everything stays on your device.</p>
+          </div>
         </div>
       </div>
     </footer>
