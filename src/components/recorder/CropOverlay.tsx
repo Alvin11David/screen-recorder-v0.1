@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, X, Move, Crop, MousePointer2, Keyboard } from "lucide-react";
+import { Check, X, Move, Crop, MousePointer2, Keyboard, Expand } from "lucide-react";
 import type { CropRect } from "@/hooks/use-screen-recorder";
 
 interface CropOverlayProps {
