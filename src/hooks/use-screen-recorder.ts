@@ -210,8 +210,7 @@ export function useScreenRecorder() {
       const duration = accumulatedRef.current;
       const interrupted = reason === "track-ended";
       const empty =
-        interrupted &&
-        (duration < MIN_MEANINGFUL_DURATION || blob.size < MIN_MEANINGFUL_BYTES);
+        interrupted && (duration < MIN_MEANINGFUL_DURATION || blob.size < MIN_MEANINGFUL_BYTES);
 
       for (const s of displayStreams) s.getTracks().forEach((t) => t.stop());
       for (const v of videosToPause) v.pause();
@@ -249,17 +248,22 @@ export function useScreenRecorder() {
 
   // If the capture ends while the user is still in crop / multi-monitor setup, exit gracefully
   // instead of leaving a frozen overlay.
-  const handlePendingCaptureEnded = useCallback((stream: MediaStream, state: "crop" | "multi-setup") => {
-    if (statusRef.current !== state) return;
-    stream.getTracks().forEach((t) => t.stop());
-    if (state === "crop") pendingStreamRef.current = null;
-    multiStreamsRef.current = [];
-    setMultiStreams([]);
-    setCropRect(null);
-    setStream(null);
-    setStatus("idle");
-    setError("Screen capture was stopped before recording could begin. Please try recording again.");
-  }, []);
+  const handlePendingCaptureEnded = useCallback(
+    (stream: MediaStream, state: "crop" | "multi-setup") => {
+      if (statusRef.current !== state) return;
+      stream.getTracks().forEach((t) => t.stop());
+      if (state === "crop") pendingStreamRef.current = null;
+      multiStreamsRef.current = [];
+      setMultiStreams([]);
+      setCropRect(null);
+      setStream(null);
+      setStatus("idle");
+      setError(
+        "Screen capture was stopped before recording could begin. Please try recording again.",
+      );
+    },
+    [],
+  );
 
   const createThrottledFrameLoop = useCallback(
     (
@@ -842,9 +846,9 @@ export function useScreenRecorder() {
       const updated = [...multiStreamsRef.current, newStream];
       multiStreamsRef.current = updated;
       setMultiStreams(updated);
-      newStream.getVideoTracks()[0]?.addEventListener("ended", () =>
-        handlePendingCaptureEnded(newStream, "multi-setup"),
-      );
+      newStream
+        .getVideoTracks()[0]
+        ?.addEventListener("ended", () => handlePendingCaptureEnded(newStream, "multi-setup"));
     } catch {
       // user dismissed the picker — do nothing
     }
@@ -987,7 +991,14 @@ export function useScreenRecorder() {
     recorder.start(1000);
     setStatus("recording");
     startTimer();
-  }, [includeAudio, startTimer, stopComposite, overlayAnnotations, setupAnnotationCanvas, finalizeResult]);
+  }, [
+    includeAudio,
+    startTimer,
+    stopComposite,
+    overlayAnnotations,
+    setupAnnotationCanvas,
+    finalizeResult,
+  ]);
 
   const cancelMultiSetup = useCallback(() => {
     for (const s of multiStreamsRef.current) s.getTracks().forEach((t) => t.stop());
