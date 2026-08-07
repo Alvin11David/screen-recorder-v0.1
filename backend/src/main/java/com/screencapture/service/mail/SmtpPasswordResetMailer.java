@@ -32,7 +32,7 @@ public class SmtpPasswordResetMailer implements PasswordResetMailer {
     }
 
     @Override
-    public void sendCode(String email, String code, Duration validity) {
+    public void sendCode(String email, String code, Duration validity, String timezone) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
