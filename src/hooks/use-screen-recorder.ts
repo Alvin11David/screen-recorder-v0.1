@@ -50,6 +50,7 @@ export interface RecordingResult {
   sizeBytes: number;
   createdAt: Date;
   mimeType: string;
+  interrupted?: boolean;
 }
 
 const pickMimeType = (): string => {
