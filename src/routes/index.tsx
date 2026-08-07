@@ -50,8 +50,7 @@ import {
   type QualityPreset,
   type CameraSettings,
 } from "@/hooks/use-screen-recorder";
-import { formatTimer, formatBytes, formatResolution } from "@/lib/recording-utils";
-import { Button } from "@/components/ui/button";
+import { formatTimer, formatBytes, formatResolution } from "@/lib/recording-utils";import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { ClickFX } from "@/components/recorder/ClickFX";
