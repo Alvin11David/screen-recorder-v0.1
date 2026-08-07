@@ -1625,45 +1625,6 @@ function Index() {
             <br className="hidden sm:block" />
             No installs, no watermarks, no data leaving your machine.
           </motion.p>
-
-          {/* Feature badges */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.65, duration: 0.6 }}
-            className="flex items-center justify-center gap-2.5 flex-wrap"
-          >
-            {HERO_BADGES.map(({ icon: Icon, label, color, bg, ring, glow }, fi) => (
-              <motion.span
-                key={label}
-                initial={{ opacity: 0, scale: 0.75, y: 12 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{
-                  delay: 0.7 + fi * 0.1,
-                  duration: 0.5,
-                  type: "spring",
-                  stiffness: 280,
-                  damping: 22,
-                }}
-                whileHover={{ y: -2, scale: 1.05, transition: { duration: 0.18 } }}
-                className={cn(
-                  "inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold ring-1 backdrop-blur-sm cursor-default",
-                  bg,
-                  ring,
-                )}
-              >
-                <span
-                  className={cn(
-                    "flex h-5 w-5 items-center justify-center rounded-full bg-black/20",
-                    glow,
-                  )}
-                >
-                  <Icon className={cn("h-3 w-3", color)} />
-                </span>
-                <span className={color}>{label}</span>
-              </motion.span>
-            ))}
-          </motion.div>
         </motion.div>
 
         {/* ── Error ── */}
