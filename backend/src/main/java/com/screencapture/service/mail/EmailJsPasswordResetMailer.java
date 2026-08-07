@@ -50,6 +50,9 @@ public class EmailJsPasswordResetMailer implements PasswordResetMailer {
         payload.put("service_id", props.serviceId());
         payload.put("template_id", props.templateId());
         payload.put("user_id", props.publicKey());
+        if (props.privateKey() != null && !props.privateKey().isBlank()) {
+            payload.put("accessToken", props.privateKey());
+        }
 
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("email", email);
