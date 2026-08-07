@@ -1,6 +1,7 @@
 package com.screencapture.config;
 
 import com.screencapture.service.mail.ConsolePasswordResetMailer;
+import com.screencapture.service.mail.FailoverPasswordResetMailer;
 import com.screencapture.service.mail.PasswordResetMailer;
 import com.screencapture.service.mail.SmtpPasswordResetMailer;
 import org.springframework.beans.factory.ObjectProvider;
