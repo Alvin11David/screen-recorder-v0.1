@@ -786,30 +786,11 @@ export function useScreenRecorder() {
         if (event.data && event.data.size > 0) chunksRef.current.push(event.data);
       };
 
-      const handleStop = () => {
-        const blob = new Blob(chunksRef.current, { type: mimeType });
-        const url = URL.createObjectURL(blob);
-        setResult({
-          url,
-          blob,
-          durationSeconds: accumulatedRef.current,
-          width: trackSettingsRef.current.width,
-          height: trackSettingsRef.current.height,
-          sizeBytes: blob.size,
-          createdAt: new Date(),
-          mimeType,
-        });
-        displayStream.getTracks().forEach((t) => t.stop());
-        setStream(null);
-        setStatus("idle");
-        clearTimer();
-        stopComposite();
-      };
-
-      recorder.onstop = handleStop;
+      recorder.onstop = () => finalizeResult(mimeType, [displayStream]);
 
       videoTrack.addEventListener("ended", () => {
         if (recorderRef.current && recorderRef.current.state !== "inactive") {
+          stopReasonRef.current = "track-ended";
           accumulatedRef.current += (Date.now() - startTimeRef.current) / 1000;
           recorderRef.current.stop();
         }
