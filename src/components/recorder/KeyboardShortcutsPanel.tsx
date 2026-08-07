@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Keyboard } from "lucide-react";
+import { MODIFIER_LABEL } from "@/lib/platform";
 
 interface KeyboardShortcutsPanelProps {
   open: boolean;
