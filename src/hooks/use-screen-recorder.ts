@@ -563,23 +563,7 @@ export function useScreenRecorder() {
         };
 
         const handleStop = () => {
-          const blob = new Blob(chunksRef.current, { type: mimeType });
-          const url = URL.createObjectURL(blob);
-          setResult({
-            url,
-            blob,
-            durationSeconds: accumulatedRef.current,
-            width: trackSettingsRef.current.width,
-            height: trackSettingsRef.current.height,
-            sizeBytes: blob.size,
-            createdAt: new Date(),
-            mimeType,
-          });
-          displayStream.getTracks().forEach((t) => t.stop());
-          setStream(null);
-          setStatus("idle");
-          clearTimer();
-          stopComposite();
+          finalizeResult(mimeType, [displayStream]);
         };
 
         recorder.onstop = handleStop;
@@ -587,6 +571,7 @@ export function useScreenRecorder() {
         // User stops sharing via browser UI
         videoTrack.addEventListener("ended", () => {
           if (recorderRef.current && recorderRef.current.state !== "inactive") {
+            stopReasonRef.current = "track-ended";
             accumulatedRef.current += (Date.now() - startTimeRef.current) / 1000;
             recorderRef.current.stop();
           }
