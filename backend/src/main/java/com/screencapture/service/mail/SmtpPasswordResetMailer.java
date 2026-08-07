@@ -46,6 +46,7 @@ public class SmtpPasswordResetMailer implements PasswordResetMailer {
             log.info("Password reset code email sent to {}", email);
         } catch (MailException | jakarta.mail.MessagingException | java.io.UnsupportedEncodingException e) {
             log.error("Failed to send password reset email to {}", email, e);
+            throw new MailSendException("Failed to send password reset email to " + email, e);
         }
     }
 
