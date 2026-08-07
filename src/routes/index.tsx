@@ -1517,6 +1517,9 @@ function Index() {
             }}
           />
         ))}
+
+        {/* Particle network overlay */}
+        <ParticleBackground />
       </div>
 
       {/* ── Noise texture overlay ── */}
