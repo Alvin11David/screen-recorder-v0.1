@@ -71,6 +71,11 @@ const pickMimeType = (): string => {
 
 export function useScreenRecorder() {
   const [status, setStatus] = useState<RecorderStatus>("idle");
+  const statusRef = useRef<RecorderStatus>("idle");
+  statusRef.current = status;
+  const [captureMode, setCaptureMode] = useState<CaptureMode>("full");
+  const captureModeRef = useRef<CaptureMode>("full");
+  captureModeRef.current = captureMode;
   const [elapsed, setElapsed] = useState(0);
   const [countdown, setCountdown] = useState(0);
   const [stream, setStream] = useState<MediaStream | null>(null);
