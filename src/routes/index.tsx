@@ -2069,10 +2069,18 @@ function Index() {
         {/* ── Footer ── */}
         <motion.div
           variants={fadeUp}
-          className="flex items-center justify-center gap-2 mt-8 text-xs text-white/15"
+          className="flex flex-col items-center justify-center gap-1.5 mt-8 text-xs text-white/15"
         >
-          <ShieldCheck className="h-3.5 w-3.5 text-white/10" />
-          Recordings never leave your device — everything is processed locally.
+          <span className="flex items-center justify-center gap-2">
+            <ShieldCheck className="h-3.5 w-3.5 text-white/10" />
+            Recordings never leave your device — everything is processed locally.
+          </span>
+          <a
+            href="mailto:screenflowcom@gmail.com"
+            className="transition-colors hover:text-white/35"
+          >
+            Questions or support: screenflowcom@gmail.com
+          </a>
         </motion.div>
       </motion.div>
 
