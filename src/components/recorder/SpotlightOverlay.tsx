@@ -164,11 +164,11 @@ export function SpotlightOverlay({
           >
             <span className="text-[11px] text-white/60">
               <kbd className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[10px] text-white/50">
-                Alt+S
+                {MODIFIER_LABEL}+S
               </kbd>{" "}
               Spotlight ·{" "}
               <kbd className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[10px] text-white/50">
-                Alt+Z
+                {MODIFIER_LABEL}+Z
               </kbd>{" "}
               Zoom · scroll to resize
             </span>
