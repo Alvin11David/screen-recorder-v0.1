@@ -201,6 +201,66 @@ export function useScreenRecorder() {
     ctx.drawImage(ac, 0, 0, w, h);
   }, []);
 
+  // Build the final result, distinguishing a clean stop from an interrupted capture
+  // (e.g. the user stopped sharing in another app/browser, firing the track 'ended' event).
+  const finalizeResult = useCallback(
+    (mimeType: string, displayStreams: MediaStream[], videosToPause: HTMLVideoElement[] = []) => {
+      const blob = new Blob(chunksRef.current, { type: mimeType });
+      const reason = stopReasonRef.current;
+      const duration = accumulatedRef.current;
+      const interrupted = reason === "track-ended";
+      const empty =
+        interrupted &&
+        (duration < MIN_MEANINGFUL_DURATION || blob.size < MIN_MEANINGFUL_BYTES);
+
+      for (const s of displayStreams) s.getTracks().forEach((t) => t.stop());
+      for (const v of videosToPause) v.pause();
+      setStream(null);
+      setStatus("idle");
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      stopComposite();
+
+      if (empty) {
+        chunksRef.current = [];
+        setError(
+          "Screen sharing stopped before anything could be recorded, so nothing was captured. Don't end sharing in another app or browser tab while ScreenFlow is recording.",
+        );
+        return;
+      }
+
+      const url = URL.createObjectURL(blob);
+      setResult({
+        url,
+        blob,
+        durationSeconds: duration,
+        width: trackSettingsRef.current.width,
+        height: trackSettingsRef.current.height,
+        sizeBytes: blob.size,
+        createdAt: new Date(),
+        mimeType,
+        interrupted,
+      });
+    },
+    [stopComposite],
+  );
+
+  // If the capture ends while the user is still in crop / multi-monitor setup, exit gracefully
+  // instead of leaving a frozen overlay.
+  const handlePendingCaptureEnded = useCallback((stream: MediaStream, state: "crop" | "multi-setup") => {
+    if (statusRef.current !== state) return;
+    stream.getTracks().forEach((t) => t.stop());
+    if (state === "crop") pendingStreamRef.current = null;
+    multiStreamsRef.current = [];
+    setMultiStreams([]);
+    setCropRect(null);
+    setStream(null);
+    setStatus("idle");
+    setError("Screen capture was stopped before recording could begin. Please try recording again.");
+  }, []);
+
   const createThrottledFrameLoop = useCallback(
     (
       fps: number,
