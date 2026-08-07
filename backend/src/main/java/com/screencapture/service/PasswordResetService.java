@@ -84,11 +84,11 @@ public class PasswordResetService {
     /**
      * Generates a fresh 4-digit code, stores only its digest, and delivers it via email.
      */
-    public void issueCode(String email) {
+    public void issueCode(String email, String timezone) {
         String code = generateCode(props.length());
         long expiry = Instant.now().plusSeconds(props.ttlSeconds()).toEpochMilli();
         codes.put(email, new ResetEntry(hash(code), expiry, 0));
-        mailer.sendCode(email, code, Duration.ofSeconds(props.ttlSeconds()));
+        mailer.sendCode(email, code, Duration.ofSeconds(props.ttlSeconds()), timezone);
     }
 
     /**
