@@ -177,41 +177,6 @@ function useAudioMeter(stream: MediaStream | null) {
   return level;
 }
 
-const HERO_BADGES = [
-  {
-    icon: Zap,
-    label: "Zero Installs",
-    color: "text-cyan-400",
-    bg: "bg-cyan-500/10",
-    ring: "ring-cyan-500/25",
-    glow: "shadow-[0_0_16px_oklch(0.74_0.15_222/0.5)]",
-  },
-  {
-    icon: ShieldCheck,
-    label: "100% Private",
-    color: "text-emerald-400",
-    bg: "bg-emerald-500/10",
-    ring: "ring-emerald-500/25",
-    glow: "shadow-[0_0_16px_oklch(0.72_0.16_160/0.5)]",
-  },
-  {
-    icon: Lock,
-    label: "No Watermark",
-    color: "text-violet-400",
-    bg: "bg-violet-500/10",
-    ring: "ring-violet-500/25",
-    glow: "shadow-[0_0_16px_oklch(0.65_0.2_295/0.5)]",
-  },
-  {
-    icon: Sparkles,
-    label: "4K Quality",
-    color: "text-amber-400",
-    bg: "bg-amber-500/10",
-    ring: "ring-amber-500/25",
-    glow: "shadow-[0_0_16px_oklch(0.75_0.18_60/0.5)]",
-  },
-] as const;
-
 const PARTICLES = Array.from({ length: 25 }, (_, i) => ({
   left: `${((i * 3.7 + 1.2) % 100).toFixed(1)}%`,
   top: `${((i * 7.3 + 5.1) % 100).toFixed(1)}%`,
