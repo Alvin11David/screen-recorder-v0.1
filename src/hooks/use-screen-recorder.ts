@@ -1102,6 +1102,8 @@ export function useScreenRecorder() {
     error,
     cropRect,
     multiStreams,
+    captureMode,
+    setCaptureMode,
     includeAudio,
     setIncludeAudio,
     quality,
