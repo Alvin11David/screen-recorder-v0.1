@@ -167,7 +167,8 @@ export async function trimVideo(
   endSec: number,
   options: VideoOptions,
 ): Promise<Blob> {
-  const video = await loadVideo(blob);
+  const video = await loadVideo(blob, false);
+  const audio = createVideoAudioTrack(video);
   const canvas = document.createElement("canvas");
   canvas.width = options.width;
   canvas.height = options.height;
@@ -186,13 +187,21 @@ export async function trimVideo(
       fps,
       (result) => {
         URL.revokeObjectURL(video.src);
+        if (audio) audio.ctx.close().catch(() => {});
         resolve(result);
       },
       (err) => {
         URL.revokeObjectURL(video.src);
+        if (audio) audio.ctx.close().catch(() => {});
         reject(err);
       },
+      audio ? [audio.track] : [],
     );
+
+    video.onerror = () => {
+      if (recorder.state === "recording") recorder.stop();
+      reject(new Error("Failed to decode video while trimming"));
+    };
 
     video.play();
 
