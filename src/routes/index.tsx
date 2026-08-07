@@ -659,12 +659,12 @@ function SourceCards({
                   >
                     {label}
                   </span>
-                  <span className="block text-[10px] text-white/25 mt-0.5 leading-tight hidden md:block line-clamp-2">
+                  <span className="block text-[10px] text-white/25 mt-0.5 leading-tight hidden md:block line-clamp-2 min-h-[25px]">
                     {description}
                   </span>
                 </div>
               </div>
-              <span className="text-[10px] text-white/15 leading-tight italic hidden sm:block line-clamp-2 mt-auto">
+              <span className="text-[10px] text-white/15 leading-tight italic hidden sm:block line-clamp-2 mt-auto min-h-[25px]">
                 {tip}
               </span>
             </button>
