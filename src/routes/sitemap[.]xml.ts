@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
-const BASE_URL = "https://screenflow26.netlify.app";
+const BASE_URL = "https://screen-recorder-v0-1.vercel.app";
 
 interface SitemapEntry {
   path: string;

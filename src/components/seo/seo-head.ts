@@ -11,7 +11,7 @@ export interface SeoPageData {
   faqs?: SeoFaq[];
 }
 
-const SITE = "https://screenflow26.netlify.app";
+const SITE = "https://screen-recorder-v0-1.vercel.app";
 
 type SeoMetaEntry = {
   title?: string;

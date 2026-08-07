@@ -123,8 +123,8 @@ export const Route = createFileRoute("/")({
           "@context": "https://schema.org",
           "@type": "SoftwareApplication",
           name: "ScreenFlow",
-          url: "https://screenflow26.netlify.app/",
-          image: "https://screenflow26.netlify.app/og-image.png",
+          url: "https://screen-recorder-v0-1.vercel.app/",
+          image: "https://screen-recorder-v0-1.vercel.app/og-image.png",
           description:
             "Record your screen in HD, Full HD and 4K directly in the browser and save it locally. No installs, no watermarks, no data leaving your machine.",
           applicationCategory: "MultimediaApplication",
