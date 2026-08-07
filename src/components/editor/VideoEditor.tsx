@@ -678,7 +678,9 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
                         <>
                           <span className="text-sm text-white/60 block truncate">{c.text}</span>
                           <span className="text-[10px] font-mono text-white/20">
-                            {formatTime(c.start)} \u2013 {formatTime(c.end)}
+                            {formatTime(c.start)}
+                            {" \u2013 "}
+                            {formatTime(c.end)}
                           </span>
                         </>
                       )}
@@ -709,7 +711,7 @@ export function VideoEditor({ blob, onClose }: VideoEditorProps) {
               <div className="rounded-lg bg-white/[0.02] p-3 ring-1 ring-white/[0.06] space-y-2">
                 <input
                   type="text"
-                  placeholder="Caption text\u2026"
+                  placeholder={"Caption text\u2026"}
                   value={newCaptionText}
                   onChange={(e) => setNewCaptionText(e.target.value)}
                   onKeyDown={(e) => {
