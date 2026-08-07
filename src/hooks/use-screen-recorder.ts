@@ -987,7 +987,7 @@ export function useScreenRecorder() {
     recorder.start(1000);
     setStatus("recording");
     startTimer();
-  }, [includeAudio, startTimer, stopComposite, overlayAnnotations, setupAnnotationCanvas]);
+  }, [includeAudio, startTimer, stopComposite, overlayAnnotations, setupAnnotationCanvas, finalizeResult]);
 
   const cancelMultiSetup = useCallback(() => {
     for (const s of multiStreamsRef.current) s.getTracks().forEach((t) => t.stop());
