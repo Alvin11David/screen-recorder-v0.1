@@ -43,6 +43,7 @@ import { useAuth } from "@/hooks/use-auth";
 import {
   useScreenRecorder,
   type CaptureSurface,
+  type CaptureMode,
   type RecordingResult,
   QUALITY_PRESETS,
   type QualityPreset,
