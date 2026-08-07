@@ -28,7 +28,7 @@ import java.util.Properties;
 public class MailConfig {
 
     @Bean
-    @ConditionalOnProperty(name = "app.mail.enabled", havingValue = "true")
+    @ConditionalOnProperty(name = "app.mail.provider", havingValue = "smtp")
     public JavaMailSender javaMailSender(MailProperties props) {
         if (props.host() == null || props.host().isBlank()) {
             throw new IllegalStateException("app.mail.enabled is true but SMTP_HOST is not set");
