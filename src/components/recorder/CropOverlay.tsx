@@ -261,6 +261,20 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
     });
   };
 
+  const handleRecordFullScreen = () => {
+    const el = overlayRef.current;
+    if (!el) return;
+    const vr = el.getBoundingClientRect();
+    const scaleX = videoW / vr.width;
+    const scaleY = videoH / vr.height;
+    onConfirm({
+      x: 0,
+      y: 0,
+      width: Math.round(vr.width * scaleX),
+      height: Math.round(vr.height * scaleY),
+    });
+  };
+
   const hasValidSelection =
     selection && selection.width >= MIN_SIZE && selection.height >= MIN_SIZE;
 
