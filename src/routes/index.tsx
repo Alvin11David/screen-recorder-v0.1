@@ -1188,6 +1188,8 @@ function Index() {
     error,
     cropRect,
     multiStreams,
+    captureMode,
+    setCaptureMode,
     includeAudio,
     setIncludeAudio,
     includeCamera,
