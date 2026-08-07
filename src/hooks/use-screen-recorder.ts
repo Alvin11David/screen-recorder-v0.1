@@ -603,6 +603,8 @@ export function useScreenRecorder() {
       stopComposite,
       overlayAnnotations,
       setupAnnotationCanvas,
+      finalizeResult,
+      handlePendingCaptureEnded,
     ],
   );
 
