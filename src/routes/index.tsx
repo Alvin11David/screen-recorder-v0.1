@@ -985,10 +985,12 @@ function RecordingResultPanel({
   result,
   onReset,
   onEdit,
+  interrupted,
 }: {
   result: RecordingResult;
   onReset: () => void;
   onEdit?: () => void;
+  interrupted?: boolean;
 }) {
   const [saveState, setSaveState] = useState<"idle" | "saving" | "done">("idle");
 
