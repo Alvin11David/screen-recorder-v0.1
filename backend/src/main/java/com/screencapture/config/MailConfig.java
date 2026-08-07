@@ -53,9 +53,13 @@ public class MailConfig {
 
     @Bean
     public PasswordResetMailer passwordResetMailer(ObjectProvider<JavaMailSender> sender, MailProperties props) {
-        if (props.enabled()) {
-            return new SmtpPasswordResetMailer(sender.getObject(), props);
+        if (!props.enabled()) {
+            return new ConsolePasswordResetMailer(props);
         }
-        return new ConsolePasswordResetMailer(props);
+        SmtpPasswordResetMailer smtp = new SmtpPasswordResetMailer(sender.getObject(), props);
+        if (props.consoleFallback()) {
+            return new FailoverPasswordResetMailer(smtp, new ConsolePasswordResetMailer(props));
+        }
+        return smtp;
     }
 }
