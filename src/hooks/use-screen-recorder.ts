@@ -303,7 +303,7 @@ export function useScreenRecorder() {
     }
     let cancelled = false;
     navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
+      .getUserMedia({ video: true, audio: includeAudio })
       .then((cs) => {
         if (!cancelled) setCameraStream(cs);
         else cs.getTracks().forEach((t) => t.stop());
@@ -316,7 +316,7 @@ export function useScreenRecorder() {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [includeCamera]);
+  }, [includeCamera, includeAudio]);
 
   const beginCapture = useCallback(
     async (surface: CaptureSurface) => {
