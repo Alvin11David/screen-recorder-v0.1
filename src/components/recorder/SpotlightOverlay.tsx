@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Crosshair, ZoomIn } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { MODIFIER_LABEL } from "@/lib/platform";
 
 export type SpotlightMode = "spotlight" | "zoom";
 
