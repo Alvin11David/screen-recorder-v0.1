@@ -146,14 +146,14 @@ public class SmtpPasswordResetMailer implements PasswordResetMailer {
                         <!-- Code digits -->
                         <table role="presentation" cellpadding="0" cellspacing="0" border="0" class="digits-row" align="center" style="margin:0 auto 32px;">
                           <tr>
-                            %s
+                            __DIGITS__
                           </tr>
                         </table>
 
                         <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto 8px;">
                           <tr>
                             <td align="center" style="font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-size:13px;font-weight:600;color:#8FA3C0;">
-                              This code expires in %d minutes.
+                              This code expires in __MINUTES__ minutes.
                             </td>
                           </tr>
                         </table>
