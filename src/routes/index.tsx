@@ -1398,6 +1398,7 @@ function Index() {
   }, [
     status,
     result,
+    editorBlob,
     source,
     showHistory,
     showShortcuts,
