@@ -505,8 +505,7 @@ export async function processWithEffects(
             const by = textY - bh / 2;
 
             ctx.fillStyle = "rgba(0,0,0,0.65)";
-            ctx.beginPath();
-            ctx.roundRect(bx, by, bw, bh, Math.round(fontSize * 0.4));
+            roundedRectPath(ctx, bx, by, bw, bh, Math.round(fontSize * 0.4));
             ctx.fill();
 
             ctx.fillStyle = "#ffffff";
