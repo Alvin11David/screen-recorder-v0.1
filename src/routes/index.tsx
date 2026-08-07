@@ -66,6 +66,7 @@ import { FloatingMiniBar } from "@/components/recorder/FloatingMiniBar";
 import { RecordingHistory, saveToHistory } from "@/components/recorder/RecordingHistory";
 import { KeyboardShortcutsPanel } from "@/components/recorder/KeyboardShortcutsPanel";
 import { TeleprompterOverlay } from "@/components/recorder/TeleprompterOverlay";
+import { ScreenFlowLogo } from "@/components/ui/ScreenFlowLogo";
 
 const SOURCES: {
   id: CaptureSurface;
