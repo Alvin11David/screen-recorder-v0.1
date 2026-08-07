@@ -185,7 +185,7 @@ export function SpotlightOverlay({
             <ZoomIn className="h-3.5 w-3.5 text-primary/70" />
           )}
           <span className="text-[10px] font-mono text-white/50 uppercase tracking-wider">
-            {isSpotlight ? "Spotlight" : "Zoom"} · Alt+{isSpotlight ? "S" : "Z"} to exit
+            {isSpotlight ? "Spotlight" : "Zoom"} · {MODIFIER_LABEL}+{isSpotlight ? "S" : "Z"} to exit
           </span>
         </div>
       )}
