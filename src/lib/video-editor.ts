@@ -36,11 +36,11 @@ function getSupportedMimeType(): string {
   return "video/webm";
 }
 
-function loadVideo(blob: Blob): Promise<HTMLVideoElement> {
+function loadVideo(blob: Blob, muted = true): Promise<HTMLVideoElement> {
   return new Promise((resolve, reject) => {
     const video = document.createElement("video");
     video.src = URL.createObjectURL(blob);
-    video.muted = true;
+    video.muted = muted;
     video.playsInline = true;
     video.preload = "auto";
     video.onloadedmetadata = () => resolve(video);
@@ -48,13 +48,35 @@ function loadVideo(blob: Blob): Promise<HTMLVideoElement> {
   });
 }
 
+interface VideoAudioTrack {
+  ctx: AudioContext;
+  track: MediaStreamTrack;
+}
+
+function createVideoAudioTrack(video: HTMLVideoElement): VideoAudioTrack | null {
+  try {
+    const ctx = new AudioContext();
+    const dest = ctx.createMediaStreamDestination();
+    const src = ctx.createMediaElementSource(video);
+    src.connect(dest);
+    return { ctx, track: dest.stream.getAudioTracks()[0] };
+  } catch (err) {
+    console.warn("Source audio setup failed, continuing without source audio", err);
+    return null;
+  }
+}
+
 function createRecorder(
   canvas: HTMLCanvasElement,
   fps: number,
   onDone: (blob: Blob) => void,
   onError: (err: unknown) => void,
+  audioTracks: MediaStreamTrack[] = [],
 ): MediaRecorder {
   const stream = canvas.captureStream(fps);
+  for (const track of audioTracks) {
+    stream.addTrack(track);
+  }
   const mimeType = getSupportedMimeType();
   const recorder = new MediaRecorder(stream, { mimeType });
   const chunks: Blob[] = [];
