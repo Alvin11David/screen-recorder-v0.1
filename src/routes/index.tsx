@@ -1060,6 +1060,16 @@ function RecordingResultPanel({
           WEBM · High quality
         </span>
       </div>
+      {interrupted && (
+        <div className="mb-5 flex items-start gap-2.5 rounded-xl bg-amber-500/10 p-3.5 text-sm ring-1 ring-amber-500/20">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+          <p className="text-amber-200/90">
+            This recording was interrupted because screen sharing stopped — it may be incomplete.
+            To avoid this, don't end sharing in another app or browser tab while ScreenFlow is
+            recording.
+          </p>
+        </div>
+      )}
       <div className="grid grid-cols-2 gap-2 lg:grid-cols-4 mb-5">
         {stats.map(({ icon: Icon, label, value }) => (
           <div key={label} className="glass rounded-xl p-3.5">
