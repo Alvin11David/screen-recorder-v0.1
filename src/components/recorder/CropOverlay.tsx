@@ -352,6 +352,14 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleRecordFullScreen}
+              className="flex items-center gap-2 rounded-lg bg-white/[0.06] px-3 py-1.5 text-[11px] font-semibold text-white/70 ring-1 ring-white/[0.1] transition-all hover:bg-white/[0.1] hover:text-white"
+            >
+              <Expand className="h-3 w-3" />
+              Record Full Screen
+            </button>
             <div className="rounded-lg bg-white/[0.04] px-3 py-1.5 text-[11px] font-mono text-white/50 ring-1 ring-white/[0.06]">
               Source: {videoW}×{videoH}
             </div>
