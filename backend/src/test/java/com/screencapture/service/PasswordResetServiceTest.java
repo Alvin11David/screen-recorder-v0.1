@@ -44,7 +44,7 @@ class PasswordResetServiceTest {
         PasswordResetService service = service(mailer, props(5, 60, 5));
 
         for (int i = 0; i < 200; i++) {
-            service.issueCode(EMAIL);
+            service.issueCode(EMAIL, null);
             String delivered = mailer.sent.get(mailer.sent.size() - 1).code();
             assertEquals(4, delivered.length());
             int numeric = Integer.parseInt(delivered);
