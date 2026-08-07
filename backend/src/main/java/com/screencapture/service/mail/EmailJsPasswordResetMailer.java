@@ -44,7 +44,7 @@ public class EmailJsPasswordResetMailer implements PasswordResetMailer {
     }
 
     @Override
-    public void sendCode(String email, String code, Duration validity) {
+    public void sendCode(String email, String code, Duration validity, String timezone) {
         Map<String, Object> payload = new LinkedHashMap<>();
         payload.put("service_id", props.serviceId());
         payload.put("template_id", props.templateId());
@@ -56,7 +56,7 @@ public class EmailJsPasswordResetMailer implements PasswordResetMailer {
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("email", email);
         params.put("passcode", code);
-        params.put("time", EXPIRY_FORMAT.format(Instant.now().plus(validity)));
+        params.put("time", formatExpiry(validity, timezone));
         payload.put("template_params", params);
 
         try {
@@ -81,5 +81,17 @@ public class EmailJsPasswordResetMailer implements PasswordResetMailer {
             log.error("Failed to send password reset email via EmailJS to {}", email, e);
             throw new MailSendException("Failed to send password reset email to " + email, e);
         }
+    }
+
+    private String formatExpiry(Duration validity, String timezone) {
+        Instant expiry = Instant.now().plus(validity);
+        if (timezone != null && !timezone.isBlank()) {
+            try {
+                return EXPIRY_FORMAT.format(expiry.atZone(ZoneId.of(timezone)));
+            } catch (Exception e) {
+                log.warn("Unrecognized timezone '{}'; falling back to server timezone", timezone);
+            }
+        }
+        return EXPIRY_FORMAT.format(expiry.atZone(ZoneId.systemDefault()));
     }
 }
