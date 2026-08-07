@@ -622,7 +622,7 @@ function SourceCards({
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
               className={cn(
-                "relative flex flex-col items-start gap-2.5 rounded-xl p-4 text-left w-full transition-all duration-200 ease-out text-balance overflow-hidden",
+                "relative flex flex-col items-start gap-2.5 rounded-xl p-4 text-left w-full h-28 sm:h-36 md:h-[150px] transition-all duration-200 ease-out text-balance overflow-hidden",
                 "bg-white/[0.03] backdrop-blur-sm border border-white/[0.06]",
                 "hover:border-white/[0.18] hover:bg-white/[0.06]",
                 "disabled:cursor-not-allowed disabled:opacity-30",
