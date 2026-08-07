@@ -57,7 +57,7 @@ class PasswordResetServiceTest {
         FakeMailer mailer = new FakeMailer();
         PasswordResetService service = service(mailer, props(5, 60, 5));
 
-        service.issueCode(EMAIL);
+        service.issueCode(EMAIL, null);
 
         assertEquals(1, mailer.sent.size());
         String delivered = mailer.sent.get(0).code();
@@ -71,7 +71,7 @@ class PasswordResetServiceTest {
         FakeMailer mailer = new FakeMailer();
         PasswordResetService service = service(mailer, props(5, 60, 5));
 
-        service.issueCode(EMAIL);
+        service.issueCode(EMAIL, null);
         String delivered = mailer.sent.get(0).code();
         String wrong = delivered.equals("0000") ? "0001" : "0000";
 
@@ -84,7 +84,7 @@ class PasswordResetServiceTest {
         FakeMailer mailer = new FakeMailer();
         PasswordResetService service = service(mailer, props(3, 60, 5));
 
-        service.issueCode(EMAIL);
+        service.issueCode(EMAIL, null);
         String delivered = mailer.sent.get(0).code();
 
         assertFalse(service.verifyCode(EMAIL, "1111"));
@@ -99,7 +99,7 @@ class PasswordResetServiceTest {
         ResetCodeProperties props = new ResetCodeProperties(4, 1, 5, 60, 5, 15, 60_000);
         PasswordResetService service = service(mailer, props);
 
-        service.issueCode(EMAIL);
+        service.issueCode(EMAIL, null);
         String delivered = mailer.sent.get(0).code();
 
         Thread.sleep(1_100);
@@ -111,11 +111,11 @@ class PasswordResetServiceTest {
         FakeMailer mailer = new FakeMailer();
         PasswordResetService service = service(mailer, props(5, 60, 5));
 
-        service.issueCode(EMAIL);
+        service.issueCode(EMAIL, null);
         String delivered = mailer.sent.get(0).code();
         assertTrue(service.verifyCode(EMAIL, delivered));
 
-        service.issueCode(EMAIL);
+        service.issueCode(EMAIL, null);
         String second = mailer.sent.get(1).code();
         service.consumeCode(EMAIL);
         assertFalse(service.verifyCode(EMAIL, second));
@@ -126,7 +126,7 @@ class PasswordResetServiceTest {
         FakeMailer mailer = new FakeMailer();
         PasswordResetService service = service(mailer, props(5, 60, 5));
 
-        service.issueCode(EMAIL);
+        service.issueCode(EMAIL, null);
         String delivered = mailer.sent.get(0).code();
 
         Field codesField = PasswordResetService.class.getDeclaredField("codes");
@@ -187,7 +187,7 @@ class PasswordResetServiceTest {
         ResetCodeProperties props = new ResetCodeProperties(4, 1, 5, 60, 5, 15, 60_000);
         PasswordResetService service = service(mailer, props);
 
-        service.issueCode(EMAIL);
+        service.issueCode(EMAIL, null);
         String delivered = mailer.sent.get(0).code();
         Thread.sleep(1_100);
 
