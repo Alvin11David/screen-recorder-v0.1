@@ -730,7 +730,7 @@ export function useScreenRecorder() {
           const srcNode = audioCtx.createMediaStreamSource(displayStream);
           srcNode.connect(dest);
         }
-        if (cameraStream.getAudioTracks().length > 0) {
+        if (includeAudio && cameraStream.getAudioTracks().length > 0) {
           const srcNode = audioCtx.createMediaStreamSource(cameraStream);
           srcNode.connect(dest);
         }
