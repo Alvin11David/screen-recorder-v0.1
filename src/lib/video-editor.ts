@@ -347,7 +347,7 @@ export async function processWithEffects(
   blob: Blob,
   options: VideoOptions & ProcessEffectsOptions,
 ): Promise<Blob> {
-  const video = await loadVideo(blob);
+  const video = await loadVideo(blob, false);
   const canvas = document.createElement("canvas");
   canvas.width = options.width;
   canvas.height = options.height;
@@ -361,31 +361,41 @@ export async function processWithEffects(
     run().catch(reject);
 
     async function run() {
-      let audioTrack: MediaStreamTrack | null = null;
       let audioCtx: AudioContext | null = null;
       let audioEl: HTMLAudioElement | null = null;
+      let audioTrack: MediaStreamTrack | null = null;
       const cleanupUrls: string[] = [];
       let audioStarted = false;
 
-      if (hasMusic && options.music) {
+      try {
+        audioCtx = new AudioContext();
+        const dest = audioCtx.createMediaStreamDestination();
         try {
-          audioCtx = new AudioContext();
-          audioEl = document.createElement("audio");
-          const musicUrl = URL.createObjectURL(options.music.blob);
-          cleanupUrls.push(musicUrl);
-          audioEl.src = musicUrl;
-          audioEl.loop = false;
-          audioEl.volume = 1;
-          const source = audioCtx.createMediaElementSource(audioEl);
-          const gain = audioCtx.createGain();
-          gain.gain.value = options.music.volume;
-          const dest = audioCtx.createMediaStreamDestination();
-          source.connect(gain);
-          gain.connect(dest);
-          audioTrack = dest.stream.getAudioTracks()[0];
+          const src = audioCtx.createMediaElementSource(video);
+          src.connect(dest);
         } catch (err) {
-          console.warn("Music setup failed, continuing without audio", err);
+          console.warn("Source audio setup failed, continuing without source audio", err);
         }
+        if (hasMusic && options.music) {
+          try {
+            audioEl = document.createElement("audio");
+            const musicUrl = URL.createObjectURL(options.music.blob);
+            cleanupUrls.push(musicUrl);
+            audioEl.src = musicUrl;
+            audioEl.loop = false;
+            audioEl.volume = 1;
+            const source = audioCtx.createMediaElementSource(audioEl);
+            const gain = audioCtx.createGain();
+            gain.gain.value = options.music.volume;
+            source.connect(gain);
+            gain.connect(dest);
+          } catch (err) {
+            console.warn("Music setup failed, continuing without music", err);
+          }
+        }
+        audioTrack = dest.stream.getAudioTracks()[0];
+      } catch (err) {
+        console.warn("Audio setup failed, continuing without audio", err);
       }
 
       const videoStream = canvas.captureStream(fps);
@@ -397,17 +407,23 @@ export async function processWithEffects(
       const recorder = new MediaRecorder(combinedStream, { mimeType });
       const chunks: Blob[] = [];
 
+      const cleanup = () => {
+        cleanupUrls.forEach((u) => URL.revokeObjectURL(u));
+        URL.revokeObjectURL(video.src);
+        if (audioCtx) audioCtx.close().catch(() => {});
+      };
+
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) chunks.push(e.data);
       };
       recorder.onstop = () => {
-        const result = new Blob(chunks, { type: "video/webm" });
-        cleanupUrls.forEach((u) => URL.revokeObjectURL(u));
-        URL.revokeObjectURL(video.src);
-        if (audioCtx) audioCtx.close().catch(() => {});
-        resolve(result);
+        cleanup();
+        resolve(new Blob(chunks, { type: "video/webm" }));
       };
-      recorder.onerror = (e) => reject(e.error);
+      recorder.onerror = (e) => {
+        cleanup();
+        reject(e.error);
+      };
 
       // Position video at trim start
       if (options.trim) {
@@ -418,11 +434,23 @@ export async function processWithEffects(
         });
       }
 
+      video.onerror = () => {
+        cleanup();
+        if (recorder.state === "recording") recorder.stop();
+        reject(new Error("Failed to decode video while applying effects"));
+      };
+
       recorder.start();
       const endTime = options.trim?.end ?? video.duration;
 
       video.playbackRate = speed;
-      await video.play();
+      try {
+        await video.play();
+      } catch (err) {
+        cleanup();
+        if (recorder.state === "recording") recorder.stop();
+        throw err;
+      }
 
       if (audioEl && audioTrack) {
         audioEl.currentTime = 0;
