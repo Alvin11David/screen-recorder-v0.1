@@ -107,7 +107,7 @@ public class SmtpPasswordResetMailer implements PasswordResetMailer {
 
                 <!-- Preheader (invisible) -->
                 <tr><td style="display:none;visibility:hidden;mso-hide:all;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;color:#0B1120;">
-                Your ScreenFlow verification code is %s — valid for %d minutes.
+                Your ScreenFlow verification code is __PREVIEW_CODE__ — valid for __PREVIEW_MINUTES__ minutes.
                 </td></tr>
 
                 <!-- Brand header -->
