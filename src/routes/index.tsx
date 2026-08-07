@@ -718,7 +718,7 @@ function QualitySelector({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -4, scale: 0.96 }}
             transition={{ duration: 0.15 }}
-            className="absolute bottom-full left-0 mb-2 w-48 rounded-xl bg-black/95 p-1.5 ring-1 ring-white/[0.1] backdrop-blur-2xl shadow-2xl z-20"
+            className="absolute bottom-full left-0 mb-2 w-48 rounded-xl bg-black p-1.5 ring-1 ring-white/[0.1] shadow-2xl z-20"
           >
             {QUALITY_PRESETS.map((preset) => (
               <button
