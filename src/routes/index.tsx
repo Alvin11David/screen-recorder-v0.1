@@ -927,9 +927,12 @@ function ControlBar({
             className="flex cursor-pointer items-center gap-2.5 rounded-full bg-white/[0.03] px-4 py-2 text-xs ring-1 ring-white/[0.06] backdrop-blur-sm transition-all hover:bg-white/[0.06] hover:ring-white/[0.12]"
           >
             <Switch checked={includeAudio} onCheckedChange={onIncludeAudioChange} />
-            <span className="text-white/50 select-none flex items-center gap-1.5">
+            <span
+              title="Record sound from your screen or tab and microphone. Turn off for screen-only recording."
+              className="text-white/50 select-none flex items-center gap-1.5"
+            >
               <Mic className="h-3 w-3" />
-              Audio
+              Sound
             </span>
           </motion.label>
           <motion.label
