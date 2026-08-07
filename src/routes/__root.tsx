@@ -125,6 +125,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { rel: "canonical", href: canonicalUrl },
         { rel: "manifest", href: "/manifest.webmanifest" },
         { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+        { rel: "icon", type: "image/png", href: "/ScreenFlow.png" },
         { rel: "icon", type: "image/png", sizes: "192x192", href: "/pwa-192x192.png" },
         { rel: "apple-touch-icon", href: "/pwa-192x192.png" },
         { rel: "preconnect", href: "https://fonts.googleapis.com" },
