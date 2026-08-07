@@ -1609,7 +1609,7 @@ function Index() {
             {/* History button */}
             <button
               onClick={() => setShowHistory(true)}
-              title="Recording History (Alt+H)"
+              title={`Recording History (${MODIFIER_LABEL}+H)`}
               className="flex h-8 w-8 items-center justify-center rounded-lg text-white/30 ring-1 ring-white/[0.06] transition-all hover:bg-white/[0.06] hover:text-white/70 hover:ring-white/[0.12]"
             >
               <History className="h-4 w-4" />
@@ -1617,7 +1617,7 @@ function Index() {
             {/* Keyboard shortcuts button */}
             <button
               onClick={() => setShowShortcuts(true)}
-              title="Keyboard Shortcuts (Alt+K)"
+              title={`Keyboard Shortcuts (${MODIFIER_LABEL}+K)`}
               className="flex h-8 w-8 items-center justify-center rounded-lg text-white/30 ring-1 ring-white/[0.06] transition-all hover:bg-white/[0.06] hover:text-white/70 hover:ring-white/[0.12]"
             >
               <Keyboard className="h-4 w-4" />
@@ -1625,7 +1625,7 @@ function Index() {
             {/* Teleprompter button */}
             <button
               onClick={() => setTeleprompterActive((v) => !v)}
-              title="Teleprompter (Alt+T)"
+              title={`Teleprompter (${MODIFIER_LABEL}+T)`}
               className={cn(
                 "flex h-8 w-8 items-center justify-center rounded-lg ring-1 transition-all",
                 teleprompterActive
