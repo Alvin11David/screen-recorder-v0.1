@@ -22,6 +22,7 @@ import java.util.Map;
 public class AuthService {
 
     private static final int OAUTH_TIMEOUT_MS = 5_000;
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
