@@ -310,12 +310,12 @@ public class AuthService {
 
     @SuppressWarnings("unchecked")
     private Map<String, String> exchangeGoogleCode(String code, String redirectUri) {
+        if (googleClientId == null || googleClientId.isBlank()
+                || googleClientSecret == null || googleClientSecret.isBlank()) {
+            throw new RuntimeException(
+                    "Google OAuth is not configured on the backend (GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET)");
+        }
         try {
-            if (googleClientId == null || googleClientId.isBlank()
-                    || googleClientSecret == null || googleClientSecret.isBlank()) {
-                throw new IllegalStateException("Google OAuth credentials are not configured");
-            }
-
             var body = new java.util.LinkedHashMap<String, Object>();
             body.put("client_id", googleClientId);
             body.put("client_secret", googleClientSecret);
@@ -331,9 +331,15 @@ public class AuthService {
                     .POST(HttpRequest.BodyPublishers.ofString(toFormBody(body)))
                     .build();
 
-            return objectMapper.readValue(send(request), Map.class);
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() < 200 || response.statusCode() >= 300) {
+                log.error("Google token exchange failed: HTTP {} body={}", response.statusCode(), response.body());
+                throw new IllegalStateException(
+                        "Google token exchange failed (HTTP " + response.statusCode() + "): " + response.body());
+            }
+            return objectMapper.readValue(response.body(), Map.class);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to exchange Google code", e);
+            throw new RuntimeException("Failed to exchange Google code: " + e.getMessage(), e);
         }
     }
 
