@@ -232,12 +232,12 @@ public class AuthService {
 
     @SuppressWarnings("unchecked")
     private Map<String, String> exchangeGitHubCode(String code) {
+        if (githubClientId == null || githubClientId.isBlank()
+                || githubClientSecret == null || githubClientSecret.isBlank()) {
+            throw new RuntimeException(
+                    "GitHub OAuth is not configured on the backend (GITHUB_CLIENT_ID / GITHUB_CLIENT_SECRET)");
+        }
         try {
-            if (githubClientId == null || githubClientId.isBlank()
-                    || githubClientSecret == null || githubClientSecret.isBlank()) {
-                throw new IllegalStateException("GitHub OAuth credentials are not configured");
-            }
-
             var body = new java.util.LinkedHashMap<String, Object>();
             body.put("client_id", githubClientId);
             body.put("client_secret", githubClientSecret);
@@ -251,9 +251,15 @@ public class AuthService {
                     .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(body)))
                     .build();
 
-            return objectMapper.readValue(send(request), Map.class);
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() < 200 || response.statusCode() >= 300) {
+                log.error("GitHub token exchange failed: HTTP {} body={}", response.statusCode(), response.body());
+                throw new IllegalStateException(
+                        "GitHub token exchange failed (HTTP " + response.statusCode() + "): " + response.body());
+            }
+            return objectMapper.readValue(response.body(), Map.class);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to exchange GitHub code", e);
+            throw new RuntimeException("Failed to exchange GitHub code: " + e.getMessage(), e);
         }
     }
 
