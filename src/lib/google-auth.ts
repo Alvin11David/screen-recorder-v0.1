@@ -48,9 +48,11 @@ export const exchangeGoogleCode = createServerFn({ method: "POST" })
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code, redirectUri, action }),
     });
+    console.info(`[google-auth] POST ${apiBase}/api/auth/google/callback -> ${res.status}`);
 
     if (!res.ok) {
       const data = (await res.json()) as Record<string, string>;
+      console.error(`[google-auth] backend error ${res.status}:`, data);
       throw new Error(data.error || "Google authentication failed");
     }
 
