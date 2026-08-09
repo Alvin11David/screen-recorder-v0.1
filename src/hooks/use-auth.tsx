@@ -30,6 +30,8 @@ const TOKEN_KEY = "sc-auth-token";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
+console.info(`[auth] API_BASE = ${API_BASE}`);
+
 function apiUrl(path: string) {
   return `${API_BASE}${path}`;
 }
@@ -37,9 +39,11 @@ function apiUrl(path: string) {
 const NETWORK_ERROR = "Couldn't reach the server — please check your connection and try again.";
 
 async function postJson(path: string, body: unknown, maxAttempts = 3) {
+  const url = apiUrl(path);
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
-      const res = await fetch(apiUrl(path), {
+      console.info(`[auth] POST ${url} (attempt ${attempt + 1}/${maxAttempts})`);
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -50,8 +54,12 @@ async function postJson(path: string, body: unknown, maxAttempts = 3) {
       } catch {
         data = null;
       }
+      console.info(`[auth] ${url} -> ${res.status}`, data);
       return { status: res.status, data };
-    } catch {
+    } catch (err) {
+      console.error(`[auth] fetch failed (${url}, attempt ${attempt + 1}/${maxAttempts})`, err, {
+        cause: (err as Error)?.cause,
+      });
       if (attempt < maxAttempts - 1) {
         await new Promise((r) => setTimeout(r, 600 * (attempt + 1)));
         continue;
