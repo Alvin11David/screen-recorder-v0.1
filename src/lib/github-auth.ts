@@ -47,9 +47,11 @@ export const exchangeGitHubCode = createServerFn({ method: "POST" })
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code, action }),
     });
+    console.info(`[github-auth] POST ${apiBase}/api/auth/github/callback -> ${res.status}`);
 
     if (!res.ok) {
       const data = (await res.json()) as Record<string, string>;
+      console.error(`[github-auth] backend error ${res.status}:`, data);
       throw new Error(data.error || "GitHub authentication failed");
     }
 
