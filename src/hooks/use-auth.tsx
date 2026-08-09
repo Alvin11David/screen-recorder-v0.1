@@ -34,6 +34,34 @@ function apiUrl(path: string) {
   return `${API_BASE}${path}`;
 }
 
+const NETWORK_ERROR = "Couldn't reach the server — please check your connection and try again.";
+
+async function postJson(path: string, body: unknown, maxAttempts = 3) {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    try {
+      const res = await fetch(apiUrl(path), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      let data: any = null;
+      try {
+        data = await res.json();
+      } catch {
+        data = null;
+      }
+      return { status: res.status, data };
+    } catch {
+      if (attempt < maxAttempts - 1) {
+        await new Promise((r) => setTimeout(r, 600 * (attempt + 1)));
+        continue;
+      }
+      throw new Error(NETWORK_ERROR);
+    }
+  }
+  throw new Error(NETWORK_ERROR);
+}
+
 function loadUser(): User | null {
   if (typeof window === "undefined") return null;
   try {
@@ -67,17 +95,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (email: string, password: string): Promise<string | null> => {
     setState((s) => ({ ...s, isLoading: true }));
     try {
-      const res = await fetch(apiUrl("/api/auth/login"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) return data.error || "Login failed";
+      const { status, data } = await postJson("/api/auth/login", { email, password });
+      if (status >= 400) return (data?.error as string) || "Login failed";
+      if (!data) return NETWORK_ERROR;
       setUser({ email: data.email, name: data.name, avatar: data.avatar }, data.token);
       return null;
-    } catch {
-      return "Network error — is the backend running?";
+    } catch (e) {
+      return e instanceof Error ? e.message : NETWORK_ERROR;
+    } finally {
+      setState((s) => ({ ...s, isLoading: false }));
     }
   }, []);
 
@@ -85,17 +111,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (name: string, email: string, password: string): Promise<string | null> => {
       setState((s) => ({ ...s, isLoading: true }));
       try {
-        const res = await fetch(apiUrl("/api/auth/register"), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, email, password }),
-        });
-        const data = await res.json();
-        if (!res.ok) return data.error || "Registration failed";
+        const { status, data } = await postJson("/api/auth/register", { name, email, password });
+        if (status >= 400) return (data?.error as string) || "Registration failed";
+        if (!data) return NETWORK_ERROR;
         setUser({ email: data.email, name: data.name, avatar: data.avatar }, data.token);
         return null;
-      } catch {
-        return "Network error — is the backend running?";
+      } catch (e) {
+        return e instanceof Error ? e.message : NETWORK_ERROR;
+      } finally {
+        setState((s) => ({ ...s, isLoading: false }));
       }
     },
     [],

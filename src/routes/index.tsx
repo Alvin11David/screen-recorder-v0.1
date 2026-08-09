@@ -154,27 +154,32 @@ function useAudioMeter(stream: MediaStream | null) {
   const raf = useRef(0);
 
   useEffect(() => {
-    if (!stream) {
+    if (!stream || stream.getAudioTracks().length === 0) {
       setLevel(0);
       return;
     }
-    const ctx = new AudioContext();
-    if (ctx.state === "suspended") ctx.resume();
-    const src = ctx.createMediaStreamSource(stream);
-    const analyser = ctx.createAnalyser();
-    analyser.fftSize = 256;
-    src.connect(analyser);
-    const data = new Uint8Array(analyser.frequencyBinCount);
-    const tick = () => {
-      analyser.getByteFrequencyData(data);
-      const avg = data.reduce((a, b) => a + b, 0) / data.length;
-      setLevel(Math.min(avg / 128, 1));
-      raf.current = requestAnimationFrame(tick);
-    };
-    tick();
+    let ctx: AudioContext | null = null;
+    try {
+      ctx = new AudioContext();
+      if (ctx.state === "suspended") ctx.resume().catch(() => {});
+      const src = ctx.createMediaStreamSource(stream);
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 256;
+      src.connect(analyser);
+      const data = new Uint8Array(analyser.frequencyBinCount);
+      const tick = () => {
+        analyser.getByteFrequencyData(data);
+        const avg = data.reduce((a, b) => a + b, 0) / data.length;
+        setLevel(Math.min(avg / 128, 1));
+        raf.current = requestAnimationFrame(tick);
+      };
+      tick();
+    } catch {
+      setLevel(0);
+    }
     return () => {
       cancelAnimationFrame(raf.current!);
-      ctx.close();
+      ctx?.close().catch(() => {});
     };
   }, [stream]);
 
