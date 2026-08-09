@@ -141,21 +141,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const sendResetLink = useCallback(async (email: string): Promise<string | null> => {
     setState((s) => ({ ...s, isLoading: true }));
     try {
-      const res = await fetch(apiUrl("/api/auth/forgot-password"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        }),
+      const { status, data } = await postJson("/api/auth/forgot-password", {
+        email,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       });
-      if (!res.ok) {
-        const data = await res.json();
-        return data.error || "Failed to send reset link";
-      }
+      if (status >= 400) return (data?.error as string) || "Failed to send reset link";
       return null;
-    } catch {
-      return "Network error — is the backend running?";
+    } catch (e) {
+      return e instanceof Error ? e.message : NETWORK_ERROR;
     } finally {
       setState((s) => ({ ...s, isLoading: false }));
     }
@@ -165,18 +158,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (email: string, code: string): Promise<string | null> => {
       setState((s) => ({ ...s, isLoading: true }));
       try {
-        const res = await fetch(apiUrl("/api/auth/verify-reset-code"), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, code }),
-        });
-        if (!res.ok) {
-          const data = await res.json();
-          return data.error || "Invalid code";
-        }
+        const { status, data } = await postJson("/api/auth/verify-reset-code", { email, code });
+        if (status >= 400) return (data?.error as string) || "Invalid code";
         return null;
-      } catch {
-        return "Network error — is the backend running?";
+      } catch (e) {
+        return e instanceof Error ? e.message : NETWORK_ERROR;
       } finally {
         setState((s) => ({ ...s, isLoading: false }));
       }
@@ -188,18 +174,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (email: string, code: string, newPassword: string): Promise<string | null> => {
       setState((s) => ({ ...s, isLoading: true }));
       try {
-        const res = await fetch(apiUrl("/api/auth/reset-password"), {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, code, newPassword }),
+        const { status, data } = await postJson("/api/auth/reset-password", {
+          email,
+          code,
+          newPassword,
         });
-        if (!res.ok) {
-          const data = await res.json();
-          return data.error || "Failed to reset password";
-        }
+        if (status >= 400) return (data?.error as string) || "Failed to reset password";
         return null;
-      } catch {
-        return "Network error — is the backend running?";
+      } catch (e) {
+        return e instanceof Error ? e.message : NETWORK_ERROR;
       } finally {
         setState((s) => ({ ...s, isLoading: false }));
       }
