@@ -393,8 +393,8 @@ export function useScreenRecorder() {
 
         if (annotationsEnabledRef.current) setupAnnotationCanvas(width, height);
 
-        // ── Crop mode for entire-screen capture (region mode only) ──
-        if (surface === "monitor" && captureModeRef.current === "region") {
+        // ── Crop mode for single-surface capture (region mode only) ──
+        if (surface !== "multi-monitor" && captureModeRef.current === "region") {
           pendingStreamRef.current = displayStream;
           setStream(displayStream);
           setStatus("crop");
