@@ -1274,6 +1274,7 @@ function Index() {
     stream,
     result,
     error,
+    warning,
     cropRect,
     multiStreams,
     captureMode,
