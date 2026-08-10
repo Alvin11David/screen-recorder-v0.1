@@ -24,6 +24,7 @@ export function useDrive() {
   const [reloadKey, setReloadKey] = useState(0);
 
   const checkConnection = useCallback(async () => {
+    console.info(`[use-drive] checkConnection: isAuthenticated=${isAuthenticated}`);
     if (!isAuthenticated) {
       setConnected(false);
       return;
@@ -33,7 +34,9 @@ export function useDrive() {
       sessionStorage.setItem("sc-drive-token", token);
       setAccessToken(token);
       setConnected(true);
-    } catch {
+      console.info("[use-drive] connection OK");
+    } catch (err) {
+      console.info(`[use-drive] connection check failed: ${err instanceof Error ? err.message : err}`);
       setConnected(false);
     }
   }, [isAuthenticated]);
