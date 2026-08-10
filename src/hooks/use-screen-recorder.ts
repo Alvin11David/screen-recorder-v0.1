@@ -175,8 +175,7 @@ export function useScreenRecorder() {
       setElapsed(current);
       // Auto-stop if configured
       if (autoStopRef.current > 0 && current >= autoStopRef.current * 60) {
-        stopReasonRef.current = "auto";
-        stopRecordingRef.current?.();
+        stopRecordingRef.current?.("auto");
       }
     }, 250);
   }, []);
