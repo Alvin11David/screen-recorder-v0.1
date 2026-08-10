@@ -1,6 +1,8 @@
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
 const TOKEN_KEY = "sc-auth-token";
 
+console.info(`[history-api] API_BASE = ${API_BASE}`);
+
 export interface RecordingHistoryEntry {
   id: number;
   driveFileId: string;
