@@ -7,6 +7,23 @@ export type CaptureMode = "full" | "region";
 const MIN_MEANINGFUL_DURATION = 1; // seconds
 const MIN_MEANINGFUL_BYTES = 50 * 1024;
 
+const waitForFrame = (video: HTMLVideoElement, timeoutMs = 1500): Promise<void> =>
+  new Promise((resolve) => {
+    if (video.readyState >= 2 || video.videoWidth > 0) {
+      resolve();
+      return;
+    }
+    const timeout = window.setTimeout(resolve, timeoutMs);
+    video.addEventListener(
+      "loadeddata",
+      () => {
+        window.clearTimeout(timeout);
+        resolve();
+      },
+      { once: true },
+    );
+  });
+
 export interface CropRect {
   x: number;
   y: number;
