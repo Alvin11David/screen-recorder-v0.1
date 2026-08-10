@@ -694,6 +694,7 @@ export function useScreenRecorder() {
         camVideo.muted = true;
         camVideo.playsInline = true;
         await camVideo.play();
+        await waitForFrame(camVideo);
         compositeCameraVideo.current = camVideo;
 
         const frame = () => {
