@@ -44,6 +44,7 @@ import {
   Cloud,
   CloudUpload,
   Loader2,
+  Upload,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useDrive } from "@/hooks/use-drive";
