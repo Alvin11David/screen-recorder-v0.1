@@ -1668,7 +1668,19 @@ function Index() {
         onClose={() => setTeleprompterActive(false)}
         isRecording={status === "recording"}
       />
-      <RecordingHistory open={showHistory} onClose={() => setShowHistory(false)} />
+      <RecordingHistory
+        open={showHistory}
+        onClose={() => setShowHistory(false)}
+        drive={{
+          connected: drive.connected,
+          driveEmail: drive.driveEmail,
+          reloadKey: drive.reloadKey,
+          beginConnect: drive.beginConnect,
+          deleteEntry: drive.deleteEntry,
+          disconnect: drive.disconnect,
+        }}
+        isAuthenticated={isAuthenticated}
+      />
       <KeyboardShortcutsPanel open={showShortcuts} onClose={() => setShowShortcuts(false)} />
 
       {status === "crop" && stream && (
