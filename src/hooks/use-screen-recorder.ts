@@ -355,6 +355,13 @@ export function useScreenRecorder() {
         };
         const displayStream = await navigator.mediaDevices.getDisplayMedia(constraints);
 
+        if (captureCancelledRef.current) {
+          displayStream.getTracks().forEach((t) => t.stop());
+          setStream(null);
+          setStatus("idle");
+          return;
+        }
+
         if (includeAudio && displayStream.getAudioTracks().length === 0) {
           setWarning(
             'Your browser didn\'t capture audio. When the share picker appears, choose "Entire screen" and tick "Share system audio" (or share a tab and tick "Share tab audio"). Sharing a single window cannot capture audio on Windows.',
