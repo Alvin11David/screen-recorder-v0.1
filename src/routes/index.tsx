@@ -2189,6 +2189,12 @@ function Index() {
                 onEdit={() => setEditorBlob(result.blob)}
                 interrupted={result.interrupted}
                 autoStopped={result.autoStopped}
+                drive={{
+                  connected: drive.connected,
+                  autoUpload: drive.autoUpload,
+                  beginConnect: drive.beginConnect,
+                  saveToDrive: drive.saveToDrive,
+                }}
               />
             </motion.div>
           )}
