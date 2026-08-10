@@ -216,11 +216,15 @@ function RecordingPreview({
   status,
   elapsed,
   result,
+  mirrored,
+  label,
 }: {
   stream: MediaStream | null;
   status: string;
   elapsed: number;
   result: RecordingResult | null;
+  mirrored?: boolean;
+  label?: string;
 }) {
   const liveRef = useRef<HTMLVideoElement>(null);
   const isLive = status === "recording" || status === "paused";
