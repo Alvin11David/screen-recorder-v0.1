@@ -1424,6 +1424,7 @@ function Index() {
   const showCursorFX = status === "recording" || whiteboardActive;
   const screenUnsupported =
     typeof navigator !== "undefined" && !navigator.mediaDevices?.getDisplayMedia;
+  const androidStandalone = isAndroid() && isStandalonePwa();
 
   const beginRecording = useCallback(() => {
     if (source === "camera") startCameraRecording();
