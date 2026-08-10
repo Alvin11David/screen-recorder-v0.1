@@ -2024,6 +2024,9 @@ function Index() {
                   e.target.value = "";
                 }}
               />
+              {importError && (
+                <p className="mt-2 text-xs text-red-400/80">{importError}</p>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
