@@ -292,13 +292,13 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
   const recordedH = mappedSelection ? mappedSelection.height : videoH;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex flex-col bg-black/70 select-none">
+    <div className="fixed inset-0 z-[9999] flex flex-col bg-black select-none">
       {/* Background video */}
       <video
         ref={videoRef}
         muted
         playsInline
-        className="absolute inset-0 h-full w-full object-contain opacity-30 pointer-events-none"
+        className="absolute inset-0 h-full w-full object-contain pointer-events-none"
       />
 
       {/* Header */}
