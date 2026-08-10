@@ -1,9 +1,27 @@
 import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { History, Download, Trash2, X, Clock, HardDrive, Monitor, Calendar } from "lucide-react";
+import {
+  History,
+  Download,
+  Trash2,
+  X,
+  Clock,
+  HardDrive,
+  Monitor,
+  Calendar,
+  Cloud,
+  ExternalLink,
+  LogIn,
+  Loader2,
+} from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import { formatTimer, formatBytes, formatResolution } from "@/lib/recording-utils";
 import type { RecordingResult } from "@/hooks/use-screen-recorder";
+import {
+  fetchRecordingHistory,
+  type RecordingHistoryEntry as ApiRecordingHistoryEntry,
+} from "@/lib/recording-history-api";
 
 export interface HistoryEntry {
   id: string;
@@ -13,6 +31,8 @@ export interface HistoryEntry {
   sizeBytes: number;
   createdAt: string; // ISO string
   mimeType: string;
+  driveUrl?: string;
+  driveFileId?: string;
 }
 
 const STORAGE_KEY = "screencapture-history";
@@ -45,9 +65,20 @@ export function saveToHistory(result: RecordingResult) {
   }
 }
 
+export interface DriveSync {
+  connected: boolean | null;
+  driveEmail: string | null;
+  reloadKey: number;
+  beginConnect: () => void;
+  deleteEntry: (id: number) => Promise<void>;
+  disconnect: () => Promise<void>;
+}
+
 interface RecordingHistoryProps {
   open: boolean;
   onClose: () => void;
+  drive?: DriveSync;
+  isAuthenticated?: boolean;
 }
 
 const STATS = [
@@ -66,25 +97,73 @@ const STATS = [
   { icon: HardDrive, key: "sizeBytes" as const, label: "Size", fmt: (v: number) => formatBytes(v) },
 ];
 
-export function RecordingHistory({ open, onClose }: RecordingHistoryProps) {
+function toLocalEntry(e: ApiRecordingHistoryEntry): HistoryEntry {
+  return {
+    id: String(e.id),
+    durationSeconds: e.durationSeconds,
+    width: e.width,
+    height: e.height,
+    sizeBytes: e.sizeBytes,
+    createdAt: e.createdAt,
+    mimeType: e.mimeType,
+    driveUrl: e.driveUrl,
+    driveFileId: e.driveFileId,
+  };
+}
+
+export function RecordingHistory({ open, onClose, drive, isAuthenticated = false }: RecordingHistoryProps) {
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
+  const [loading, setLoading] = useState(false);
+  const cloudActive = drive?.connected === true;
 
   useEffect(() => {
-    if (open) setEntries(loadHistory());
-  }, [open]);
+    if (!open) return;
+    let cancelled = false;
 
-  const clearAll = useCallback(() => {
-    localStorage.removeItem(STORAGE_KEY);
-    setEntries([]);
-  }, []);
+    if (cloudActive) {
+      setLoading(true);
+      fetchRecordingHistory()
+        .then((apiEntries) => {
+          if (!cancelled) setEntries(apiEntries.map(toLocalEntry));
+        })
+        .catch(() => {
+          if (!cancelled) setEntries([]);
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+    } else {
+      setEntries(loadHistory());
+      setLoading(false);
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [open, cloudActive, drive?.reloadKey]);
+
+  const clearAll = useCallback(async () => {
+    if (cloudActive && drive) {
+      await Promise.allSettled(entries.map((e) => drive.deleteEntry(Number(e.id))));
+      setEntries([]);
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+      setEntries([]);
+    }
+  }, [cloudActive, drive, entries]);
 
   const deleteEntry = useCallback(
-    (id: string) => {
-      const updated = entries.filter((e) => e.id !== id);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      setEntries(updated);
+    async (id: string) => {
+      if (cloudActive && drive) {
+        await drive.deleteEntry(Number(id));
+        setEntries((prev) => prev.filter((e) => e.id !== id));
+      } else {
+        const updated = entries.filter((e) => e.id !== id);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        setEntries(updated);
+      }
     },
-    [entries],
+    [cloudActive, drive, entries],
   );
 
   return (
@@ -144,9 +223,58 @@ export function RecordingHistory({ open, onClose }: RecordingHistoryProps) {
                 </div>
               </div>
 
+              {/* Drive banner */}
+              {!isAuthenticated && (
+                <div className="mx-4 mt-3 flex items-center justify-between gap-3 rounded-xl bg-primary/[0.08] p-3 ring-1 ring-primary/20">
+                  <p className="text-[11px] text-white/60">
+                    Sign in to back up your history to Google Drive
+                  </p>
+                  <Link
+                    to="/login"
+                    className="flex shrink-0 items-center gap-1.5 rounded-lg bg-white/[0.08] px-2.5 py-1.5 text-[11px] font-semibold text-white transition-all hover:bg-white/[0.14]"
+                  >
+                    <LogIn className="h-3 w-3" />
+                    Sign in
+                  </Link>
+                </div>
+              )}
+              {isAuthenticated && drive && !cloudActive && drive.connected !== null && (
+                <div className="mx-4 mt-3 flex items-center justify-between gap-3 rounded-xl bg-primary/[0.08] p-3 ring-1 ring-primary/20">
+                  <p className="text-[11px] text-white/60">
+                    Back up recordings to your Google Drive
+                  </p>
+                  <button
+                    onClick={drive.beginConnect}
+                    className="flex shrink-0 items-center gap-1.5 rounded-lg bg-white/[0.08] px-2.5 py-1.5 text-[11px] font-semibold text-white transition-all hover:bg-white/[0.14]"
+                  >
+                    <Cloud className="h-3 w-3" />
+                    Connect
+                  </button>
+                </div>
+              )}
+              {cloudActive && drive && (
+                <div className="mx-4 mt-3 flex items-center justify-between gap-3 rounded-xl bg-emerald-500/[0.07] p-3 ring-1 ring-emerald-500/20">
+                  <p className="text-[11px] text-white/60 truncate">
+                    <Cloud className="mr-1 inline h-3 w-3 text-emerald-400" />
+                    Synced to {drive.driveEmail || "Google Drive"}
+                  </p>
+                  <button
+                    onClick={() => drive.disconnect()}
+                    className="shrink-0 text-[10px] text-white/30 transition-all hover:text-red-400"
+                  >
+                    Disconnect
+                  </button>
+                </div>
+              )}
+
               {/* Content */}
               <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2.5">
-                {entries.length === 0 ? (
+                {loading ? (
+                  <div className="flex h-full items-center justify-center gap-2 py-16 text-white/30">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span className="text-xs">Loading history…</span>
+                  </div>
+                ) : entries.length === 0 ? (
                   <div className="flex h-full flex-col items-center justify-center gap-4 py-16 text-center">
                     <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.03] ring-1 ring-white/[0.05]">
                       <History className="h-6 w-6 text-white/15" />
@@ -208,14 +336,27 @@ export function RecordingHistory({ open, onClose }: RecordingHistoryProps) {
                           </div>
                         ))}
                       </div>
-                      <p className="mt-2 text-[10px] text-white/25 font-mono uppercase">
-                        {entry.mimeType.includes("vp9")
-                          ? "VP9"
-                          : entry.mimeType.includes("vp8")
-                            ? "VP8"
-                            : "WebM"}
-                        {" · "}WebM container
-                      </p>
+                      <div className="mt-2 flex items-center justify-between gap-2">
+                        <p className="text-[10px] text-white/25 font-mono uppercase">
+                          {entry.mimeType.includes("vp9")
+                            ? "VP9"
+                            : entry.mimeType.includes("vp8")
+                              ? "VP8"
+                              : "WebM"}
+                          {" · "}WebM container
+                        </p>
+                        {entry.driveUrl && (
+                          <a
+                            href={entry.driveUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="flex items-center gap-1 text-[10px] text-primary/70 transition-all hover:text-primary"
+                          >
+                            <ExternalLink className="h-2.5 w-2.5" />
+                            Open in Drive
+                          </a>
+                        )}
+                      </div>
                     </motion.div>
                   ))
                 )}
@@ -223,8 +364,10 @@ export function RecordingHistory({ open, onClose }: RecordingHistoryProps) {
 
               {entries.length > 0 && (
                 <div className="border-t border-white/[0.05] px-5 py-3">
-                  <p className="text-center text-[10px] text-white/20">
-                    History is stored locally on your device
+                  <p className={cn("text-center text-[10px]", cloudActive ? "text-emerald-300/30" : "text-white/20")}>
+                    {cloudActive
+                      ? "Videos live in your Google Drive — history keeps only metadata"
+                      : "History is stored locally on your device"}
                   </p>
                 </div>
               )}
