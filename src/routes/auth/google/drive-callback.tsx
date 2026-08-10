@@ -18,7 +18,7 @@ export const Route = createFileRoute("/auth/google/drive-callback")({
 function GoogleDriveCallbackPage() {
   const navigate = useNavigate();
   const search = Route.useSearch();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [error, setError] = useState<string | null>(null);
 
@@ -64,18 +64,20 @@ function GoogleDriveCallbackPage() {
         if (!cancelled) navigate({ to: "/" });
       } catch (err) {
         if (cancelled) return;
-        console.info(
-          `[drive-callback] connect FAILED: ${err instanceof Error ? err.message : err}`,
-        );
+        const message = err instanceof Error ? err.message : "Failed to connect Google Drive.";
+        console.info(`[drive-callback] connect FAILED: ${message}`);
+        if (message.includes("session has expired")) {
+          logout();
+        }
         setStatus("error");
-        setError(err instanceof Error ? err.message : "Failed to connect Google Drive.");
+        setError(message);
       }
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [search, navigate, isAuthenticated]);
+  }, [search, navigate, isAuthenticated, logout]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">

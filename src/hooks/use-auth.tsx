@@ -80,6 +80,17 @@ function loadUser(): User | null {
   }
 }
 
+async function validateSession(token: string): Promise<boolean> {
+  try {
+    const res = await fetch(apiUrl("/api/recordings"), {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.status !== 401;
+  } catch {
+    return true;
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
   const [state, setState] = useState<AuthState>({
@@ -90,8 +101,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const user = loadUser();
-    setState({ user, isAuthenticated: user !== null, isLoading: false });
-    setHydrated(true);
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!user || !token) {
+      setState({ user, isAuthenticated: user !== null, isLoading: false });
+      setHydrated(true);
+      return;
+    }
+    validateSession(token)
+      .then((valid) => {
+        if (valid) {
+          setState({ user, isAuthenticated: true, isLoading: false });
+        } else {
+          localStorage.removeItem(STORAGE_KEY);
+          localStorage.removeItem(TOKEN_KEY);
+          setState({ user: null, isAuthenticated: false, isLoading: false });
+        }
+        setHydrated(true);
+      })
+      .catch(() => {
+        setState({ user, isAuthenticated: true, isLoading: false });
+        setHydrated(true);
+      });
   }, []);
 
   const setUser = (user: User, token: string) => {

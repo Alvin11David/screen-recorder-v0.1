@@ -1,8 +1,11 @@
 package com.screencapture.service;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +47,22 @@ public class JwtService {
 
     public Claims extractClaimsOrNull(String token) {
         return parseClaimsOrNull(token);
+    }
+
+    public record JwtParseResult(Claims claims, String error) {}
+
+    public JwtParseResult parseTokenOrError(String token) {
+        try {
+            return new JwtParseResult(parseClaims(token), null);
+        } catch (ExpiredJwtException e) {
+            return new JwtParseResult(null, "expired");
+        } catch (SignatureException e) {
+            return new JwtParseResult(null, "bad signature");
+        } catch (MalformedJwtException e) {
+            return new JwtParseResult(null, "malformed");
+        } catch (Exception e) {
+            return new JwtParseResult(null, e.getClass().getSimpleName());
+        }
     }
 
     private Claims parseClaims(String token) {

@@ -18,12 +18,19 @@ export interface DriveUploadResult {
   webViewLink: string;
 }
 
+const SESSION_EXPIRED_MESSAGE = "Your session has expired — please sign in again.";
+
 function authHeaders(json = true): Record<string, string> {
   const headers: Record<string, string> = {};
   const token = localStorage.getItem(TOKEN_KEY);
   if (token) headers.Authorization = `Bearer ${token}`;
   if (json) headers["Content-Type"] = "application/json";
   return headers;
+}
+
+function apiError(res: Response, fallback: string): string {
+  if (res.status === 401) return SESSION_EXPIRED_MESSAGE;
+  return fallback;
 }
 
 export function getDriveAuthUrl(origin: string): string {
@@ -60,7 +67,8 @@ export async function connectDrive(code: string, redirectUri: string): Promise<D
   });
   console.info(`[drive] connect ${API_BASE}/api/drive/connect -> ${res.status}`);
   const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
-  if (!res.ok) throw new Error((data.error as string) || "Failed to connect Google Drive");
+  if (!res.ok)
+    throw new Error((data.error as string) || apiError(res, "Failed to connect Google Drive"));
   return data as unknown as DriveConnection;
 }
 
@@ -71,7 +79,8 @@ export async function getDriveAccessToken(): Promise<string> {
   });
   console.info(`[drive] get access-token -> ${res.status}`);
   const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
-  if (!res.ok) throw new Error((data.error as string) || "Failed to get Drive access token");
+  if (!res.ok)
+    throw new Error((data.error as string) || apiError(res, "Failed to get Drive access token"));
   return data.accessToken as string;
 }
 
