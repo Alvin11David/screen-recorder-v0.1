@@ -1359,6 +1359,7 @@ function Index() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [scheduledTime, setScheduledTime] = useState("");
   const [scheduleActive, setScheduleActive] = useState(false);
+  const [importError, setImportError] = useState<string | null>(null);
   const scheduleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [mounted, setMounted] = useState(false);
   const modifierLabel = mounted ? MODIFIER_LABEL : "Alt";
