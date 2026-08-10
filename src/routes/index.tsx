@@ -2122,6 +2122,7 @@ function Index() {
                 onReset={reset}
                 onEdit={() => setEditorBlob(result.blob)}
                 interrupted={result.interrupted}
+                autoStopped={result.autoStopped}
               />
             </motion.div>
           )}
