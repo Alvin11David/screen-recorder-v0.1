@@ -24,6 +24,7 @@ function GoogleDriveCallbackPage() {
 
   useEffect(() => {
     const { code, state } = search;
+    console.info(`[drive-callback] search: code=${code ? "present" : "MISSING"} state=${state ? "present" : "MISSING"} isAuthenticated=${isAuthenticated}`);
 
     if (!code) {
       setStatus("error");
