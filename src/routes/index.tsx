@@ -1128,7 +1128,7 @@ function RecordingResultPanel({
           <h2 className="font-display text-lg font-semibold text-white">Recording ready</h2>
         </div>
         <span className="rounded-full bg-white/[0.04] px-3 py-1 text-xs text-white/40 ring-1 ring-white/[0.06]">
-          WEBM · High quality
+          {result.mimeType.includes("mp4") ? "MP4" : "WEBM"} · High quality
         </span>
       </div>
       {interrupted && (
