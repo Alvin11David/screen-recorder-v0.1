@@ -322,6 +322,7 @@ export function useScreenRecorder() {
   const beginCapture = useCallback(
     async (surface: CaptureSurface) => {
       setError(null);
+      setWarning(null);
       if (typeof navigator === "undefined" || !navigator.mediaDevices?.getDisplayMedia) {
         setError("Screen recording isn't supported in this browser.");
         setStatus("idle");
@@ -329,22 +330,30 @@ export function useScreenRecorder() {
       }
 
       try {
-        const constraints: DisplayMediaStreamOptions & { displaySurface?: string } = {
+        const constraints: DisplayMediaStreamOptions & {
+          displaySurface?: string;
+          systemAudio?: "include" | "exclude";
+        } = {
           displaySurface: surface,
           video: {
             frameRate: { ideal: fpsRef.current, max: fpsRef.current },
             width: { ideal: quality.width },
             height: { ideal: quality.height },
           } as MediaTrackConstraints,
-          audio: includeAudio
-            ? {
-                echoCancellation: noiseRef.current,
-                noiseSuppression: noiseRef.current,
-                sampleRate: 44100,
-              }
-            : false,
+          // getUserMedia-style audio constraints (echoCancellation, noiseSuppression,
+          // sampleRate) do not apply to getDisplayMedia audio, and requesting them can
+          // cause Chrome to omit the audio track entirely. Pass a plain boolean plus
+          // systemAudio:"include" so system audio is actually offered in the picker.
+          audio: includeAudio,
+          systemAudio: includeAudio ? "include" : "exclude",
         };
         const displayStream = await navigator.mediaDevices.getDisplayMedia(constraints);
+
+        if (includeAudio && displayStream.getAudioTracks().length === 0) {
+          setWarning(
+            'Your browser didn\'t capture audio. When the share picker appears, choose "Entire screen" and tick "Share system audio" (or share a tab and tick "Share tab audio"). Sharing a single window cannot capture audio on Windows.',
+          );
+        }
 
         const [videoTrack] = displayStream.getVideoTracks();
         const settings = videoTrack.getSettings();
