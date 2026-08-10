@@ -872,7 +872,7 @@ function ControlBar({
   onPause: () => void;
   onResume: () => void;
   onStop: () => void;
-  source: CaptureSurface;
+  source: RecordSource;
   quality: QualityPreset;
   onQualityChange: (v: QualityPreset) => void;
   annotationsEnabled: boolean;
