@@ -834,6 +834,7 @@ function ControlBar({
   includeCamera,
   onIncludeCameraChange,
   onStart,
+  onCancel,
   onPause,
   onResume,
   onStop,
@@ -851,6 +852,7 @@ function ControlBar({
   includeCamera: boolean;
   onIncludeCameraChange: (v: boolean) => void;
   onStart: () => void;
+  onCancel: () => void;
   onPause: () => void;
   onResume: () => void;
   onStop: () => void;
