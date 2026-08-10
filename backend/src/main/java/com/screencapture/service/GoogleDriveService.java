@@ -252,10 +252,10 @@ public class GoogleDriveService {
         return java.net.URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 
-    private static long parseLong(String value, long fallback) {
-        if (value == null || value.isBlank()) return fallback;
+    private static long parseLong(Object value, long fallback) {
+        if (value == null) return fallback;
         try {
-            return Long.parseLong(value);
+            return Long.parseLong(String.valueOf(value));
         } catch (NumberFormatException e) {
             return fallback;
         }
