@@ -59,7 +59,7 @@ import {
   type RecorderStatus,
 } from "@/hooks/use-screen-recorder";
 import { formatTimer, formatBytes, formatResolution } from "@/lib/recording-utils";
-import { MODIFIER_LABEL } from "@/lib/platform";
+import { MODIFIER_LABEL, isAndroid, isStandalonePwa } from "@/lib/platform";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
