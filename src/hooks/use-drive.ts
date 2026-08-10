@@ -60,7 +60,9 @@ export function useDrive() {
       }
       const stamp = result.createdAt.toISOString().replace(/[:.]/g, "-").slice(0, 19);
       const fileName = `ScreenFlow_${stamp}.webm`;
+      console.info(`[use-drive] saveToDrive: upload "${fileName}" (${result.sizeBytes} bytes)`);
       const { fileId, webViewLink } = await uploadRecordingToDrive(result.blob, token, fileName);
+      console.info(`[use-drive] uploaded fileId=${fileId}`);
       await createRecordingEntry({
         driveFileId: fileId,
         driveUrl: webViewLink,
