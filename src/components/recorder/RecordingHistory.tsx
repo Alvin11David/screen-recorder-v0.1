@@ -111,7 +111,12 @@ function toLocalEntry(e: ApiRecordingHistoryEntry): HistoryEntry {
   };
 }
 
-export function RecordingHistory({ open, onClose, drive, isAuthenticated = false }: RecordingHistoryProps) {
+export function RecordingHistory({
+  open,
+  onClose,
+  drive,
+  isAuthenticated = false,
+}: RecordingHistoryProps) {
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const cloudActive = drive?.connected === true;
@@ -364,7 +369,12 @@ export function RecordingHistory({ open, onClose, drive, isAuthenticated = false
 
               {entries.length > 0 && (
                 <div className="border-t border-white/[0.05] px-5 py-3">
-                  <p className={cn("text-center text-[10px]", cloudActive ? "text-emerald-300/30" : "text-white/20")}>
+                  <p
+                    className={cn(
+                      "text-center text-[10px]",
+                      cloudActive ? "text-emerald-300/30" : "text-white/20",
+                    )}
+                  >
                     {cloudActive
                       ? "Videos live in your Google Drive — history keeps only metadata"
                       : "History is stored locally on your device"}

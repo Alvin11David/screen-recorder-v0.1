@@ -51,7 +51,9 @@ export async function fetchRecordingHistory(): Promise<RecordingHistoryEntry[]> 
   return data as unknown as RecordingHistoryEntry[];
 }
 
-export async function createRecordingEntry(input: CreateRecordingInput): Promise<RecordingHistoryEntry> {
+export async function createRecordingEntry(
+  input: CreateRecordingInput,
+): Promise<RecordingHistoryEntry> {
   const res = await fetch(`${API_BASE}/api/recordings`, {
     method: "POST",
     headers: headers(),

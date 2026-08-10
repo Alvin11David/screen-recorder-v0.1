@@ -91,9 +91,12 @@ async function ensureDriveFolder(accessToken: string): Promise<string> {
   const query = encodeURIComponent(
     `mimeType='application/vnd.google-apps.folder' and name='${FOLDER_NAME}' and trashed=false`,
   );
-  const listRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)`, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
+  const listRes = await fetch(
+    `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)`,
+    {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    },
+  );
   if (listRes.ok) {
     const list = (await listRes.json()) as { files?: { id: string; name: string }[] };
     const folder = list.files?.find((f) => f.name === FOLDER_NAME);
@@ -127,16 +130,19 @@ export async function uploadRecordingToDrive(
   const folderId = await ensureDriveFolder(accessToken);
   const mimeType = blob.type || "video/webm";
 
-  const initRes = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-      "X-Upload-Content-Type": mimeType,
-      "X-Upload-Content-Length": String(blob.size),
+  const initRes = await fetch(
+    "https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+        "X-Upload-Content-Type": mimeType,
+        "X-Upload-Content-Length": String(blob.size),
+      },
+      body: JSON.stringify({ name: fileName, mimeType, parents: [folderId] }),
     },
-    body: JSON.stringify({ name: fileName, mimeType, parents: [folderId] }),
-  });
+  );
   if (!initRes.ok) {
     const err = (await initRes.json().catch(() => ({}))) as { error?: { message?: string } };
     throw new Error(err.error?.message || "Failed to start Drive upload");
