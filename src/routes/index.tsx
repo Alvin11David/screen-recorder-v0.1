@@ -1351,6 +1351,14 @@ function Index() {
     if (result) saveToHistory(result);
   }, [result]);
 
+  // Auto-upload to Google Drive once the user has saved at least one recording
+  useEffect(() => {
+    if (!result) return;
+    if (drive.connected === true && drive.autoUpload) {
+      drive.saveToDrive(result).catch(() => {});
+    }
+  }, [result, drive.connected, drive.autoUpload, drive.saveToDrive]);
+
   // Global keyboard shortcuts
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
