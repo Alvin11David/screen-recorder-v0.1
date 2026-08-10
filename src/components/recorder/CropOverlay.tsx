@@ -275,7 +275,7 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
   const handleConfirm = () => {
     if (!selection || selection.width < MIN_SIZE || selection.height < MIN_SIZE) return;
     const mapped = mapSelectionToVideo(selection);
-    if (!mapped) return;
+    if (!mapped || mapped.width < MIN_SIZE || mapped.height < MIN_SIZE) return;
     onConfirm(mapped);
   };
 
