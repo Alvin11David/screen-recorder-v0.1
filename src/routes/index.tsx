@@ -55,6 +55,7 @@ import {
   QUALITY_PRESETS,
   type QualityPreset,
   type CameraSettings,
+  type RecorderStatus,
 } from "@/hooks/use-screen-recorder";
 import { formatTimer, formatBytes, formatResolution } from "@/lib/recording-utils";
 import { MODIFIER_LABEL } from "@/lib/platform";
