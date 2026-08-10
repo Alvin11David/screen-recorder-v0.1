@@ -849,14 +849,9 @@ export function useScreenRecorder() {
     try {
       const newStream = await navigator.mediaDevices.getDisplayMedia({
         video: { frameRate: { ideal: fpsRef.current, max: fpsRef.current } },
-        audio: includeAudio
-          ? {
-              echoCancellation: noiseRef.current,
-              noiseSuppression: noiseRef.current,
-              sampleRate: 44100,
-            }
-          : false,
-      } as DisplayMediaStreamOptions);
+        audio: includeAudio,
+        systemAudio: includeAudio ? "include" : "exclude",
+      } as DisplayMediaStreamOptions & { systemAudio?: "include" | "exclude" });
       const updated = [...multiStreamsRef.current, newStream];
       multiStreamsRef.current = updated;
       setMultiStreams(updated);
