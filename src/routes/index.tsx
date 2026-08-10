@@ -1421,6 +1421,13 @@ function Index() {
   const isLiveStatus = status === "recording" || status === "paused";
   const showClickFX = status === "recording" || whiteboardActive;
   const showCursorFX = status === "recording" || whiteboardActive;
+  const screenUnsupported =
+    typeof navigator !== "undefined" && !navigator.mediaDevices?.getDisplayMedia;
+
+  const beginRecording = useCallback(() => {
+    if (source === "camera") startCameraRecording();
+    else startRecording(source);
+  }, [source, startRecording, startCameraRecording]);
 
   // Save to history whenever a recording completes
   useEffect(() => {
