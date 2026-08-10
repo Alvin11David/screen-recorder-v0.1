@@ -435,6 +435,7 @@ export function useScreenRecorder() {
           camVideo.muted = true;
           camVideo.playsInline = true;
           await camVideo.play();
+          await waitForFrame(camVideo);
 
           const canvas = document.createElement("canvas");
           canvas.width = width;
