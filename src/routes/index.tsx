@@ -2251,7 +2251,7 @@ function Index() {
             onIncludeAudioChange={setIncludeAudio}
             includeCamera={includeCamera}
             onIncludeCameraChange={setIncludeCamera}
-            onStart={() => startRecording(source)}
+            onStart={beginRecording}
             onCancel={cancelCountdown}
             onPause={pauseRecording}
             onResume={resumeRecording}
