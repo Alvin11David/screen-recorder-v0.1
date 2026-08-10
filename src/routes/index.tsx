@@ -215,12 +215,12 @@ function RecordingPreview({
   const audioLevel = useAudioMeter(isLive ? stream : null);
 
   useEffect(() => {
-    if (liveRef.current && stream) {
+    if (isLive && liveRef.current && stream) {
       liveRef.current.srcObject = stream;
       setLivePlayFailed(false);
       liveRef.current.play().catch(() => setLivePlayFailed(true));
     }
-  }, [stream]);
+  }, [stream, isLive]);
 
   const retryPlay = useCallback(() => {
     if (liveRef.current) {
