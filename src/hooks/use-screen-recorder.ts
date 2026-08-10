@@ -486,7 +486,7 @@ export function useScreenRecorder() {
                   ctx.save();
                   ctx.translate(cx, 0);
                   ctx.scale(-1, 1);
-                  ctx.drawImage(src, -(cx - r), cy - r, sw, sh);
+                  ctx.drawImage(src, -r, cy - r, sw, sh);
                   ctx.restore();
                 } else {
                   ctx.drawImage(src, cx - r, cy - r, sw, sh);
