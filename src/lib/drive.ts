@@ -74,10 +74,11 @@ export async function getDriveAccessToken(): Promise<string> {
 }
 
 export async function disconnectDrive(): Promise<void> {
-  await fetch(`${API_BASE}/api/drive/connection`, {
+  const res = await fetch(`${API_BASE}/api/drive/connection`, {
     method: "DELETE",
     headers: authHeaders(false),
   });
+  console.info(`[drive] disconnect -> ${res.status}`);
 }
 
 export function getAutoUploadEnabled(): boolean {
