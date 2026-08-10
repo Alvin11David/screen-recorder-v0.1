@@ -246,46 +246,50 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
   const videoW = stream?.getVideoTracks()[0]?.getSettings().width ?? 1920;
   const videoH = stream?.getVideoTracks()[0]?.getSettings().height ?? 1080;
 
+  const mapSelectionToVideo = useCallback(
+    (rect: { x: number; y: number; width: number; height: number }) => {
+      const videoEl = videoRef.current;
+      const overlayEl = overlayRef.current;
+      if (!videoEl || !overlayEl || videoW <= 0 || videoH <= 0) return null;
+      const vr = videoEl.getBoundingClientRect();
+      const or = overlayEl.getBoundingClientRect();
+      const scale = Math.min(vr.width / videoW, vr.height / videoH);
+      const offsetX = (vr.width - videoW * scale) / 2;
+      const offsetY = (vr.height - videoH * scale) / 2;
+      const x = (or.left - vr.left + rect.x - offsetX) / scale;
+      const y = (or.top - vr.top + rect.y - offsetY) / scale;
+      const right = Math.min(x + rect.width / scale, videoW);
+      const bottom = Math.min(y + rect.height / scale, videoH);
+      const clampedX = Math.max(0, x);
+      const clampedY = Math.max(0, y);
+      return {
+        x: Math.round(clampedX),
+        y: Math.round(clampedY),
+        width: Math.round(Math.max(0, right - clampedX)),
+        height: Math.round(Math.max(0, bottom - clampedY)),
+      };
+    },
+    [videoW, videoH],
+  );
+
   const handleConfirm = () => {
     if (!selection || selection.width < MIN_SIZE || selection.height < MIN_SIZE) return;
-    const el = overlayRef.current;
-    if (!el) return;
-    const vr = el.getBoundingClientRect();
-    const scaleX = videoW / vr.width;
-    const scaleY = videoH / vr.height;
-    onConfirm({
-      x: Math.round(selection.x * scaleX),
-      y: Math.round(selection.y * scaleY),
-      width: Math.round(selection.width * scaleX),
-      height: Math.round(selection.height * scaleY),
-    });
+    const mapped = mapSelectionToVideo(selection);
+    if (!mapped) return;
+    onConfirm(mapped);
   };
 
   const handleRecordFullScreen = () => {
-    const el = overlayRef.current;
-    if (!el) return;
-    const vr = el.getBoundingClientRect();
-    const scaleX = videoW / vr.width;
-    const scaleY = videoH / vr.height;
-    onConfirm({
-      x: 0,
-      y: 0,
-      width: Math.round(vr.width * scaleX),
-      height: Math.round(vr.height * scaleY),
-    });
+    onConfirm({ x: 0, y: 0, width: videoW, height: videoH });
   };
 
   const hasValidSelection =
     selection && selection.width >= MIN_SIZE && selection.height >= MIN_SIZE;
 
   // Compute recorded resolution for display
-  const overlayRect = overlayRef.current?.getBoundingClientRect();
-  const recordedW = overlayRect
-    ? Math.round(selection ? selection.width * (videoW / overlayRect.width) : videoW)
-    : videoW;
-  const recordedH = overlayRect
-    ? Math.round(selection ? selection.height * (videoH / overlayRect.height) : videoH)
-    : videoH;
+  const mappedSelection = selection ? mapSelectionToVideo(selection) : null;
+  const recordedW = mappedSelection ? mappedSelection.width : videoW;
+  const recordedH = mappedSelection ? mappedSelection.height : videoH;
 
   return (
     <div className="fixed inset-0 z-[9999] flex flex-col bg-black/70 select-none">
