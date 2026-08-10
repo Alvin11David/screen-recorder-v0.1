@@ -2225,7 +2225,8 @@ function Index() {
         >
           <span className="flex items-center justify-center gap-2">
             <ShieldCheck className="h-3.5 w-3.5 text-white/10" />
-            Recordings never leave your device — everything is processed locally.
+            Recordings are processed entirely in your browser — keep them on this device or sync
+            them to your Google Drive.
           </span>
           <a
             href="mailto:screenflowcom@gmail.com"
