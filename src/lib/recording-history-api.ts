@@ -42,6 +42,7 @@ function headers(json = true): Record<string, string> {
 }
 
 async function handle(res: Response): Promise<Record<string, unknown>> {
+  console.info(`[history-api] ${res.url} -> ${res.status}`);
   const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
   if (!res.ok) throw new HistoryApiError((data.error as string) || "Request failed", res.status);
   return data;
