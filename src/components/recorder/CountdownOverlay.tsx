@@ -22,7 +22,6 @@ export function CountdownOverlay({
   }, [countdown]);
 
   useEffect(() => {
-    let t: ReturnType<typeof setTimeout>;
     if (
       countdown === 0 &&
       phase === "countdown" &&
@@ -30,10 +29,14 @@ export function CountdownOverlay({
     ) {
       setPhase("go");
       setShowCancel(false);
-      t = setTimeout(() => setPhase(null), 600);
     }
-    return () => clearTimeout(t);
   }, [countdown, phase, status]);
+
+  useEffect(() => {
+    if (phase !== "go") return;
+    const t = setTimeout(() => setPhase(null), 600);
+    return () => clearTimeout(t);
+  }, [phase]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
