@@ -1068,21 +1068,13 @@ export function useScreenRecorder() {
     (surface: CaptureSurface = "monitor") => {
       setError(null);
       setWarning(null);
-      let cd = 3;
-      setCountdown(cd);
-      setStatus("countdown");
-      if (countdownRef.current) clearInterval(countdownRef.current);
-      countdownRef.current = setInterval(() => {
-        cd -= 1;
-        setCountdown(cd);
-        if (cd <= 0) {
-          if (countdownRef.current) clearInterval(countdownRef.current);
-          countdownRef.current = null;
-          beginCapture(surface);
-        }
-      }, 1000);
+      if (captureModeRef.current === "region" && surface !== "multi-monitor") {
+        beginCapture(surface);
+        return;
+      }
+      runCountdown(() => beginCapture(surface));
     },
-    [beginCapture],
+    [beginCapture, runCountdown],
   );
 
   const cancelCountdown = useCallback(() => {
