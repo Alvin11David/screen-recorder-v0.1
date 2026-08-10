@@ -1743,6 +1743,22 @@ function Index() {
           )}
         </AnimatePresence>
 
+        {/* ── Warning ── */}
+        <AnimatePresence mode="wait">
+          {warning && (
+            <motion.div
+              key="warning"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mb-4 flex items-start gap-2.5 rounded-xl bg-amber-500/10 p-3.5 text-sm ring-1 ring-amber-500/25"
+            >
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+              <p className="text-amber-200">{warning}</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* ── Preview ── */}
         <motion.div variants={fadeUp} className="mb-5">
           {/* Subtle label above preview */}
