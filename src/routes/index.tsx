@@ -970,28 +970,32 @@ function ControlBar({
               Sound
             </span>
           </motion.label>
-          <motion.label
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex cursor-pointer items-center gap-2.5 rounded-full bg-white/[0.03] px-4 py-2 text-xs ring-1 ring-white/[0.06] backdrop-blur-sm transition-all hover:bg-white/[0.06] hover:ring-white/[0.12]"
-          >
-            <Switch checked={includeCamera} onCheckedChange={onIncludeCameraChange} />
-            <span className="text-white/50 select-none flex items-center gap-1.5">
-              <Camera className="h-3 w-3" />
-              Webcam
-            </span>
-          </motion.label>
-          <motion.label
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex cursor-pointer items-center gap-2.5 rounded-full bg-white/[0.03] px-4 py-2 text-xs ring-1 ring-white/[0.06] backdrop-blur-sm transition-all hover:bg-white/[0.06] hover:ring-white/[0.12]"
-          >
-            <Switch checked={annotationsEnabled} onCheckedChange={onAnnotationsChange} />
-            <span className="text-white/50 select-none flex items-center gap-1.5">
-              <Pencil className="h-3 w-3" />
-              Annotate
-            </span>
-          </motion.label>
+          {!isCamera && (
+            <motion.label
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex cursor-pointer items-center gap-2.5 rounded-full bg-white/[0.03] px-4 py-2 text-xs ring-1 ring-white/[0.06] backdrop-blur-sm transition-all hover:bg-white/[0.06] hover:ring-white/[0.12]"
+            >
+              <Switch checked={includeCamera} onCheckedChange={onIncludeCameraChange} />
+              <span className="text-white/50 select-none flex items-center gap-1.5">
+                <Camera className="h-3 w-3" />
+                Webcam
+              </span>
+            </motion.label>
+          )}
+          {!isCamera && (
+            <motion.label
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex cursor-pointer items-center gap-2.5 rounded-full bg-white/[0.03] px-4 py-2 text-xs ring-1 ring-white/[0.06] backdrop-blur-sm transition-all hover:bg-white/[0.06] hover:ring-white/[0.12]"
+            >
+              <Switch checked={annotationsEnabled} onCheckedChange={onAnnotationsChange} />
+              <span className="text-white/50 select-none flex items-center gap-1.5">
+                <Pencil className="h-3 w-3" />
+                Annotate
+              </span>
+            </motion.label>
+          )}
           <motion.label
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
