@@ -1547,7 +1547,7 @@ function Index() {
     teleprompterActive,
     annotationsEnabled,
     spotlightActive,
-    startRecording,
+    beginRecording,
     pauseRecording,
     resumeRecording,
     stopRecording,
