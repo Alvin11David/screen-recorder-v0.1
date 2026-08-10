@@ -68,7 +68,10 @@ export interface RecordingResult {
   createdAt: Date;
   mimeType: string;
   interrupted?: boolean;
+  autoStopped?: boolean;
 }
+
+type StopReason = "user" | "track-ended" | "auto";
 
 const pickMimeType = (): string => {
   const candidates = [
