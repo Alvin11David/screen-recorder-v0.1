@@ -165,7 +165,7 @@ export function useScreenRecorder() {
     }
   };
 
-  const stopRecordingRef = useRef<(() => void) | null>(null);
+  const stopRecordingRef = useRef<((reason?: StopReason) => void) | null>(null);
 
   const startTimer = useCallback(() => {
     startTimeRef.current = Date.now();
