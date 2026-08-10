@@ -332,6 +332,7 @@ export function useScreenRecorder() {
     async (surface: CaptureSurface) => {
       setError(null);
       setWarning(null);
+      captureCancelledRef.current = false;
       if (typeof navigator === "undefined" || !navigator.mediaDevices?.getDisplayMedia) {
         setError("Screen recording isn't supported in this browser.");
         setStatus("idle");
