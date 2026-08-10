@@ -1275,6 +1275,8 @@ export function useScreenRecorder() {
     cameraSettings,
     setCameraSettings,
     startRecording,
+    startCameraRecording,
+    setResult,
     cancelCountdown,
     confirmCrop,
     cancelCrop,
