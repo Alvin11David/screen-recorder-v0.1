@@ -340,10 +340,6 @@ export function useScreenRecorder() {
             width: { ideal: quality.width },
             height: { ideal: quality.height },
           } as MediaTrackConstraints,
-          // getUserMedia-style audio constraints (echoCancellation, noiseSuppression,
-          // sampleRate) do not apply to getDisplayMedia audio, and requesting them can
-          // cause Chrome to omit the audio track entirely. Pass a plain boolean plus
-          // systemAudio:"include" so system audio is actually offered in the picker.
           audio: includeAudio,
           systemAudio: includeAudio ? "include" : "exclude",
         };
