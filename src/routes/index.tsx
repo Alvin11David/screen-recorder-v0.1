@@ -1803,9 +1803,9 @@ function Index() {
           )}
         </AnimatePresence>
 
-        {/* ── Capture mode (Entire Screen only) ── */}
+        {/* ── Capture mode ── */}
         <AnimatePresence>
-          {isIdle && !result && source === "monitor" && (
+          {isIdle && !result && source !== "multi-monitor" && (
             <motion.div
               key="capture-mode"
               initial={{ opacity: 0, y: 12 }}
