@@ -1957,7 +1957,14 @@ function Index() {
             </span>
             <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/[0.06]" />
           </div>
-          <RecordingPreview stream={stream} status={status} elapsed={elapsed} result={result} />
+          <RecordingPreview
+            stream={stream}
+            status={status}
+            elapsed={elapsed}
+            result={result}
+            mirrored={source === "camera"}
+            label={source === "camera" ? "camera preview" : undefined}
+          />
         </motion.div>
 
         {/* ── Source cards ── */}
