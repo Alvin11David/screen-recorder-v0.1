@@ -96,7 +96,6 @@ public class GoogleDriveService {
             var c = new UserDriveConnection();
             c.setUserId(user.getId());
             c.setProvider("google");
-            c.setCreatedAt(Instant.now());
             return c;
         });
         if (tokens.refreshToken() != null && !tokens.refreshToken().isBlank()) {
