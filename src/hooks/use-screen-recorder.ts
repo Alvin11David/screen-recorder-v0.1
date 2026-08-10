@@ -1083,9 +1083,17 @@ export function useScreenRecorder() {
       countdownRef.current = null;
     }
     captureCancelledRef.current = true;
+    stopComposite();
+    const stream = pendingStreamRef.current;
+    if (stream) {
+      stream.getTracks().forEach((t) => t.stop());
+      pendingStreamRef.current = null;
+    }
+    accumulatedRef.current = 0;
+    setStream(null);
     setStatus("idle");
     setCountdown(0);
-  }, []);
+  }, [stopComposite]);
 
   const pauseRecording = useCallback(() => {
     const recorder = recorderRef.current;
