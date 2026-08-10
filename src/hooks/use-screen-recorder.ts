@@ -194,6 +194,22 @@ export function useScreenRecorder() {
     }
   }, []);
 
+  const runCountdown = useCallback((onDone: () => void) => {
+    let cd = 3;
+    setCountdown(cd);
+    setStatus("countdown");
+    if (countdownRef.current) clearInterval(countdownRef.current);
+    countdownRef.current = setInterval(() => {
+      cd -= 1;
+      setCountdown(cd);
+      if (cd <= 0) {
+        if (countdownRef.current) clearInterval(countdownRef.current);
+        countdownRef.current = null;
+        onDone();
+      }
+    }, 1000);
+  }, []);
+
   const setupAnnotationCanvas = useCallback((width: number, height: number) => {
     let canvas = annotationCanvasRef.current;
     if (!canvas) {
