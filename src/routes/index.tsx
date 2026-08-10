@@ -80,8 +80,10 @@ import { TeleprompterOverlay } from "@/components/recorder/TeleprompterOverlay";
 import { ScreenFlowLogo } from "@/components/ui/ScreenFlowLogo";
 import ParticleBackground from "@/components/ui/particle-background";
 
+type RecordSource = CaptureSurface | "camera";
+
 const SOURCES: {
-  id: CaptureSurface;
+  id: RecordSource;
   label: string;
   icon: typeof Monitor;
   description: string;
