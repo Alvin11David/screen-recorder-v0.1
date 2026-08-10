@@ -858,6 +858,16 @@ export function useScreenRecorder() {
           stopReasonRef.current = "track-ended";
           accumulatedRef.current += (Date.now() - startTimeRef.current) / 1000;
           recorderRef.current.stop();
+        } else if (countdownRef.current) {
+          if (countdownRef.current) clearInterval(countdownRef.current);
+          countdownRef.current = null;
+          stopComposite();
+          displayStream.getTracks().forEach((t) => t.stop());
+          pendingStreamRef.current = null;
+          accumulatedRef.current = 0;
+          setStream(null);
+          setStatus("idle");
+          setCountdown(0);
         }
       });
 
@@ -865,9 +875,11 @@ export function useScreenRecorder() {
       accumulatedRef.current = 0;
       setElapsed(0);
       setResult(null);
-      recorder.start(1000);
-      setStatus("recording");
-      startTimer();
+      runCountdown(() => {
+        recorder.start(1000);
+        setStatus("recording");
+        startTimer();
+      });
     },
     [
       includeAudio,
@@ -878,6 +890,7 @@ export function useScreenRecorder() {
       overlayAnnotations,
       setupAnnotationCanvas,
       finalizeResult,
+      runCountdown,
     ],
   );
 
