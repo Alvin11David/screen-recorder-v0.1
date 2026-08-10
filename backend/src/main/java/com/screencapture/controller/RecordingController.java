@@ -42,7 +42,7 @@ public class RecordingController {
         try {
             var entry = recordingService.create(currentUser(authentication), req);
             log.info("[recordings] create: user={} id={} file={} size={}",
-                    authName(authentication), entry.id(), req.getDriveFileId(), req.getSizeBytes());
+                    authName(authentication), entry.getId(), req.getDriveFileId(), req.getSizeBytes());
             return ResponseEntity.ok(entry);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
