@@ -372,7 +372,13 @@ export function useScreenRecorder() {
       setWarning(null);
       captureCancelledRef.current = false;
       if (typeof navigator === "undefined" || !navigator.mediaDevices?.getDisplayMedia) {
-        setError("Screen recording isn't supported in this browser.");
+        if (isAndroid() && isStandalonePwa()) {
+          setError(
+            "Screen capture isn't available in this installed app window. Open the app in a normal Chrome tab to record your screen — the browser will show the 'Select screen' picker.",
+          );
+        } else {
+          setError("Screen recording isn't supported in this browser.");
+        }
         setStatus("idle");
         return;
       }
