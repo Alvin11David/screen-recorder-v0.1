@@ -124,8 +124,10 @@ async function ensureDriveFolder(accessToken: string): Promise<string> {
   });
   const created = (await createRes.json()) as { id?: string; error?: { message?: string } };
   if (!createRes.ok || !created.id) {
+    console.info(`[drive] folder create failed: ${createRes.status} ${created.error?.message ?? ""}`);
     throw new Error(created.error?.message || "Failed to create Drive folder");
   }
+  console.info(`[drive] folder created: ${created.id}`);
   localStorage.setItem(FOLDER_KEY, created.id);
   return created.id;
 }
