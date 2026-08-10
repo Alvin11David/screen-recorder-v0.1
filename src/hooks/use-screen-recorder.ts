@@ -134,7 +134,7 @@ export function useScreenRecorder() {
   const trackSettingsRef = useRef<{ width: number; height: number }>({ width: 0, height: 0 });
   const pendingStreamRef = useRef<MediaStream | null>(null);
   const multiStreamsRef = useRef<MediaStream[]>([]);
-  const stopReasonRef = useRef<"user" | "track-ended" | "auto">("user");
+  const stopReasonRef = useRef<StopReason>("user");
   const captureCancelledRef = useRef(false);
 
   // Compositing refs (kept stable for the rAF loop)
