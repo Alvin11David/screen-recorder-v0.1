@@ -1412,6 +1412,7 @@ function Index() {
       }
       if (e.key === "Escape") {
         if (status === "recording" || status === "paused") stopRecording();
+        else if (status === "countdown") cancelCountdown();
         else if (spotlightActive) setSpotlightActive(false);
         else if (showHistory) setShowHistory(false);
         else if (showShortcuts) setShowShortcuts(false);
