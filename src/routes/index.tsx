@@ -117,6 +117,13 @@ const SOURCES: {
     description: "Capture multiple monitors side by side in a single recording.",
     tip: "Great for multi-screen setups and presentations.",
   },
+  {
+    id: "camera",
+    label: "Phone Camera",
+    icon: Camera,
+    description: "Record with your front camera — works on any phone and desktop.",
+    tip: "The only recording mode that works on iPhones and Android.",
+  },
 ];
 
 export const Route = createFileRoute("/")({
