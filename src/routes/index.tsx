@@ -1293,6 +1293,7 @@ function Index() {
   }, []);
 
   const { isAuthenticated, user, logout } = useAuth();
+  const drive = useDrive();
   const {
     status,
     elapsed,
