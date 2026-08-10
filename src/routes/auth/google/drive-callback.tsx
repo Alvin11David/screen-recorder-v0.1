@@ -56,11 +56,13 @@ function GoogleDriveCallbackPage() {
         if (cancelled) return;
         sessionStorage.setItem("sc-drive-token", connection.accessToken);
         sessionStorage.setItem("sc-drive-email", connection.driveEmail);
+        console.info(`[drive-callback] connect success: email=${connection.driveEmail}`);
         setStatus("success");
         await new Promise((r) => setTimeout(r, 800));
         if (!cancelled) navigate({ to: "/" });
       } catch (err) {
         if (cancelled) return;
+        console.info(`[drive-callback] connect FAILED: ${err instanceof Error ? err.message : err}`);
         setStatus("error");
         setError(err instanceof Error ? err.message : "Failed to connect Google Drive.");
       }
