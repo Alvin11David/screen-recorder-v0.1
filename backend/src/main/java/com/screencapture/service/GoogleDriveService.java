@@ -137,12 +137,15 @@ public class GoogleDriveService {
         String stored = connection.getAccessToken();
         Instant expiresAt = connection.getTokenExpiresAt();
         if (stored != null && expiresAt != null && expiresAt.isAfter(Instant.now().plusSeconds(120))) {
+            log.info("[drive] access-token served from cache for user={}", user.getEmail());
             return decrypt(stored);
         }
         if (connection.getRefreshToken() == null || connection.getRefreshToken().isBlank()) {
+            log.warn("[drive] connection expired without refresh token for user={}", user.getEmail());
             throw new IllegalArgumentException("Google Drive connection is expired — please reconnect");
         }
 
+        log.info("[drive] refreshing access token for user={}", user.getEmail());
         var body = new LinkedHashMap<String, Object>();
         body.put("client_id", googleClientId);
         body.put("client_secret", googleClientSecret);
