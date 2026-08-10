@@ -56,6 +56,7 @@ export async function connectDrive(code: string, redirectUri: string): Promise<D
     headers: authHeaders(),
     body: JSON.stringify({ code, redirectUri }),
   });
+  console.info(`[drive] connect ${API_BASE}/api/drive/connect -> ${res.status}`);
   const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
   if (!res.ok) throw new Error((data.error as string) || "Failed to connect Google Drive");
   return data as unknown as DriveConnection;
