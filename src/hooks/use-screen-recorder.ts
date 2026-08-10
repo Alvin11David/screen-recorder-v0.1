@@ -304,7 +304,15 @@ export function useScreenRecorder() {
     }
     let cancelled = false;
     navigator.mediaDevices
-      .getUserMedia({ video: true, audio: includeAudio })
+      .getUserMedia({
+        video: true,
+        audio: includeAudio
+          ? {
+              echoCancellation: { ideal: noiseRef.current },
+              noiseSuppression: { ideal: noiseRef.current },
+            }
+          : false,
+      })
       .then((cs) => {
         if (!cancelled) setCameraStream(cs);
         else cs.getTracks().forEach((t) => t.stop());
