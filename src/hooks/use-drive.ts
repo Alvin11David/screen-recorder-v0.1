@@ -61,7 +61,8 @@ export function useDrive() {
         setAccessToken(token);
       }
       const stamp = result.createdAt.toISOString().replace(/[:.]/g, "-").slice(0, 19);
-      const fileName = `ScreenFlow_${stamp}.webm`;
+      const ext = result.mimeType.includes("mp4") ? ".mp4" : ".webm";
+      const fileName = `ScreenFlow_${stamp}${ext}`;
       console.info(`[use-drive] saveToDrive: upload "${fileName}" (${result.sizeBytes} bytes)`);
       const { fileId, webViewLink } = await uploadRecordingToDrive(result.blob, token, fileName);
       console.info(`[use-drive] uploaded fileId=${fileId}`);
