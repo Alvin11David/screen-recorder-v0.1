@@ -106,6 +106,7 @@ public class GoogleDriveService {
         connection.setAccessToken(encrypt(tokens.accessToken()));
         connection.setTokenExpiresAt(Instant.now().plusSeconds(tokens.expiresIn()));
         connection.setDriveEmail(driveEmail);
+        log.info("[drive] saved connection for user={} driveEmail={}", user.getEmail(), driveEmail);
         return connectionRepository.save(connection);
     }
 
