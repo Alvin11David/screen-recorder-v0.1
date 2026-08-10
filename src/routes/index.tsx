@@ -299,7 +299,7 @@ function RecordingPreview({
               <div className="h-[11px] w-[11px] rounded-full bg-[oklch(0.72_0.2_145)] ring-1 ring-white/10 shadow-[0_0_6px_oklch(0.72_0.2_145/0.4)]" />
             </div>
             <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/15 select-none ml-1">
-              screen preview
+              {label ?? "screen preview"}
             </span>
           </div>
           <div className="flex items-center gap-2">
