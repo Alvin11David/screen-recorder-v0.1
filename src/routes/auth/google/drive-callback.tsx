@@ -24,7 +24,9 @@ function GoogleDriveCallbackPage() {
 
   useEffect(() => {
     const { code, state } = search;
-    console.info(`[drive-callback] search: code=${code ? "present" : "MISSING"} state=${state ? "present" : "MISSING"} isAuthenticated=${isAuthenticated}`);
+    console.info(
+      `[drive-callback] search: code=${code ? "present" : "MISSING"} state=${state ? "present" : "MISSING"} isAuthenticated=${isAuthenticated}`,
+    );
 
     if (!code) {
       setStatus("error");
@@ -62,7 +64,9 @@ function GoogleDriveCallbackPage() {
         if (!cancelled) navigate({ to: "/" });
       } catch (err) {
         if (cancelled) return;
-        console.info(`[drive-callback] connect FAILED: ${err instanceof Error ? err.message : err}`);
+        console.info(
+          `[drive-callback] connect FAILED: ${err instanceof Error ? err.message : err}`,
+        );
         setStatus("error");
         setError(err instanceof Error ? err.message : "Failed to connect Google Drive.");
       }

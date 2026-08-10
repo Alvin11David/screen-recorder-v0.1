@@ -36,7 +36,9 @@ export function useDrive() {
       setConnected(true);
       console.info("[use-drive] connection OK");
     } catch (err) {
-      console.info(`[use-drive] connection check failed: ${err instanceof Error ? err.message : err}`);
+      console.info(
+        `[use-drive] connection check failed: ${err instanceof Error ? err.message : err}`,
+      );
       setConnected(false);
     }
   }, [isAuthenticated]);

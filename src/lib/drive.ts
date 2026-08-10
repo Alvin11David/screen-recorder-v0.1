@@ -37,7 +37,9 @@ export function getDriveAuthUrl(origin: string): string {
   const redirectUri = `${origin}/auth/google/drive-callback`;
   const state = crypto.randomUUID();
   sessionStorage.setItem("google_drive_oauth_state", state);
-  console.info(`[drive] build auth url: origin=${origin} clientIdSet=${Boolean(clientId)} redirect=${redirectUri}`);
+  console.info(
+    `[drive] build auth url: origin=${origin} clientIdSet=${Boolean(clientId)} redirect=${redirectUri}`,
+  );
   const params = new URLSearchParams({
     client_id: clientId,
     redirect_uri: redirectUri,
@@ -124,7 +126,9 @@ async function ensureDriveFolder(accessToken: string): Promise<string> {
   });
   const created = (await createRes.json()) as { id?: string; error?: { message?: string } };
   if (!createRes.ok || !created.id) {
-    console.info(`[drive] folder create failed: ${createRes.status} ${created.error?.message ?? ""}`);
+    console.info(
+      `[drive] folder create failed: ${createRes.status} ${created.error?.message ?? ""}`,
+    );
     throw new Error(created.error?.message || "Failed to create Drive folder");
   }
   console.info(`[drive] folder created: ${created.id}`);

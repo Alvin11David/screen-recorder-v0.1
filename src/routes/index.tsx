@@ -1416,7 +1416,9 @@ function Index() {
         console.info(`[auto-upload] FAILED: ${err instanceof Error ? err.message : err}`),
       );
     } else {
-      console.info(`[auto-upload] skipped: driveConnected=${driveConnected} autoUpload=${driveAutoUpload}`);
+      console.info(
+        `[auto-upload] skipped: driveConnected=${driveConnected} autoUpload=${driveAutoUpload}`,
+      );
     }
   }, [result, driveConnected, driveAutoUpload, saveRecordingToDrive]);
 
