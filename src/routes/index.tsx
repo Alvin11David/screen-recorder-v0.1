@@ -881,6 +881,7 @@ function ControlBar({
   onWhiteboardChange: (v: boolean) => void;
 }) {
   const idle = status === "idle";
+  const isCamera = source === "camera";
 
   return (
     <div className="flex flex-col items-center gap-4">
