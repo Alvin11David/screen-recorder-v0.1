@@ -5,6 +5,7 @@ import {
   ShieldCheck,
   Sparkles,
   AlertCircle,
+  AlertTriangle,
   User,
   Monitor,
   MonitorUp,
