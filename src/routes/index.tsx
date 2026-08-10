@@ -1158,11 +1158,42 @@ function RecordingResultPanel({
           <Film className="h-4 w-4" />
           Edit Video
         </Button>
+        {drive && (
+          <Button
+            variant="glass"
+            size="lg"
+            onClick={drive.connected ? handleSaveToDrive : drive.beginConnect}
+            disabled={driveState === "uploading"}
+            className="group gap-2"
+          >
+            {driveState === "uploading" ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <CloudUpload className="h-4 w-4" />
+            )}
+            {driveState === "uploading"
+              ? "Uploading…"
+              : drive.connected
+                ? driveState === "done"
+                  ? "Saved to Drive"
+                  : "Save to Drive"
+                : "Connect Google Drive"}
+          </Button>
+        )}
         <Button variant="glass" size="lg" onClick={onReset} className="group">
           <RotateCcw className="h-4 w-4" />
           New Recording
         </Button>
       </div>
+      {driveState === "error" && driveError && (
+        <p className="mt-3 text-xs text-red-400">{driveError}</p>
+      )}
+      {drive && drive.connected && drive.autoUpload && driveState !== "uploading" && (
+        <p className="mt-3 flex items-center gap-1.5 text-xs text-white/30">
+          <Cloud className="h-3 w-3 text-primary/60" />
+          Future recordings are saved to your Google Drive automatically.
+        </p>
+      )}
     </motion.div>
   );
 }
