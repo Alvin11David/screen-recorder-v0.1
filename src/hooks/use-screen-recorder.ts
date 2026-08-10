@@ -1091,6 +1091,7 @@ export function useScreenRecorder() {
     setResult(null);
     setElapsed(0);
     setCropRect(null);
+    setWarning(null);
     accumulatedRef.current = 0;
     clearAnnotationCanvas();
   }, [result, clearAnnotationCanvas]);
