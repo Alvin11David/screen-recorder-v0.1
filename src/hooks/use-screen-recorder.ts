@@ -1,5 +1,4 @@
-import { isAndroid, isStandalonePwa } from "../lib/platform";
- useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export type RecorderStatus = "idle" | "countdown" | "crop" | "multi-setup" | "recording" | "paused";
 export type CaptureSurface = "monitor" | "window" | "browser" | "multi-monitor";
