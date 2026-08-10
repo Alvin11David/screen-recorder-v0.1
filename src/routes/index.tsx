@@ -1981,7 +1981,24 @@ function Index() {
               className="mb-4"
             >
               <SourceCards value={source} onChange={setSource} disabled={!isIdle} />
-              {screenUnsupported && (
+              {screenUnsupported && androidStandalone && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="mt-3 rounded-xl bg-amber-500/[0.07] px-4 py-3 text-xs leading-relaxed text-amber-200/70 ring-1 ring-amber-500/20"
+                >
+                  <p className="font-semibold text-amber-200">
+                    You're in the installed app window — screen capture is blocked here.
+                  </p>
+                  <p className="mt-1">
+                    Tap the <span className="font-semibold text-amber-200">⋮</span> menu →{" "}
+                    <span className="font-semibold text-amber-200">Open in Chrome</span>, then tap
+                    <span className="font-semibold text-amber-200"> Monitor</span> again. Chrome
+                    will show the native screen picker where you choose what to record.
+                  </p>
+                </motion.div>
+              )}
+              {screenUnsupported && !androidStandalone && (
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
