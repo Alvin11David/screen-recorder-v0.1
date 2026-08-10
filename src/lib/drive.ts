@@ -67,6 +67,7 @@ export async function getDriveAccessToken(): Promise<string> {
     method: "GET",
     headers: authHeaders(false),
   });
+  console.info(`[drive] get access-token -> ${res.status}`);
   const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
   if (!res.ok) throw new Error((data.error as string) || "Failed to get Drive access token");
   return data.accessToken as string;
