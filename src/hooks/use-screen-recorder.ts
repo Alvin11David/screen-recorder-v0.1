@@ -262,6 +262,7 @@ export function useScreenRecorder() {
         createdAt: new Date(),
         mimeType,
         interrupted,
+        autoStopped: reason === "auto",
       });
     },
     [stopComposite],
