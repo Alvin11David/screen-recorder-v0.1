@@ -1435,6 +1435,7 @@ function Index() {
     pauseRecording,
     resumeRecording,
     stopRecording,
+    cancelCountdown,
     reset,
     setAnnotationsEnabled,
     setupAnnotationCanvas,
