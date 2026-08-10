@@ -1411,7 +1411,12 @@ function Index() {
   useEffect(() => {
     if (!result) return;
     if (driveConnected && driveAutoUpload) {
-      saveRecordingToDrive(result).catch(() => {});
+      console.info(`[auto-upload] start: ${result.sizeBytes} bytes`);
+      saveRecordingToDrive(result).catch((err) =>
+        console.info(`[auto-upload] FAILED: ${err instanceof Error ? err.message : err}`),
+      );
+    } else {
+      console.info(`[auto-upload] skipped: driveConnected=${driveConnected} autoUpload=${driveAutoUpload}`);
     }
   }, [result, driveConnected, driveAutoUpload, saveRecordingToDrive]);
 
