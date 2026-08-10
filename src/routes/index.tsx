@@ -18,6 +18,7 @@ import {
   Square,
   Pause,
   Play,
+  X,
   Clock,
   HardDrive,
   MonitorPlay,
