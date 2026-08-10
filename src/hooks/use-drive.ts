@@ -75,16 +75,19 @@ export function useDrive() {
       setAutoUploadEnabled(true);
       setAutoUpload(true);
       setReloadKey((k) => k + 1);
+      console.info("[use-drive] recording entry created, auto-upload enabled");
     },
     [accessToken],
   );
 
   const deleteEntry = useCallback(async (id: number) => {
+    console.info(`[use-drive] deleteEntry id=${id}`);
     await deleteRecordingEntry(id);
     setReloadKey((k) => k + 1);
   }, []);
 
   const disconnect = useCallback(async () => {
+    console.info("[use-drive] disconnect");
     try {
       await disconnectDrive();
     } finally {
