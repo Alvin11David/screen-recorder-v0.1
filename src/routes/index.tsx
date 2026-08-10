@@ -1094,6 +1094,14 @@ function RecordingResultPanel({
           </p>
         </div>
       )}
+      {autoStopped && (
+        <div className="mb-5 flex items-start gap-2.5 rounded-xl bg-emerald-500/10 p-3.5 text-sm ring-1 ring-emerald-500/20">
+          <Timer className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+          <p className="text-emerald-200/90">
+            Recording stopped automatically after the configured duration.
+          </p>
+        </div>
+      )}
       <div className="grid grid-cols-2 gap-2 lg:grid-cols-4 mb-5">
         {stats.map(({ icon: Icon, label, value }) => (
           <div key={label} className="glass rounded-xl p-3.5">
