@@ -1405,12 +1405,15 @@ function Index() {
   }, [result]);
 
   // Auto-upload to Google Drive once the user has saved at least one recording
+  const driveConnected = drive.connected === true;
+  const driveAutoUpload = drive.autoUpload;
+  const saveRecordingToDrive = drive.saveToDrive;
   useEffect(() => {
     if (!result) return;
-    if (drive.connected === true && drive.autoUpload) {
-      drive.saveToDrive(result).catch(() => {});
+    if (driveConnected && driveAutoUpload) {
+      saveRecordingToDrive(result).catch(() => {});
     }
-  }, [result, drive.connected, drive.autoUpload, drive.saveToDrive]);
+  }, [result, driveConnected, driveAutoUpload, saveRecordingToDrive]);
 
   // Global keyboard shortcuts
   useEffect(() => {
