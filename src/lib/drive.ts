@@ -103,10 +103,12 @@ async function ensureDriveFolder(accessToken: string): Promise<string> {
       headers: { Authorization: `Bearer ${accessToken}` },
     },
   );
+  console.info(`[drive] folder lookup -> ${listRes.status}`);
   if (listRes.ok) {
     const list = (await listRes.json()) as { files?: { id: string; name: string }[] };
     const folder = list.files?.find((f) => f.name === FOLDER_NAME);
     if (folder) {
+      console.info(`[drive] folder found: ${folder.id}`);
       localStorage.setItem(FOLDER_KEY, folder.id);
       return folder.id;
     }
