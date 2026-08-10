@@ -426,6 +426,7 @@ function RecordingPreview({
                 className={cn(
                   "h-full w-full object-contain transition-all duration-500",
                   isPaused ? "bg-black/60 brightness-75" : "bg-black/50",
+                  mirrored && "-scale-x-100",
                 )}
               />
 
