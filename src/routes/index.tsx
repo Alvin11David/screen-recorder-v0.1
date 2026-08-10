@@ -1979,6 +1979,49 @@ function Index() {
               className="mb-4"
             >
               <SourceCards value={source} onChange={setSource} disabled={!isIdle} />
+              {screenUnsupported && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="mt-3 rounded-xl bg-amber-500/[0.07] px-4 py-3 text-xs leading-relaxed text-amber-200/70 ring-1 ring-amber-500/20"
+                >
+                  Screen capture isn't supported in this browser. Record with the{" "}
+                  <span className="font-semibold text-amber-200">Phone Camera</span>, or use your
+                  phone's built-in screen recorder and upload the video below.
+                </motion.p>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ── Upload a video (iOS native recorder / any device) ── */}
+        <AnimatePresence>
+          {isIdle && !result && (
+            <motion.div
+              key="upload-video"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3 }}
+              className="mb-4"
+            >
+              <button
+                onClick={() => videoImportInputRef.current?.click()}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-white/[0.02] px-4 py-3 text-xs text-white/40 ring-1 ring-white/[0.06] transition-all hover:bg-white/[0.04] hover:text-white/60 hover:ring-white/[0.12]"
+              >
+                <Upload className="h-3.5 w-3.5" />
+                Upload a recorded video (e.g. from your phone's screen recorder)
+              </button>
+              <input
+                ref={videoImportInputRef}
+                type="file"
+                accept="video/*"
+                className="hidden"
+                onChange={(e) => {
+                  handleVideoImport(e.target.files?.[0]);
+                  e.target.value = "";
+                }}
+              />
             </motion.div>
           )}
         </AnimatePresence>
