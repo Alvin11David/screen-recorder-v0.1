@@ -81,6 +81,7 @@ export function useScreenRecorder() {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [result, setResult] = useState<RecordingResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [warning, setWarning] = useState<string | null>(null);
   const [includeAudio, setIncludeAudio] = useState(true);
   const [quality, setQuality] = useState<QualityPreset>(QUALITY_PRESETS[1]);
   const [includeCamera, setIncludeCamera] = useState(false);
