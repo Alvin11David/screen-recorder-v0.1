@@ -246,6 +246,28 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
   const videoW = stream?.getVideoTracks()[0]?.getSettings().width ?? 1920;
   const videoH = stream?.getVideoTracks()[0]?.getSettings().height ?? 1080;
 
+  useEffect(() => {
+    const videoEl = videoRef.current;
+    const overlayEl = overlayRef.current;
+    if (!videoEl || !overlayEl || videoW <= 0 || videoH <= 0) return;
+    const vr = videoEl.getBoundingClientRect();
+    const or = overlayEl.getBoundingClientRect();
+    const scale = Math.min(vr.width / videoW, vr.height / videoH);
+    const offsetX = (vr.width - videoW * scale) / 2;
+    const offsetY = (vr.height - videoH * scale) / 2;
+    const full = constrainRect(
+      {
+        x: vr.left - or.left + offsetX,
+        y: vr.top - or.top + offsetY,
+        width: videoW * scale,
+        height: videoH * scale,
+      },
+      { w: or.width, h: or.height },
+    );
+    setSelection(full);
+    setStep("adjust");
+  }, [stream, videoW, videoH, constrainRect]);
+
   const mapSelectionToVideo = useCallback(
     (rect: { x: number; y: number; width: number; height: number }) => {
       const videoEl = videoRef.current;
