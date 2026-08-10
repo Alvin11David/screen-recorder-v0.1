@@ -41,8 +41,12 @@ import {
   ChevronDown,
   ChevronUp,
   Gauge,
+  Cloud,
+  CloudUpload,
+  Loader2,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { useDrive } from "@/hooks/use-drive";
 import {
   useScreenRecorder,
   type CaptureSurface,
