@@ -1615,8 +1615,9 @@ function Index() {
           autoStopped: false,
         });
         window.scrollTo({ top: 0, behavior: "smooth" });
+        setImportError(null);
       } catch {
-        setError("Couldn't read that video file.");
+        setImportError("Couldn't read that video file.");
       }
     },
     [setResult],
