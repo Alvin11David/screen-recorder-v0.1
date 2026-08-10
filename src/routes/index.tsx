@@ -1348,7 +1348,7 @@ function TrustMetrics() {
 }
 
 function Index() {
-  const [source, setSource] = useState<CaptureSurface>("monitor");
+  const [source, setSource] = useState<RecordSource>("monitor");
   const [whiteboardActive, setWhiteboardActive] = useState(false);
   const [spotlightActive, setSpotlightActive] = useState(false);
   const [spotlightMode, setSpotlightMode] = useState<"spotlight" | "zoom">("spotlight");
