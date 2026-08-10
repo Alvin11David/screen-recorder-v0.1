@@ -126,17 +126,21 @@ export function RecordingHistory({
 
     if (cloudActive) {
       setLoading(true);
+      console.info("[history] loading from API (cloud mode)");
       fetchRecordingHistory()
         .then((apiEntries) => {
+          console.info(`[history] loaded ${apiEntries.length} entries from API`);
           if (!cancelled) setEntries(apiEntries.map(toLocalEntry));
         })
-        .catch(() => {
+        .catch((err) => {
+          console.info(`[history] API load FAILED: ${err instanceof Error ? err.message : err}`);
           if (!cancelled) setEntries([]);
         })
         .finally(() => {
           if (!cancelled) setLoading(false);
         });
     } else {
+      console.info(`[history] loading ${loadHistory().length} entries from localStorage`);
       setEntries(loadHistory());
       setLoading(false);
     }
