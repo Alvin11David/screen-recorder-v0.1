@@ -1013,14 +1013,36 @@ function RecordingResultPanel({
   onEdit,
   interrupted,
   autoStopped,
+  drive,
 }: {
   result: RecordingResult;
   onReset: () => void;
   onEdit?: () => void;
   interrupted?: boolean;
   autoStopped?: boolean;
+  drive?: {
+    connected: boolean | null;
+    autoUpload: boolean;
+    beginConnect: () => void;
+    saveToDrive: (result: RecordingResult) => Promise<void>;
+  };
 }) {
   const [saveState, setSaveState] = useState<"idle" | "saving" | "done">("idle");
+  const [driveState, setDriveState] = useState<"idle" | "uploading" | "done" | "error">("idle");
+  const [driveError, setDriveError] = useState<string | null>(null);
+
+  const handleSaveToDrive = async () => {
+    if (!drive) return;
+    setDriveState("uploading");
+    setDriveError(null);
+    try {
+      await drive.saveToDrive(result);
+      setDriveState("done");
+    } catch (err) {
+      setDriveState("error");
+      setDriveError(err instanceof Error ? err.message : "Failed to save to Google Drive");
+    }
+  };
 
   const handleSave = async () => {
     setSaveState("saving");
