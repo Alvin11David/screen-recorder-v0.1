@@ -1092,6 +1092,73 @@ export function useScreenRecorder() {
     [beginCapture, runCountdown],
   );
 
+  // Camera capture — the mobile-friendly alternative to screen capture.
+  // Works on phones (getUserMedia) where getDisplayMedia isn't available.
+  const startCameraRecording = useCallback(async () => {
+    setError(null);
+    setWarning(null);
+    if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
+      setError("Camera recording isn't supported in this browser.");
+      setStatus("idle");
+      return;
+    }
+    try {
+      const camStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: "user",
+          width: { ideal: quality.width },
+          height: { ideal: quality.height },
+        },
+        audio: true,
+      });
+
+      if (captureCancelledRef.current) {
+        camStream.getTracks().forEach((t) => t.stop());
+        return;
+      }
+
+      const [videoTrack] = camStream.getVideoTracks();
+      const settings = videoTrack.getSettings();
+      const width = settings.width ?? quality.width;
+      const height = settings.height ?? quality.height;
+      trackSettingsRef.current = { width, height };
+
+      const mimeType = pickMimeType();
+      const bitrate = Math.min(Math.max(Math.round(width * height * 4), 2_000_000), 12_000_000);
+
+      const recorder = new MediaRecorder(camStream, {
+        mimeType,
+        videoBitsPerSecond: bitrate,
+        audioBitsPerSecond: 128_000,
+      });
+
+      chunksRef.current = [];
+      recorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) chunksRef.current.push(event.data);
+      };
+      recorder.onstop = () => finalizeResult(mimeType, [camStream]);
+
+      recorderRef.current = recorder;
+      accumulatedRef.current = 0;
+      setElapsed(0);
+      setResult(null);
+      setStream(camStream);
+      runCountdown(() => {
+        recorder.start(1000);
+        setStatus("recording");
+        startTimer();
+      });
+    } catch (err) {
+      const e = err as DOMException;
+      setError(
+        e.name === "NotAllowedError"
+          ? "Camera permission denied. Please allow camera access."
+          : e.message || "Could not start camera recording.",
+      );
+      setStatus("idle");
+    }
+  }, [quality, startTimer, runCountdown, finalizeResult]);
+
   const cancelCountdown = useCallback(() => {
     if (countdownRef.current) {
       clearInterval(countdownRef.current);
