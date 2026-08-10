@@ -80,6 +80,8 @@ const pickMimeType = (): string => {
     "video/webm;codecs=vp8,opus",
     "video/webm;codecs=vp8",
     "video/webm",
+    "video/mp4;codecs=avc1.42E01E,mp4a.40.2",
+    "video/mp4",
   ];
   for (const type of candidates) {
     if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported(type)) {
