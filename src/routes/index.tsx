@@ -1600,8 +1600,7 @@ function Index() {
           },
         );
         const mimeType =
-          file.type ||
-          (file.name.toLowerCase().endsWith(".mp4") ? "video/mp4" : "video/webm");
+          file.type || (file.name.toLowerCase().endsWith(".mp4") ? "video/mp4" : "video/webm");
         setResult({
           url,
           blob: file,
@@ -2024,9 +2023,7 @@ function Index() {
                   e.target.value = "";
                 }}
               />
-              {importError && (
-                <p className="mt-2 text-xs text-red-400/80">{importError}</p>
-              )}
+              {importError && <p className="mt-2 text-xs text-red-400/80">{importError}</p>}
             </motion.div>
           )}
         </AnimatePresence>
