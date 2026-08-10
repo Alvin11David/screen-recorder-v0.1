@@ -1122,6 +1122,7 @@ export function useScreenRecorder() {
     stream,
     result,
     error,
+    warning,
     cropRect,
     multiStreams,
     captureMode,
