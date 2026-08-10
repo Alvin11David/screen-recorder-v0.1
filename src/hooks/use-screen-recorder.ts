@@ -1020,6 +1020,7 @@ export function useScreenRecorder() {
   const startRecording = useCallback(
     (surface: CaptureSurface = "monitor") => {
       setError(null);
+      setWarning(null);
       let cd = 3;
       setCountdown(cd);
       setStatus("countdown");
