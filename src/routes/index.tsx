@@ -1566,10 +1566,10 @@ function Index() {
     if (delay <= 0) return;
     setScheduleActive(true);
     scheduleTimerRef.current = setTimeout(() => {
-      startRecording(source);
+      beginRecording();
       setScheduleActive(false);
     }, delay);
-  }, [scheduledTime, source, startRecording]);
+  }, [scheduledTime, beginRecording]);
 
   const cancelSchedule = useCallback(() => {
     if (scheduleTimerRef.current) clearTimeout(scheduleTimerRef.current);
