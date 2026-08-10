@@ -1472,7 +1472,7 @@ function Index() {
         switch (e.key.toLowerCase()) {
           case "r":
             e.preventDefault();
-            if (status === "idle" && !result) startRecording(source);
+            if (status === "idle" && !result) beginRecording();
             break;
           case "n":
             e.preventDefault();
