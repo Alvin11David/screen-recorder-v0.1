@@ -1052,6 +1052,7 @@ export function useScreenRecorder() {
       clearInterval(countdownRef.current);
       countdownRef.current = null;
     }
+    captureCancelledRef.current = true;
     setStatus("idle");
     setCountdown(0);
   }, []);
