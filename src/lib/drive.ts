@@ -1,6 +1,8 @@
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
 const TOKEN_KEY = "sc-auth-token";
 const DRIVE_SCOPE = "openid email profile https://www.googleapis.com/auth/drive.file";
+
+console.info(`[drive] API_BASE = ${API_BASE}`);
 const FOLDER_NAME = "ScreenFlow Recordings";
 const FOLDER_KEY = "sc-drive-folder-id";
 const AUTO_UPLOAD_KEY = "sc-drive-auto-upload";
