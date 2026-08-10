@@ -596,9 +596,9 @@ function SourceCards({
   onSelect,
   disabled,
 }: {
-  value: CaptureSurface;
-  onChange: (v: CaptureSurface) => void;
-  onSelect?: (v: CaptureSurface) => void;
+  value: RecordSource;
+  onChange: (v: RecordSource) => void;
+  onSelect?: (v: RecordSource) => void;
   disabled?: boolean;
 }) {
   const handleMouseMove = useCallback(
