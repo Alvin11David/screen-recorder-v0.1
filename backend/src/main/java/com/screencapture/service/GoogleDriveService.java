@@ -91,6 +91,8 @@ public class GoogleDriveService {
     public UserDriveConnection connect(User user, String code, String redirectUri) {
         DriveTokens tokens = exchangeCode(code, redirectUri);
         String driveEmail = fetchDriveEmail(tokens.accessToken());
+        log.info("[drive] exchanged code for user={} refreshToken={} expiresIn={}s",
+                user.getEmail(), tokens.refreshToken() != null && !tokens.refreshToken().isBlank(), tokens.expiresIn());
 
         var connection = connectionRepository.findByUserId(user.getId()).orElseGet(() -> {
             var c = new UserDriveConnection();
