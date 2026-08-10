@@ -1985,7 +1985,7 @@ function Index() {
 
         {/* ── Capture mode ── */}
         <AnimatePresence>
-          {isIdle && !result && source !== "multi-monitor" && (
+          {isIdle && !result && source !== "multi-monitor" && source !== "camera" && (
             <motion.div
               key="capture-mode"
               initial={{ opacity: 0, y: 12 }}
