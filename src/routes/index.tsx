@@ -1576,6 +1576,51 @@ function Index() {
     setScheduleActive(false);
   }, []);
 
+  const videoImportInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleVideoImport = useCallback(
+    async (file: File | undefined | null) => {
+      if (!file) return;
+      try {
+        const url = URL.createObjectURL(file);
+        const meta = await new Promise<{ duration: number; width: number; height: number }>(
+          (resolve) => {
+            const v = document.createElement("video");
+            v.preload = "metadata";
+            v.src = url;
+            v.onloadedmetadata = () =>
+              resolve({
+                duration: Number.isFinite(v.duration) ? v.duration : 0,
+                width: v.videoWidth || 0,
+                height: v.videoHeight || 0,
+              });
+            v.onerror = () => resolve({ duration: 0, width: 0, height: 0 });
+            window.setTimeout(() => resolve({ duration: 0, width: 0, height: 0 }), 5000);
+          },
+        );
+        const mimeType =
+          file.type ||
+          (file.name.toLowerCase().endsWith(".mp4") ? "video/mp4" : "video/webm");
+        setResult({
+          url,
+          blob: file,
+          durationSeconds: meta.duration,
+          width: meta.width,
+          height: meta.height,
+          sizeBytes: file.size,
+          createdAt: new Date(),
+          mimeType,
+          interrupted: false,
+          autoStopped: false,
+        });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch {
+        setError("Couldn't read that video file.");
+      }
+    },
+    [setResult],
+  );
+
   // Clean up schedule timer on unmount
   useEffect(() => {
     return () => {
