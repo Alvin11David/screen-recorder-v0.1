@@ -1398,6 +1398,8 @@ function Index() {
     autoStopMinutes,
     setAutoStopMinutes,
     startRecording,
+    startCameraRecording,
+    setResult,
     cancelCountdown,
     confirmCrop,
     cancelCrop,
