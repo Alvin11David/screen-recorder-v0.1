@@ -891,6 +891,14 @@ function ControlBar({
             </div>
           </motion.div>
         )}
+        {status === "countdown" && (
+          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+            <Button variant="glass" size="lg" onClick={onCancel} className="group">
+              <X className="h-4 w-4" />
+              Cancel
+            </Button>
+          </motion.div>
+        )}
         {status === "recording" && (
           <>
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} layout>
