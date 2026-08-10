@@ -153,6 +153,7 @@ export async function uploadRecordingToDrive(
       body: JSON.stringify({ name: fileName, mimeType, parents: [folderId] }),
     },
   );
+  console.info(`[drive] upload init "${fileName}" (${blob.size} bytes) -> ${initRes.status}`);
   if (!initRes.ok) {
     const err = (await initRes.json().catch(() => ({}))) as { error?: { message?: string } };
     throw new Error(err.error?.message || "Failed to start Drive upload");
@@ -165,12 +166,14 @@ export async function uploadRecordingToDrive(
     headers: { "Content-Type": mimeType },
     body: blob,
   });
+  console.info(`[drive] upload body -> ${uploadRes.status}`);
   if (uploadRes.status !== 200 && uploadRes.status !== 201) {
     const err = (await uploadRes.json().catch(() => ({}))) as { error?: { message?: string } };
     throw new Error(err.error?.message || "Drive upload failed");
   }
   const file = (await uploadRes.json()) as { id?: string };
   if (!file.id) throw new Error("Drive upload failed");
+  console.info(`[drive] upload done, fileId=${file.id}`);
   return {
     fileId: file.id,
     webViewLink: `https://drive.google.com/file/d/${file.id}/view`,
