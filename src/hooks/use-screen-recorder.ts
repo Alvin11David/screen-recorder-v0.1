@@ -924,6 +924,7 @@ export function useScreenRecorder() {
       setupAnnotationCanvas,
       finalizeResult,
       runCountdown,
+      format,
     ],
   );
 
