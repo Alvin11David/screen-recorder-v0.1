@@ -56,10 +56,23 @@ export function saveToHistory(result: RecordingResult) {
       sizeBytes: result.sizeBytes,
       createdAt: result.createdAt.toISOString(),
       mimeType: result.mimeType,
+      fileName: result.fileName,
     };
     entries.unshift(entry);
     // Keep max 50 entries
     localStorage.setItem(STORAGE_KEY, JSON.stringify(entries.slice(0, 50)));
+  } catch {
+    // localStorage quota exceeded, ignore
+  }
+}
+
+export function updateHistoryEntryName(result: RecordingResult) {
+  try {
+    const entries = loadHistory();
+    const match = entries.find((e) => e.createdAt === result.createdAt.toISOString());
+    if (!match) return;
+    match.fileName = result.fileName;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
   } catch {
     // localStorage quota exceeded, ignore
   }
