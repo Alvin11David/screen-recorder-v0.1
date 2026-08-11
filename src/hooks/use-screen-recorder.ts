@@ -1101,6 +1101,7 @@ export function useScreenRecorder() {
     overlayAnnotations,
     setupAnnotationCanvas,
     finalizeResult,
+    format,
   ]);
 
   const cancelMultiSetup = useCallback(() => {
