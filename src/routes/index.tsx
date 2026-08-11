@@ -1498,9 +1498,7 @@ function Index() {
       const sync = cloudSyncRef.current;
       if (sync && driveIsConnected) {
         driveRenameEntry(sync.entryId, cleaned).catch((err) =>
-          console.info(
-            `[rename] Drive rename failed: ${err instanceof Error ? err.message : err}`,
-          ),
+          console.info(`[rename] Drive rename failed: ${err instanceof Error ? err.message : err}`),
         );
       }
     },
