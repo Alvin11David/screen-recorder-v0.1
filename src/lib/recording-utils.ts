@@ -50,7 +50,11 @@ export const saveRecording = async (
   createdAt: Date,
   fileName?: string,
 ): Promise<"saved" | "downloaded" | "cancelled"> => {
-  const suggestedName = buildFileName(fileName ?? defaultRecordingName(createdAt), blob.type, createdAt);
+  const suggestedName = buildFileName(
+    fileName ?? defaultRecordingName(createdAt),
+    blob.type,
+    createdAt,
+  );
 
   // Prefer File System Access API where available.
   const picker = window.showSaveFilePicker;

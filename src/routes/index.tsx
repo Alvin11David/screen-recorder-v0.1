@@ -57,7 +57,13 @@ import {
   type CameraSettings,
   type RecorderStatus,
 } from "@/hooks/use-screen-recorder";
-import { formatTimer, formatBytes, formatResolution, buildFileName, sanitizeFileName } from "@/lib/recording-utils";
+import {
+  formatTimer,
+  formatBytes,
+  formatResolution,
+  buildFileName,
+  sanitizeFileName,
+} from "@/lib/recording-utils";
 import type { RecordingHistoryEntry } from "@/lib/recording-history-api";
 import { MODIFIER_LABEL, isAndroid, isStandalonePwa } from "@/lib/platform";
 import { Button } from "@/components/ui/button";
@@ -75,7 +81,11 @@ import { DrawingOverlay } from "@/components/recorder/DrawingOverlay";
 import { VideoEditor } from "@/components/editor/VideoEditor";
 import { SpotlightOverlay } from "@/components/recorder/SpotlightOverlay";
 import { FloatingMiniBar } from "@/components/recorder/FloatingMiniBar";
-import { RecordingHistory, saveToHistory, updateHistoryEntryName } from "@/components/recorder/RecordingHistory";
+import {
+  RecordingHistory,
+  saveToHistory,
+  updateHistoryEntryName,
+} from "@/components/recorder/RecordingHistory";
 import { GoogleDriveIcon } from "@/components/ui/GoogleDriveIcon";
 import { KeyboardShortcutsPanel } from "@/components/recorder/KeyboardShortcutsPanel";
 import { TeleprompterOverlay } from "@/components/recorder/TeleprompterOverlay";
@@ -1485,9 +1495,13 @@ function Index() {
       updateHistoryEntryName({ ...current, fileName: cleaned });
       const sync = cloudSyncRef.current;
       if (sync && drive.connected === true) {
-        drive.renameEntry(sync.entryId, cleaned).catch((err) =>
-          console.info(`[rename] Drive rename failed: ${err instanceof Error ? err.message : err}`),
-        );
+        drive
+          .renameEntry(sync.entryId, cleaned)
+          .catch((err) =>
+            console.info(
+              `[rename] Drive rename failed: ${err instanceof Error ? err.message : err}`,
+            ),
+          );
       }
     },
     [drive?.renameEntry, drive?.connected, setResult],
@@ -1513,11 +1527,13 @@ function Index() {
             cloudSyncRef.current = { entryId: entry.id, nameAtUpload };
             const current = resultRef.current;
             if (current && current.fileName !== nameAtUpload) {
-              drive.renameEntry(entry.id, current.fileName).catch((err) =>
-                console.info(
-                  `[auto-upload] rename sync failed: ${err instanceof Error ? err.message : err}`,
-                ),
-              );
+              drive
+                .renameEntry(entry.id, current.fileName)
+                .catch((err) =>
+                  console.info(
+                    `[auto-upload] rename sync failed: ${err instanceof Error ? err.message : err}`,
+                  ),
+                );
             }
           }
         })

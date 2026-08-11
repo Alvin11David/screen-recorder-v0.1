@@ -79,7 +79,10 @@ export async function deleteRecordingEntry(id: number): Promise<void> {
   await handle(res);
 }
 
-export async function renameRecordingEntry(id: number, fileName: string): Promise<RecordingHistoryEntry> {
+export async function renameRecordingEntry(
+  id: number,
+  fileName: string,
+): Promise<RecordingHistoryEntry> {
   const res = await fetch(`${API_BASE}/api/recordings/${id}`, {
     method: "PATCH",
     headers: headers(),
