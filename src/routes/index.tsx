@@ -1029,6 +1029,12 @@ function ControlBar({
       {idle && (
         <div className="flex items-center gap-2 mb-1">
           <QualitySelector value={quality} onChange={onQualityChange} disabled={!idle} />
+          <FormatSelector
+            value={format}
+            onChange={onFormatChange}
+            formats={formats}
+            disabled={!idle}
+          />
         </div>
       )}
       <div className="flex items-center gap-3">
