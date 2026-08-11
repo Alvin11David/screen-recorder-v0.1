@@ -1,7 +1,10 @@
+import { pickWebMimeType, type RecordingFormat } from "./recording-formats";
+
 export interface VideoOptions {
   width: number;
   height: number;
   fps?: number;
+  format?: RecordingFormat;
 }
 
 export interface CropRect {
