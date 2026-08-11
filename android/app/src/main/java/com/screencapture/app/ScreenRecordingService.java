@@ -243,13 +243,14 @@ public class ScreenRecordingService extends Service {
         }
 
         File out = new File(getCacheDir(), fileName);
+        String mimeType = formatSpec != null ? formatSpec.mimeType : "video/mp4";
         if (cancel || !out.exists() || out.length() == 0) {
             if (out.exists()) {
                 out.delete();
             }
-            completeResult(new RecordingResult(null, width, height, durationMs, true));
+            completeResult(new RecordingResult(null, mimeType, width, height, durationMs, true));
         } else {
-            completeResult(new RecordingResult(fileName, width, height, durationMs, false));
+            completeResult(new RecordingResult(fileName, mimeType, width, height, durationMs, false));
         }
 
         stopForeground(true);
