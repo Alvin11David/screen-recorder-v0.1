@@ -26,6 +26,8 @@ public class RecordingRequest {
     @NotBlank(message = "MIME type is required")
     private String mimeType;
 
+    private String fileName;
+
     public String getDriveFileId() { return driveFileId; }
     public void setDriveFileId(String driveFileId) { this.driveFileId = driveFileId; }
     public String getDriveUrl() { return driveUrl; }
