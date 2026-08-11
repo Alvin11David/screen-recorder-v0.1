@@ -68,6 +68,7 @@ export interface RecordingResult {
   sizeBytes: number;
   createdAt: Date;
   mimeType: string;
+  fileName: string;
   interrupted?: boolean;
   autoStopped?: boolean;
 }
