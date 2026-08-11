@@ -52,9 +52,16 @@ interface VideoEditorProps {
   onClose: () => void;
   initialFileName?: string;
   onRename?: (name: string) => void;
+  format?: RecordingFormat;
 }
 
-export function VideoEditor({ blob, onClose, initialFileName, onRename }: VideoEditorProps) {
+export function VideoEditor({
+  blob,
+  onClose,
+  initialFileName,
+  onRename,
+  format,
+}: VideoEditorProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState(initialFileName ?? "");
