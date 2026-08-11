@@ -23,19 +23,34 @@ export const formatResolution = (width: number, height: number): string => {
   return `${width} × ${height}${label}`;
 };
 
-const defaultFileName = (date: Date) => {
-  const pad = (n: number) => n.toString().padStart(2, "0");
+const pad = (n: number) => n.toString().padStart(2, "0");
+
+export const defaultRecordingName = (date: Date): string => {
   const stamp = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}_${pad(
     date.getHours(),
   )}-${pad(date.getMinutes())}-${pad(date.getSeconds())}`;
-  return `screencapture-pro_${stamp}.webm`;
+  return `screencapture-pro_${stamp}`;
+};
+
+export const sanitizeFileName = (name: string): string => {
+  return name
+    .replace(/[\\/:*?"<>|]/g, "")
+    .replace(/\.(webm|mp4)$/i, "")
+    .trim();
+};
+
+export const buildFileName = (name: string, mimeType: string, date: Date): string => {
+  const base = sanitizeFileName(name) || defaultRecordingName(date);
+  const ext = mimeType.includes("mp4") ? ".mp4" : ".webm";
+  return `${base}${ext}`;
 };
 
 export const saveRecording = async (
   blob: Blob,
   createdAt: Date,
+  fileName?: string,
 ): Promise<"saved" | "downloaded" | "cancelled"> => {
-  const suggestedName = defaultFileName(createdAt);
+  const suggestedName = buildFileName(fileName ?? defaultRecordingName(createdAt), blob.type, createdAt);
 
   // Prefer File System Access API where available.
   const picker = window.showSaveFilePicker;
