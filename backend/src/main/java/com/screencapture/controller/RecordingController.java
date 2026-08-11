@@ -49,6 +49,20 @@ public class RecordingController {
         }
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> rename(@PathVariable long id,
+                                    @RequestBody RenameRecordingRequest req,
+                                    Authentication authentication) {
+        try {
+            var entry = recordingService.rename(currentUser(authentication), id, req.getFileName());
+            log.info("[recordings] rename: user={} id={} -> {}",
+                    authName(authentication), id, req.getFileName());
+            return ResponseEntity.ok(entry);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable long id, Authentication authentication) {
         try {
