@@ -35,6 +35,9 @@ public class Recording {
     @Column(name = "mime_type", length = 128, nullable = false)
     private String mimeType;
 
+    @Column(name = "file_name", length = 255)
+    private String fileName;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
