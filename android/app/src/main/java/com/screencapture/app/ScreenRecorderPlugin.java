@@ -30,11 +30,17 @@ import java.util.concurrent.CompletableFuture;
 public class ScreenRecorderPlugin extends Plugin {
 
     private boolean pendingRecordAudio = true;
+    private String pendingFormat = "mp4";
 
     @PluginMethod
     public void start(PluginCall call) {
         boolean recordAudio = call.getBoolean("recordAudio", true);
+        String format = call.getString("format", "mp4");
+        if (!"webm".equals(format) && !"mpegts".equals(format)) {
+            format = "mp4";
+        }
         pendingRecordAudio = recordAudio;
+        pendingFormat = format;
 
         if (ScreenRecordingService.isRecording()) {
             JSObject ret = new JSObject();
