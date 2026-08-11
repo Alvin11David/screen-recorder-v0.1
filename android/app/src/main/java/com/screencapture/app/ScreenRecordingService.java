@@ -148,6 +148,8 @@ public class ScreenRecordingService extends Service {
         int resultCode = intent.getIntExtra(EXTRA_RESULT_CODE, Activity.RESULT_CANCELED);
         Intent data = intent.getParcelableExtra(EXTRA_RESULT_DATA);
         boolean recordAudio = intent.getBooleanExtra(EXTRA_RECORD_AUDIO, true);
+        String formatName = intent.getStringExtra(EXTRA_RECORD_FORMAT);
+        formatSpec = FormatSpec.forName(formatName);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             Log.e(TAG, "Surface recording requires Android 8.0+");
