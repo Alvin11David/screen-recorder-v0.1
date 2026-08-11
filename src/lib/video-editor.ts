@@ -130,6 +130,7 @@ async function processFrames(
     ctx: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement,
   ) => boolean,
+  format?: RecordingFormat,
 ): Promise<Blob> {
   const video = await loadVideo(blob, false);
   const audio = createVideoAudioTrack(video);
@@ -153,6 +154,7 @@ async function processFrames(
         reject(err);
       },
       audio ? [audio.track] : [],
+      format,
     );
 
     let running = true;
