@@ -1035,32 +1035,39 @@ function RecordingResultPanel({
   result,
   onReset,
   onEdit,
+  onRename,
   interrupted,
   autoStopped,
   drive,
+  onDriveSaved,
 }: {
   result: RecordingResult;
   onReset: () => void;
   onEdit?: () => void;
+  onRename?: (name: string) => void;
   interrupted?: boolean;
   autoStopped?: boolean;
   drive?: {
     connected: boolean | null;
     autoUpload: boolean;
     beginConnect: () => void;
-    saveToDrive: (result: RecordingResult) => Promise<void>;
+    saveToDrive: (result: RecordingResult) => Promise<RecordingHistoryEntry | null>;
   };
+  onDriveSaved?: (entryId: number, nameAtUpload: string) => void;
 }) {
   const [saveState, setSaveState] = useState<"idle" | "saving" | "done">("idle");
   const [driveState, setDriveState] = useState<"idle" | "uploading" | "done" | "error">("idle");
   const [driveError, setDriveError] = useState<string | null>(null);
+
+  const fileExt = result.mimeType.includes("mp4") ? ".mp4" : ".webm";
 
   const handleSaveToDrive = async () => {
     if (!drive) return;
     setDriveState("uploading");
     setDriveError(null);
     try {
-      await drive.saveToDrive(result);
+      const entry = await drive.saveToDrive(result);
+      if (entry) onDriveSaved?.(entry.id, result.fileName);
       setDriveState("done");
     } catch (err) {
       setDriveState("error");
@@ -1070,7 +1077,7 @@ function RecordingResultPanel({
 
   const handleSave = async () => {
     setSaveState("saving");
-    const suggestedName = `screencapture-pro_${new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19)}.webm`;
+    const suggestedName = buildFileName(result.fileName, result.mimeType, result.createdAt);
     const picker = window.showSaveFilePicker;
     if (typeof picker === "function") {
       try {
