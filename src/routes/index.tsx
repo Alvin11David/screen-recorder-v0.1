@@ -1490,7 +1490,7 @@ function Index() {
         );
       }
     },
-    [drive, setResult],
+    [drive?.renameEntry, drive?.connected, setResult],
   );
 
   // Auto-upload to Google Drive once the user has saved at least one recording.
