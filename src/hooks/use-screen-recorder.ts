@@ -3,6 +3,13 @@ import { isAndroid, isStandalonePwa } from "../lib/platform";
 import { defaultRecordingName } from "../lib/recording-utils";
 import { isNativePlatform } from "../lib/native";
 import {
+  getAvailableFormats,
+  defaultRecordingFormat,
+  pickWebMimeType,
+  type RecordingFormat,
+  type RecordingFormatInfo,
+} from "../lib/recording-formats";
+import {
   startNativeScreenRecording as startNativeRecorder,
   stopNativeScreenRecording as stopNativeRecorder,
   cancelNativeScreenRecording,
