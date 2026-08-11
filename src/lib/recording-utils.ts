@@ -35,14 +35,20 @@ export const defaultRecordingName = (date: Date): string => {
 export const sanitizeFileName = (name: string): string => {
   return name
     .replace(/[\\/:*?"<>|]/g, "")
-    .replace(/\.(webm|mp4)$/i, "")
+    .replace(/\.(webm|mp4|mpegts|ts)$/i, "")
     .trim();
+};
+
+export const extensionForMimeType = (mimeType: string): string => {
+  const t = mimeType.toLowerCase();
+  if (t.includes("mp4")) return ".mp4";
+  if (t.includes("mp2t") || t.includes("mpegts")) return ".ts";
+  return ".webm";
 };
 
 export const buildFileName = (name: string, mimeType: string, date: Date): string => {
   const base = sanitizeFileName(name) || defaultRecordingName(date);
-  const ext = mimeType.includes("mp4") ? ".mp4" : ".webm";
-  return `${base}${ext}`;
+  return `${base}${extensionForMimeType(mimeType)}`;
 };
 
 export const saveRecording = async (
