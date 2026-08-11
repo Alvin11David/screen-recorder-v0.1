@@ -2431,6 +2431,10 @@ function Index() {
                 result={result}
                 onReset={reset}
                 onEdit={() => setEditorBlob(result.blob)}
+                onRename={handleRename}
+                onDriveSaved={(entryId, nameAtUpload) =>
+                  (cloudSyncRef.current = { entryId, nameAtUpload })
+                }
                 interrupted={result.interrupted}
                 autoStopped={result.autoStopped}
                 drive={{
