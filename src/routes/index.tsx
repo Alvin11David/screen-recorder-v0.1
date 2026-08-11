@@ -1092,7 +1092,14 @@ function RecordingResultPanel({
       try {
         const handle = await picker({
           suggestedName,
-          types: [{ description: "WebM Video", accept: { "video/webm": [".webm"] } }],
+          types: [
+            {
+              description: "Video",
+              accept: result.mimeType.includes("mp4")
+                ? { "video/mp4": [".mp4"] }
+                : { "video/webm": [".webm"] },
+            },
+          ],
         });
         const writable = await handle.createWritable();
         await writable.write(result.blob);
