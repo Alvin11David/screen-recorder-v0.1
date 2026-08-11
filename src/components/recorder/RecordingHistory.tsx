@@ -350,16 +350,40 @@ export function RecordingHistory({
                       className="group relative rounded-xl bg-white/[0.03] p-4 ring-1 ring-white/[0.06] transition-all hover:bg-white/[0.05] hover:ring-white/[0.1]"
                     >
                       <div className="flex items-start justify-between gap-3 mb-3">
-                        <div className="flex items-center gap-2.5">
+                        <div className="flex items-center gap-2.5 min-w-0">
                           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 ring-1 ring-primary/20">
                             <Monitor className="h-3.5 w-3.5 text-primary/70" />
                           </div>
-                          <div>
-                            <p className="text-xs font-semibold text-white/70">
-                              {formatResolution(entry.width, entry.height)}
-                            </p>
+                          <div className="min-w-0">
+                            {editingId === entry.id ? (
+                              <div className="flex items-center gap-1.5">
+                                <input
+                                  autoFocus
+                                  value={editName}
+                                  onChange={(e) => setEditName(e.target.value)}
+                                  onBlur={() => commitRename(entry)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter") commitRename(entry);
+                                    if (e.key === "Escape") setEditingId(null);
+                                  }}
+                                  className="w-32 rounded-lg bg-white/[0.06] px-2 py-1 text-xs font-semibold text-white ring-1 ring-white/[0.12] outline-none focus:ring-primary/50"
+                                />
+                                <button
+                                  onMouseDown={(e) => e.preventDefault()}
+                                  onClick={() => commitRename(entry)}
+                                  className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-emerald-400 ring-1 ring-emerald-500/20 transition-all hover:bg-emerald-500/10"
+                                >
+                                  <Check className="h-3 w-3" />
+                                </button>
+                              </div>
+                            ) : (
+                              <p className="text-xs font-semibold text-white/70 truncate max-w-[150px]">
+                                {entry.fileName || formatResolution(entry.width, entry.height)}
+                              </p>
+                            )}
                             <p className="text-[10px] text-white/30 flex items-center gap-1 mt-0.5">
                               <Calendar className="h-2.5 w-2.5" />
+                              {formatResolution(entry.width, entry.height)} ·{" "}
                               {new Date(entry.createdAt).toLocaleString(undefined, {
                                 dateStyle: "medium",
                                 timeStyle: "short",
@@ -367,12 +391,20 @@ export function RecordingHistory({
                             </p>
                           </div>
                         </div>
-                        <button
-                          onClick={() => deleteEntry(entry.id)}
-                          className="opacity-0 group-hover:opacity-100 flex h-6 w-6 items-center justify-center rounded-lg text-white/20 transition-all hover:bg-red-500/10 hover:text-red-400"
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </button>
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => startRename(entry)}
+                            className="opacity-0 group-hover:opacity-100 flex h-6 w-6 items-center justify-center rounded-lg text-white/20 transition-all hover:bg-white/[0.08] hover:text-white/70"
+                          >
+                            <Pencil className="h-3 w-3" />
+                          </button>
+                          <button
+                            onClick={() => deleteEntry(entry.id)}
+                            className="opacity-0 group-hover:opacity-100 flex h-6 w-6 items-center justify-center rounded-lg text-white/20 transition-all hover:bg-red-500/10 hover:text-red-400"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </button>
+                        </div>
                       </div>
                       <div className="grid grid-cols-3 gap-2">
                         {STATS.map(({ icon: Icon, key, label, fmt }) => (
