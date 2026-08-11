@@ -97,12 +97,13 @@ function createRecorder(
   onDone: (blob: Blob) => void,
   onError: (err: unknown) => void,
   audioTracks: MediaStreamTrack[] = [],
+  format?: RecordingFormat,
 ): MediaRecorder {
   const stream = canvas.captureStream(fps);
   for (const track of audioTracks) {
     stream.addTrack(track);
   }
-  const mimeType = getSupportedMimeType();
+  const mimeType = getSupportedMimeType(format);
   const recorder = new MediaRecorder(stream, { mimeType });
   const chunks: Blob[] = [];
 
@@ -110,7 +111,7 @@ function createRecorder(
     if (e.data.size > 0) chunks.push(e.data);
   };
   recorder.onstop = () => {
-    const blob = new Blob(chunks, { type: "video/webm" });
+    const blob = new Blob(chunks, { type: mimeType });
     onDone(blob);
   };
   recorder.onerror = (e) => onError(e.error);
