@@ -469,8 +469,19 @@ export function VideoEditor({ blob, onClose, initialFileName, onRename }: VideoE
                 <Check className="h-6 w-6 text-emerald-400" />
               </span>
               <p className="text-sm text-white/60 text-center max-w-md">
-                Your video has been processed. Download it or start over.
+                Your video has been processed. Name it, then download it.
               </p>
+              <div className="flex items-center gap-2">
+                <input
+                  value={fileName}
+                  onChange={(e) => handleFileNameChange(e.target.value)}
+                  placeholder="File name"
+                  className="w-64 rounded-xl bg-white/[0.05] px-3.5 py-2.5 text-sm text-white ring-1 ring-white/[0.08] outline-none transition-all placeholder:text-white/25 focus:ring-primary/50"
+                />
+                <span className="shrink-0 rounded-xl bg-white/[0.04] px-2.5 py-2 text-xs text-white/35 ring-1 ring-white/[0.06]">
+                  .webm
+                </span>
+              </div>
               <div className="flex gap-3 mt-2">
                 <Button variant="hero" size="lg" onClick={downloadResult} className="gap-2">
                   <Download className="h-4 w-4" />
