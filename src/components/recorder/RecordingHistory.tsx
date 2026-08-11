@@ -120,6 +120,7 @@ function toLocalEntry(e: ApiRecordingHistoryEntry): HistoryEntry {
     sizeBytes: e.sizeBytes,
     createdAt: e.createdAt,
     mimeType: e.mimeType,
+    fileName: e.fileName,
     driveUrl: e.driveUrl,
     driveFileId: e.driveFileId,
   };
