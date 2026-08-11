@@ -2575,6 +2575,9 @@ function Index() {
             source={source}
             quality={quality}
             onQualityChange={setQuality}
+            format={format}
+            onFormatChange={setFormat}
+            formats={availableFormats}
             annotationsEnabled={annotationsEnabled}
             onAnnotationsChange={(v) => {
               setAnnotationsEnabled(v);
