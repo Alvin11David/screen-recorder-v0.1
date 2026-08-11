@@ -1225,7 +1225,7 @@ export function useScreenRecorder() {
       const height = settings.height ?? quality.height;
       trackSettingsRef.current = { width, height };
 
-      const mimeType = pickMimeType();
+      const mimeType = pickMimeType(format);
       const bitrate = Math.min(Math.max(Math.round(width * height * 4), 2_000_000), 12_000_000);
 
       const recorder = new MediaRecorder(camStream, {
