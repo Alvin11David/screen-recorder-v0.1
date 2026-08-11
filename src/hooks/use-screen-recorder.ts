@@ -89,7 +89,9 @@ export interface RecordingResult {
 
 type StopReason = "user" | "track-ended" | "auto";
 
-const pickMimeType = (): string => {
+const pickMimeType = (format: RecordingFormat): string => {
+  const chosen = pickWebMimeType(format);
+  if (chosen) return chosen;
   const candidates = [
     "video/webm;codecs=vp9,opus",
     "video/webm;codecs=vp9",
