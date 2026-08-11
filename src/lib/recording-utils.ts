@@ -64,8 +64,10 @@ export const saveRecording = async (
         suggestedName,
         types: [
           {
-            description: "WebM Video",
-            accept: { "video/webm": [".webm"] },
+            description: "Video",
+            accept: blob.type.includes("mp4")
+              ? { "video/mp4": [".mp4"] }
+              : { "video/webm": [".webm"] },
           },
         ],
       });
