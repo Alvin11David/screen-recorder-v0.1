@@ -1170,6 +1170,25 @@ function RecordingResultPanel({
           </div>
         ))}
       </div>
+      <div className="mb-5">
+        <label className="mb-1.5 flex items-center justify-between text-[10px] uppercase tracking-widest text-white/30">
+          <span>File name</span>
+          <span className="normal-case tracking-normal text-[11px] text-white/25">
+            Saved with this name
+          </span>
+        </label>
+        <div className="flex items-center gap-2">
+          <Input
+            value={result.fileName}
+            onChange={(e) => onRename?.(e.target.value)}
+            placeholder="Recording name"
+            className="h-10 border-white/[0.08] bg-white/[0.03] text-sm text-white placeholder:text-white/25 focus-visible:ring-primary/50"
+          />
+          <span className="shrink-0 rounded-lg bg-white/[0.04] px-2.5 py-2 text-xs text-white/35 ring-1 ring-white/[0.06]">
+            {fileExt}
+          </span>
+        </div>
+      </div>
       <div className="flex gap-3 flex-wrap">
         <Button
           variant="hero"
@@ -1200,7 +1219,7 @@ function RecordingResultPanel({
             {driveState === "uploading" ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              <CloudUpload className="h-4 w-4" />
+              <GoogleDriveIcon className="h-4 w-4" />
             )}
             {driveState === "uploading"
               ? "Uploading…"
