@@ -1262,7 +1262,7 @@ export function useScreenRecorder() {
       );
       setStatus("idle");
     }
-  }, [quality, startTimer, runCountdown, finalizeResult]);
+  }, [quality, startTimer, runCountdown, finalizeResult, format]);
 
   const cancelCountdown = useCallback(() => {
     if (countdownRef.current) {
