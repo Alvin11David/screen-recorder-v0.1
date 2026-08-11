@@ -94,6 +94,7 @@ public class ScreenRecorderPlugin extends Plugin {
         serviceIntent.putExtra(ScreenRecordingService.EXTRA_RESULT_CODE, result.getResultCode());
         serviceIntent.putExtra(ScreenRecordingService.EXTRA_RESULT_DATA, result.getData());
         serviceIntent.putExtra(ScreenRecordingService.EXTRA_RECORD_AUDIO, pendingRecordAudio);
+        serviceIntent.putExtra(ScreenRecordingService.EXTRA_RECORD_FORMAT, pendingFormat);
         getContext().startForegroundService(serviceIntent);
         JSObject ret = new JSObject();
         ret.put("started", true);
