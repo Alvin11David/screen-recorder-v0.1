@@ -31,7 +31,11 @@ export interface ProcessEffectsOptions {
   };
 }
 
-function getSupportedMimeType(): string {
+function getSupportedMimeType(format?: RecordingFormat): string {
+  if (format) {
+    const chosen = pickWebMimeType(format);
+    if (chosen) return chosen;
+  }
   const types = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"];
   for (const t of types) {
     if (MediaRecorder.isTypeSupported(t)) return t;
