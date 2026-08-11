@@ -2652,6 +2652,7 @@ function Index() {
           onClose={() => setEditorBlob(null)}
           initialFileName={result?.fileName}
           onRename={handleRename}
+          format={format}
         />
       )}
     </main>
