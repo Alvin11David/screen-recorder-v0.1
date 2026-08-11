@@ -992,6 +992,9 @@ function ControlBar({
   source,
   quality,
   onQualityChange,
+  format,
+  onFormatChange,
+  formats,
   annotationsEnabled,
   onAnnotationsChange,
   whiteboardActive,
@@ -1010,6 +1013,9 @@ function ControlBar({
   source: RecordSource;
   quality: QualityPreset;
   onQualityChange: (v: QualityPreset) => void;
+  format: RecordingFormat;
+  onFormatChange: (v: RecordingFormat) => void;
+  formats: RecordingFormatInfo[];
   annotationsEnabled: boolean;
   onAnnotationsChange: (v: boolean) => void;
   whiteboardActive: boolean;
