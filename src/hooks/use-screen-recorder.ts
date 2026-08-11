@@ -470,7 +470,7 @@ export function useScreenRecorder() {
         const pixels = width * height;
         const bitrate = Math.min(Math.max(Math.round(pixels * 7), 5_000_000), 50_000_000);
 
-        const mimeType = pickMimeType();
+        const mimeType = pickMimeType(format);
         let recordingStream: MediaStream;
 
         // ── Camera compositing ──────────────────────────────────────────
