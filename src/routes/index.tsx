@@ -829,6 +829,94 @@ function QualitySelector({
   );
 }
 
+function FormatSelector({
+  value,
+  onChange,
+  formats,
+  disabled,
+}: {
+  value: RecordingFormat;
+  onChange: (v: RecordingFormat) => void;
+  formats: RecordingFormatInfo[];
+  disabled?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const active = formats.find((f) => f.id === value) ?? formats[0];
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => setOpen(!open)}
+        className={cn(
+          "flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm ring-1 ring-white/[0.06]",
+          "bg-white/[0.03] backdrop-blur-sm transition-all",
+          "hover:bg-white/[0.06] hover:ring-white/[0.12]",
+          "disabled:cursor-not-allowed disabled:opacity-40",
+        )}
+      >
+        <Film className="h-3.5 w-3.5 text-white/35" />
+        <span className="text-white/65 font-medium">{active?.label}</span>
+        <svg className="w-3 h-3 text-white/25 ml-0.5" fill="none" viewBox="0 0 12 12">
+          <path
+            d="M3 5l3 3 3-3"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -4, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -4, scale: 0.96 }}
+            transition={{ duration: 0.15 }}
+            className="absolute bottom-full left-0 mb-2 w-52 rounded-xl bg-black p-1.5 ring-1 ring-white/[0.1] shadow-2xl z-20"
+          >
+            {formats.map((fmt) => (
+              <button
+                key={fmt.id}
+                type="button"
+                onClick={() => {
+                  onChange(fmt.id);
+                  setOpen(false);
+                }}
+                className={cn(
+                  "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-all",
+                  value === fmt.id
+                    ? "bg-white/[0.08] text-white"
+                    : "text-white/50 hover:text-white/80 hover:bg-white/[0.04]",
+                )}
+              >
+                <span
+                  className={cn(
+                    "flex h-6 w-6 items-center justify-center rounded text-[10px] font-bold uppercase",
+                    value === fmt.id
+                      ? "bg-gradient-primary text-white"
+                      : "bg-white/[0.05] text-white/30",
+                  )}
+                >
+                  {fmt.short}
+                </span>
+                <div className="flex-1">
+                  <span className="block font-medium leading-tight">{fmt.label}</span>
+                  <span className="block text-[10px] text-white/30 mt-0.5">
+                    {fmt.description}
+                  </span>
+                </div>
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 function CaptureModeSelector({
   value,
   onChange,
