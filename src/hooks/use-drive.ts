@@ -9,7 +9,13 @@ import {
   setAutoUploadEnabled,
   uploadRecordingToDrive,
 } from "@/lib/drive";
-import { createRecordingEntry, deleteRecordingEntry } from "@/lib/recording-history-api";
+import { buildFileName, sanitizeFileName } from "@/lib/recording-utils";
+import {
+  createRecordingEntry,
+  deleteRecordingEntry,
+  renameRecordingEntry,
+  type RecordingHistoryEntry,
+} from "@/lib/recording-history-api";
 
 export function useDrive() {
   const { isAuthenticated } = useAuth();
