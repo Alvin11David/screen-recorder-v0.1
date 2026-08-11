@@ -136,6 +136,8 @@ export function RecordingHistory({
 }: RecordingHistoryProps) {
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
   const [loading, setLoading] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
   const cloudActive = drive?.connected === true;
 
   useEffect(() => {
