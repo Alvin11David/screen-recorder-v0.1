@@ -274,7 +274,7 @@ export async function cropVideo(
       outputHeight,
     );
     return true;
-  });
+  }, options.format);
 }
 
 export async function resizeVideo(
@@ -288,7 +288,7 @@ export async function resizeVideo(
     if (video.ended) return false;
     _ctx.drawImage(video, 0, 0, outputWidth, outputHeight);
     return true;
-  });
+  }, options.format);
 }
 
 export async function mergeClips(blobs: Blob[], options: VideoOptions): Promise<Blob> {
