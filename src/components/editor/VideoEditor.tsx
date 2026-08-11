@@ -49,11 +49,14 @@ function formatTime(sec: number): string {
 interface VideoEditorProps {
   blob: Blob;
   onClose: () => void;
+  initialFileName?: string;
+  onRename?: (name: string) => void;
 }
 
-export function VideoEditor({ blob, onClose }: VideoEditorProps) {
+export function VideoEditor({ blob, onClose, initialFileName, onRename }: VideoEditorProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [fileName, setFileName] = useState(initialFileName ?? "");
   const [videoUrl, setVideoUrl] = useState("");
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
