@@ -12,6 +12,7 @@ export interface RecordingHistoryEntry {
   height: number;
   sizeBytes: number;
   mimeType: string;
+  fileName?: string;
   createdAt: string;
 }
 
@@ -23,6 +24,11 @@ export interface CreateRecordingInput {
   height: number;
   sizeBytes: number;
   mimeType: string;
+  fileName?: string;
+}
+
+export interface RenameRecordingInput {
+  fileName: string;
 }
 
 export class HistoryApiError extends Error {
