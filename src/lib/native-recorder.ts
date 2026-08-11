@@ -51,7 +51,7 @@ export async function startNativeScreenRecording(
   if (!nativeScreenRecordingAvailable()) {
     throw new Error("Native screen recording is not available in this environment.");
   }
-  await ScreenRecorder.start({ recordAudio: options.recordAudio });
+  await ScreenRecorder.start({ recordAudio: options.recordAudio, format: options.format });
 }
 
 export async function stopNativeScreenRecording(): Promise<NativeScreenRecording> {
