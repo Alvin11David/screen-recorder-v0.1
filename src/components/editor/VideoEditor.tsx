@@ -263,10 +263,16 @@ export function VideoEditor({ blob, onClose, initialFileName, onRename }: VideoE
     if (!resultBlob) return;
     const a = document.createElement("a");
     a.href = resultUrl;
-    a.download = `screencapture-pro_edited_${Date.now()}.webm`;
+    a.download = buildFileName(fileName, "video/webm", new Date());
     document.body.appendChild(a);
     a.click();
     a.remove();
+  };
+
+  const handleFileNameChange = (value: string) => {
+    const cleaned = sanitizeFileName(value);
+    setFileName(cleaned);
+    onRename?.(cleaned);
   };
 
   // ── Captions ──
