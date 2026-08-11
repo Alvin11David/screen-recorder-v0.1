@@ -260,21 +260,28 @@ export async function cropVideo(
   canvas.height = outputHeight;
   const ctx = canvas.getContext("2d")!;
 
-  return processFrames(blob, outputWidth, outputHeight, fps, (video, _ctx, _canvas) => {
-    if (video.ended) return false;
-    ctx.drawImage(
-      video,
-      cropRect.x,
-      cropRect.y,
-      cropRect.width,
-      cropRect.height,
-      0,
-      0,
-      outputWidth,
-      outputHeight,
-    );
-    return true;
-  }, options.format);
+  return processFrames(
+    blob,
+    outputWidth,
+    outputHeight,
+    fps,
+    (video, _ctx, _canvas) => {
+      if (video.ended) return false;
+      ctx.drawImage(
+        video,
+        cropRect.x,
+        cropRect.y,
+        cropRect.width,
+        cropRect.height,
+        0,
+        0,
+        outputWidth,
+        outputHeight,
+      );
+      return true;
+    },
+    options.format,
+  );
 }
 
 export async function resizeVideo(
@@ -284,11 +291,18 @@ export async function resizeVideo(
   options: VideoOptions,
 ): Promise<Blob> {
   const fps = options.fps ?? 30;
-  return processFrames(blob, outputWidth, outputHeight, fps, (video, _ctx, _canvas) => {
-    if (video.ended) return false;
-    _ctx.drawImage(video, 0, 0, outputWidth, outputHeight);
-    return true;
-  }, options.format);
+  return processFrames(
+    blob,
+    outputWidth,
+    outputHeight,
+    fps,
+    (video, _ctx, _canvas) => {
+      if (video.ended) return false;
+      _ctx.drawImage(video, 0, 0, outputWidth, outputHeight);
+      return true;
+    },
+    options.format,
+  );
 }
 
 export async function mergeClips(blobs: Blob[], options: VideoOptions): Promise<Blob> {
