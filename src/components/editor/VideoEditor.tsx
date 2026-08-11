@@ -279,7 +279,7 @@ export function VideoEditor({
     if (!resultBlob) return;
     const a = document.createElement("a");
     a.href = resultUrl;
-    a.download = buildFileName(fileName, "video/webm", new Date());
+    a.download = buildFileName(fileName, resultBlob.type, new Date());
     document.body.appendChild(a);
     a.click();
     a.remove();
