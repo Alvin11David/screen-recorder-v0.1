@@ -93,7 +93,7 @@ public class ScreenRecordingService extends Service {
                         MediaRecorder.AudioEncoder.VORBIS,
                         ".webm", "video/webm");
             }
-            if ("mpegts".equals(name)) {
+            if ("mpegts".equals(name) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 return new FormatSpec(
                         MediaRecorder.OutputFormat.MPEG_2_TS,
                         MediaRecorder.VideoEncoder.H264,
