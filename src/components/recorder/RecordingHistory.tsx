@@ -84,6 +84,7 @@ export interface DriveSync {
   reloadKey: number;
   beginConnect: () => void;
   deleteEntry: (id: number) => Promise<void>;
+  renameEntry?: (id: number, fileName: string) => Promise<void>;
   disconnect: () => Promise<void>;
 }
 
