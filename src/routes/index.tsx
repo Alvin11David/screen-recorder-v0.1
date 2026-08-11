@@ -42,7 +42,6 @@ import {
   ChevronUp,
   Gauge,
   Cloud,
-  CloudUpload,
   Loader2,
   Upload,
 } from "lucide-react";
