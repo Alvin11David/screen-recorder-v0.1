@@ -424,12 +424,15 @@ export function RecordingHistory({
                       </div>
                       <div className="mt-2 flex items-center justify-between gap-2">
                         <p className="text-[10px] text-white/25 font-mono uppercase">
-                          {entry.mimeType.includes("vp9")
-                            ? "VP9"
-                            : entry.mimeType.includes("vp8")
-                              ? "VP8"
-                              : "WebM"}
-                          {" · "}WebM container
+                          {entry.mimeType.includes("mp4")
+                            ? "H.264 · MP4"
+                            : entry.mimeType.includes("mp2t") || entry.mimeType.includes("mpegts")
+                              ? "H.264 · MPEG-TS"
+                              : entry.mimeType.includes("vp9")
+                                ? "VP9 · WebM"
+                                : entry.mimeType.includes("vp8")
+                                  ? "VP8 · WebM"
+                                  : "WebM container"}
                         </p>
                         {entry.driveUrl && (
                           <a
