@@ -30,6 +30,7 @@ export interface HistoryEntry {
   sizeBytes: number;
   createdAt: string; // ISO string
   mimeType: string;
+  fileName?: string;
   driveUrl?: string;
   driveFileId?: string;
 }
