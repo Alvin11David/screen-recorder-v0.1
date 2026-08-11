@@ -306,7 +306,7 @@ export async function mergeClips(blobs: Blob[], options: VideoOptions): Promise<
     const dest = audioCtx.createMediaStreamDestination();
     const canvasStream = canvas.captureStream(fps);
     canvasStream.addTrack(dest.stream.getAudioTracks()[0]);
-    const mimeType = getSupportedMimeType();
+    const mimeType = getSupportedMimeType(options.format);
     const recorder = new MediaRecorder(canvasStream, { mimeType });
     const chunks: Blob[] = [];
     const urls: string[] = [];
@@ -320,7 +320,7 @@ export async function mergeClips(blobs: Blob[], options: VideoOptions): Promise<
       if (failed) {
         reject(new Error("A clip failed to load"));
       } else {
-        resolve(new Blob(chunks, { type: "video/webm" }));
+        resolve(new Blob(chunks, { type: mimeType }));
       }
     };
     recorder.onerror = (e) => reject(e.error);
