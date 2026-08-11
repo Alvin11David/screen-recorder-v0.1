@@ -2471,7 +2471,14 @@ function Index() {
       </motion.div>
 
       {/* ── Video Editor ── */}
-      {editorBlob && <VideoEditor blob={editorBlob} onClose={() => setEditorBlob(null)} />}
+      {editorBlob && (
+        <VideoEditor
+          blob={editorBlob}
+          onClose={() => setEditorBlob(null)}
+          initialFileName={result?.fileName}
+          onRename={handleRename}
+        />
+      )}
     </main>
   );
 }
