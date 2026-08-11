@@ -1,8 +1,10 @@
 import { Capacitor, registerPlugin } from "@capacitor/core";
 import { Directory, Filesystem } from "@capacitor/filesystem";
+import type { RecordingFormat } from "./recording-formats";
 
 export interface NativeScreenRecorderStartOptions {
   recordAudio: boolean;
+  format: RecordingFormat;
 }
 
 export interface NativeScreenRecording {
