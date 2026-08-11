@@ -437,7 +437,7 @@ export async function processWithEffects(
       if (audioTrack) tracks.push(audioTrack);
       const combinedStream = new MediaStream(tracks);
 
-      const mimeType = getSupportedMimeType();
+      const mimeType = getSupportedMimeType(options.format);
       const recorder = new MediaRecorder(combinedStream, { mimeType });
       const chunks: Blob[] = [];
 
@@ -452,7 +452,7 @@ export async function processWithEffects(
       };
       recorder.onstop = () => {
         cleanup();
-        resolve(new Blob(chunks, { type: "video/webm" }));
+        resolve(new Blob(chunks, { type: mimeType }));
       };
       recorder.onerror = (e) => {
         cleanup();
