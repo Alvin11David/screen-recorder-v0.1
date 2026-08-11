@@ -2,6 +2,7 @@ package com.screencapture.controller;
 
 import com.screencapture.dto.ErrorResponse;
 import com.screencapture.dto.RecordingRequest;
+import com.screencapture.dto.RenameRecordingRequest;
 import com.screencapture.model.User;
 import com.screencapture.repository.UserRepository;
 import com.screencapture.service.RecordingService;
