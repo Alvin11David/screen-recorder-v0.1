@@ -282,6 +282,7 @@ export function useScreenRecorder() {
         sizeBytes: blob.size,
         createdAt: new Date(),
         mimeType,
+        fileName: defaultRecordingName(new Date()),
         interrupted,
         autoStopped: reason === "auto",
       });
