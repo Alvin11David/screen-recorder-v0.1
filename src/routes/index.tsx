@@ -58,9 +58,11 @@ import {
   type CameraSettings,
   type RecorderStatus,
 } from "@/hooks/use-screen-recorder";
-import { formatTimer, formatBytes, formatResolution } from "@/lib/recording-utils";
+import { formatTimer, formatBytes, formatResolution, buildFileName, sanitizeFileName } from "@/lib/recording-utils";
+import type { RecordingHistoryEntry } from "@/lib/recording-history-api";
 import { MODIFIER_LABEL, isAndroid, isStandalonePwa } from "@/lib/platform";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { ClickFX } from "@/components/recorder/ClickFX";
