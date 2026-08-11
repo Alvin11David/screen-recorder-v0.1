@@ -1225,9 +1225,12 @@ function RecordingResultPanel({
           types: [
             {
               description: "Video",
-              accept: result.mimeType.includes("mp4")
-                ? { "video/mp4": [".mp4"] }
-                : { "video/webm": [".webm"] },
+              accept:
+                fileExt === ".mp4"
+                  ? { "video/mp4": [".mp4"] }
+                  : fileExt === ".ts"
+                    ? { "video/mp2t": [".ts"] }
+                    : { "video/webm": [".webm"] },
             },
           ],
         });
