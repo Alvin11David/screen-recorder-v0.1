@@ -83,6 +83,6 @@ public class RecordingService {
     private RecordingResponse toResponse(Recording r) {
         return new RecordingResponse(r.getId(), r.getDriveFileId(), r.getDriveUrl(),
                 r.getDurationSeconds(), r.getWidth(), r.getHeight(), r.getSizeBytes(),
-                r.getMimeType(), r.getCreatedAt());
+                r.getMimeType(), r.getFileName(), r.getCreatedAt());
     }
 }
