@@ -20,7 +20,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { buildFileName, sanitizeFileName } from "@/lib/recording-utils";
+import { buildFileName, sanitizeFileName, extensionForMimeType } from "@/lib/recording-utils";
+import type { RecordingFormat } from "@/lib/recording-formats";
 import {
   trimVideo,
   cropVideo,
