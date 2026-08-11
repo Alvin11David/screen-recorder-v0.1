@@ -1485,6 +1485,8 @@ function Index() {
   }, [result]);
 
   // Rename the recording: update result, local history, and the Drive file/cloud entry.
+  const driveRenameEntry = drive.renameEntry;
+  const driveIsConnected = drive.connected === true;
   const handleRename = useCallback(
     (name: string) => {
       const current = resultRef.current;
@@ -1494,17 +1496,15 @@ function Index() {
       setResult((prev) => (prev ? { ...prev, fileName: cleaned } : prev));
       updateHistoryEntryName({ ...current, fileName: cleaned });
       const sync = cloudSyncRef.current;
-      if (sync && drive.connected === true) {
-        drive
-          .renameEntry(sync.entryId, cleaned)
-          .catch((err) =>
-            console.info(
-              `[rename] Drive rename failed: ${err instanceof Error ? err.message : err}`,
-            ),
-          );
+      if (sync && driveIsConnected) {
+        driveRenameEntry(sync.entryId, cleaned).catch((err) =>
+          console.info(
+            `[rename] Drive rename failed: ${err instanceof Error ? err.message : err}`,
+          ),
+        );
       }
     },
-    [drive?.renameEntry, drive?.connected, setResult],
+    [driveRenameEntry, driveIsConnected, setResult],
   );
 
   // Auto-upload to Google Drive once the user has saved at least one recording.
@@ -1527,13 +1527,11 @@ function Index() {
             cloudSyncRef.current = { entryId: entry.id, nameAtUpload };
             const current = resultRef.current;
             if (current && current.fileName !== nameAtUpload) {
-              drive
-                .renameEntry(entry.id, current.fileName)
-                .catch((err) =>
-                  console.info(
-                    `[auto-upload] rename sync failed: ${err instanceof Error ? err.message : err}`,
-                  ),
-                );
+              driveRenameEntry(entry.id, current.fileName).catch((err) =>
+                console.info(
+                  `[auto-upload] rename sync failed: ${err instanceof Error ? err.message : err}`,
+                ),
+              );
             }
           }
         })
@@ -1545,7 +1543,7 @@ function Index() {
         `[auto-upload] skipped: driveConnected=${driveConnected} autoUpload=${driveAutoUpload}`,
       );
     }
-  }, [result, driveConnected, driveAutoUpload, saveRecordingToDrive, drive.renameEntry]);
+  }, [result, driveConnected, driveAutoUpload, saveRecordingToDrive, driveRenameEntry]);
 
   // Global keyboard shortcuts
   useEffect(() => {
