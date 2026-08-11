@@ -181,6 +181,7 @@ export function VideoEditor({
         speed,
         captions,
         music: musicBlob ? { blob: musicBlob, volume: musicVolume } : undefined,
+        format,
       });
       setResultBlob(result);
     } catch (err) {
