@@ -19,6 +19,7 @@ import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import { formatTimer, formatBytes, formatResolution } from "@/lib/recording-utils";
 import type { RecordingResult } from "@/hooks/use-screen-recorder";
+import { GoogleDriveIcon } from "@/components/ui/GoogleDriveIcon";
 import {
   fetchRecordingHistory,
   type RecordingHistoryEntry as ApiRecordingHistoryEntry,
