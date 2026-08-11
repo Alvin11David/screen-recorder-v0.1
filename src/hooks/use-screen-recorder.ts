@@ -701,6 +701,7 @@ export function useScreenRecorder() {
       setupAnnotationCanvas,
       finalizeResult,
       handlePendingCaptureEnded,
+      format,
     ],
   );
 
@@ -1135,7 +1136,7 @@ export function useScreenRecorder() {
       setError(err instanceof Error ? err.message : "Could not start screen recording.");
       setStatus("idle");
     }
-  }, [includeAudio, startTimer]);
+  }, [includeAudio, startTimer, format]);
 
   const stopNativeRecordingAsync = useCallback(async (reason: StopReason) => {
     if (nativeStopInFlightRef.current) return;
