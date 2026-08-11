@@ -7,7 +7,6 @@ import {
   defaultRecordingFormat,
   pickWebMimeType,
   type RecordingFormat,
-  type RecordingFormatInfo,
 } from "../lib/recording-formats";
 import {
   startNativeScreenRecording as startNativeRecorder,
