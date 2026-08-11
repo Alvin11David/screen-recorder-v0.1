@@ -718,7 +718,7 @@ export function useScreenRecorder() {
       const settings = videoTrack.getSettings();
       trackSettingsRef.current = { width: rect.width, height: rect.height };
 
-      const mimeType = pickMimeType();
+      const mimeType = pickMimeType(format);
       const pixels = rect.width * rect.height;
       const bitrate = Math.min(Math.max(Math.round(pixels * 7), 5_000_000), 50_000_000);
 
