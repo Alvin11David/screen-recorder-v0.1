@@ -209,7 +209,12 @@ export function VideoEditor({
     setProcessing(true);
     setProcessingLabel("Merging clips\u2026");
     try {
-      const result = await mergeClipsFn(mergeClips, { width: vidW, height: vidH, fps: 30 });
+      const result = await mergeClipsFn(mergeClips, {
+        width: vidW,
+        height: vidH,
+        fps: 30,
+        format,
+      });
       setResultBlob(result);
     } catch (err) {
       console.error("Merge failed", err);
