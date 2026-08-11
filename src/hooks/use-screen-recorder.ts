@@ -981,7 +981,7 @@ export function useScreenRecorder() {
 
     if (annotationsEnabledRef.current) setupAnnotationCanvas(canvasW, canvasH);
 
-    const mimeType = pickMimeType();
+    const mimeType = pickMimeType(format);
     const bitrate = Math.min(Math.max(Math.round(canvasW * canvasH * 7), 5_000_000), 50_000_000);
 
     // Create video elements for each stream
