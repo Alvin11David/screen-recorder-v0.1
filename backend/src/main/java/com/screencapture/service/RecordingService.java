@@ -44,6 +44,24 @@ public class RecordingService {
         recording.setHeight(req.getHeight());
         recording.setSizeBytes(req.getSizeBytes());
         recording.setMimeType(req.getMimeType());
+        recording.setFileName(req.getFileName());
+        return toResponse(recordingRepository.save(recording));
+    }
+
+    @Transactional
+    public RecordingResponse rename(User user, long id, String fileName) {
+        var recording = recordingRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Recording not found"));
+        if (!recording.getUserId().equals(user.getId())) {
+            throw new IllegalArgumentException("Recording not found");
+        }
+        if (fileName == null || fileName.isBlank()) {
+            throw new IllegalArgumentException("File name is required");
+        }
+        if (recording.getDriveFileId() != null && !recording.getDriveFileId().isBlank()) {
+            googleDriveService.renameFile(user, recording.getDriveFileId(), fileName);
+        }
+        recording.setFileName(fileName);
         return toResponse(recordingRepository.save(recording));
     }
 
