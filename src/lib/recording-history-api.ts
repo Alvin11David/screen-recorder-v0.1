@@ -78,3 +78,12 @@ export async function deleteRecordingEntry(id: number): Promise<void> {
   });
   await handle(res);
 }
+
+export async function renameRecordingEntry(id: number, fileName: string): Promise<RecordingHistoryEntry> {
+  const res = await fetch(`${API_BASE}/api/recordings/${id}`, {
+    method: "PATCH",
+    headers: headers(),
+    body: JSON.stringify({ fileName } satisfies RenameRecordingInput),
+  });
+  return (await handle(res)) as unknown as RecordingHistoryEntry;
+}
