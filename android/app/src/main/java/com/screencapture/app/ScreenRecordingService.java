@@ -184,7 +184,7 @@ public class ScreenRecordingService extends Service {
         height = metrics.heightPixels;
         int densityDpi = metrics.densityDpi;
 
-        fileName = String.format(Locale.US, "screenflow_%d.mp4", System.currentTimeMillis());
+        fileName = String.format(Locale.US, "screenflow_%d%s", System.currentTimeMillis(), formatSpec.extension);
         File out = new File(getCacheDir(), fileName);
 
         try {
@@ -193,13 +193,13 @@ public class ScreenRecordingService extends Service {
             if (recordAudio) {
                 mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             }
-            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            mediaRecorder.setOutputFormat(formatSpec.outputFormat);
             if (recordAudio) {
-                mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+                mediaRecorder.setAudioEncoder(formatSpec.audioEncoder);
                 mediaRecorder.setAudioEncodingBitRate(128000);
                 mediaRecorder.setAudioSamplingRate(44100);
             }
-            mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+            mediaRecorder.setVideoEncoder(formatSpec.videoEncoder);
             mediaRecorder.setVideoSize(width, height);
             mediaRecorder.setVideoFrameRate(30);
             mediaRecorder.setVideoEncodingBitRate(Math.max(6000000, width * height * 4));
