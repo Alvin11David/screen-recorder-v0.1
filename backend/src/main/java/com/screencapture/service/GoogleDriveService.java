@@ -166,32 +166,6 @@ public class GoogleDriveService {
     }
 
     public void deleteFile(User user, String fileId) {
-        if (fileId == null || fileId.isBlank()) return;
-        String accessToken = accessTokenForUser(user);
-        try {
-            var request = HttpRequest.newBuilder()
-                    .uri(URI.create(DRIVE_FILES_URI + "/" + urlEncode(fileId)))
-                    .timeout(Duration.ofMillis(OAUTH_TIMEOUT_MS))
-                    .header("Authorization", "Bearer " + accessToken)
-                    .DELETE()
-                    .build();
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 404) {
-                log.info("[drive] delete file {} already gone", fileId);
-                return;
-            }
-            if (response.statusCode() < 200 || response.statusCode() >= 300) {
-                log.warn("Failed to delete Drive file {}: HTTP {}", fileId, response.statusCode());
-                throw new IllegalStateException("Failed to delete file from Google Drive");
-            }
-            log.info("[drive] deleted file {} for user={}", fileId, user.getEmail());
-        } catch (IllegalArgumentException e) {
-            throw e;
-        } catch (Exception e) {
-            log.warn("Failed to delete Drive file {}", fileId, e);
-            throw new IllegalStateException("Failed to delete file from Google Drive");
-        }
-    }
 
     @Transactional
     public void disconnect(User user) {
