@@ -64,5 +64,7 @@ public class Recording {
     public void setSizeBytes(long sizeBytes) { this.sizeBytes = sizeBytes; }
     public String getMimeType() { return mimeType; }
     public void setMimeType(String mimeType) { this.mimeType = mimeType; }
+    public String getFileName() { return fileName; }
+    public void setFileName(String fileName) { this.fileName = fileName; }
     public Instant getCreatedAt() { return createdAt; }
 }
