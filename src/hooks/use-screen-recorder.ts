@@ -126,7 +126,9 @@ export function useScreenRecorder() {
   const [warning, setWarning] = useState<string | null>(null);
   const [includeAudio, setIncludeAudio] = useState(true);
   const [quality, setQuality] = useState<QualityPreset>(QUALITY_PRESETS[1]);
-  const [format, setFormat] = useState<RecordingFormat>(() => defaultRecordingFormat(isNativePlatform()));
+  const [format, setFormat] = useState<RecordingFormat>(() =>
+    defaultRecordingFormat(isNativePlatform()),
+  );
   const availableFormats = getAvailableFormats(isNativePlatform());
   const [includeCamera, setIncludeCamera] = useState(false);
   const [fps, setFps] = useState<30 | 60>(60);
@@ -1142,8 +1144,7 @@ export function useScreenRecorder() {
   const stopNativeRecordingAsync = useCallback(async (reason: StopReason) => {
     if (nativeStopInFlightRef.current) return;
     nativeStopInFlightRef.current = true;
-    const duration =
-      accumulatedRef.current + (Date.now() - startTimeRef.current) / 1000;
+    const duration = accumulatedRef.current + (Date.now() - startTimeRef.current) / 1000;
     clearTimer();
     setNativeRecording(false);
     nativeRecordingRef.current = false;
@@ -1151,7 +1152,9 @@ export function useScreenRecorder() {
     try {
       const file = await stopNativeRecorder();
       const interrupted = reason === "track-ended";
-      const empty = interrupted && (duration < MIN_MEANINGFUL_DURATION || file.blob.size < MIN_MEANINGFUL_BYTES);
+      const empty =
+        interrupted &&
+        (duration < MIN_MEANINGFUL_DURATION || file.blob.size < MIN_MEANINGFUL_BYTES);
       if (empty) {
         setError(
           "Screen recording stopped before anything could be captured, so nothing was saved.",
@@ -1311,20 +1314,23 @@ export function useScreenRecorder() {
     }
   }, [startTimer]);
 
-  const stopRecording = useCallback((reason: StopReason = "user") => {
-    stopReasonRef.current = reason;
-    if (nativeRecordingRef.current) {
-      stopNativeRecordingAsync(reason);
-      return;
-    }
-    const recorder = recorderRef.current;
-    if (recorder && recorder.state !== "inactive") {
-      if (recorder.state === "recording") {
-        accumulatedRef.current += (Date.now() - startTimeRef.current) / 1000;
+  const stopRecording = useCallback(
+    (reason: StopReason = "user") => {
+      stopReasonRef.current = reason;
+      if (nativeRecordingRef.current) {
+        stopNativeRecordingAsync(reason);
+        return;
       }
-      recorder.stop();
-    }
-  }, [stopNativeRecordingAsync]);
+      const recorder = recorderRef.current;
+      if (recorder && recorder.state !== "inactive") {
+        if (recorder.state === "recording") {
+          accumulatedRef.current += (Date.now() - startTimeRef.current) / 1000;
+        }
+        recorder.stop();
+      }
+    },
+    [stopNativeRecordingAsync],
+  );
 
   const reset = useCallback(() => {
     if (result?.url) URL.revokeObjectURL(result.url);

@@ -904,9 +904,7 @@ function FormatSelector({
                 </span>
                 <div className="flex-1">
                   <span className="block font-medium leading-tight">{fmt.label}</span>
-                  <span className="block text-[10px] text-white/30 mt-0.5">
-                    {fmt.description}
-                  </span>
+                  <span className="block text-[10px] text-white/30 mt-0.5">{fmt.description}</span>
                 </div>
               </button>
             ))}
@@ -1605,7 +1603,9 @@ function Index() {
   const showClickFX = status === "recording" || whiteboardActive;
   const showCursorFX = status === "recording" || whiteboardActive;
   const screenUnsupported =
-    !isNativePlatform() && typeof navigator !== "undefined" && !navigator.mediaDevices?.getDisplayMedia;
+    !isNativePlatform() &&
+    typeof navigator !== "undefined" &&
+    !navigator.mediaDevices?.getDisplayMedia;
   const androidStandalone = isAndroid() && isStandalonePwa();
   const isNative = isNativePlatform();
 
