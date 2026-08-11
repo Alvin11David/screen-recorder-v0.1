@@ -127,6 +127,8 @@ export function useScreenRecorder() {
   const [warning, setWarning] = useState<string | null>(null);
   const [includeAudio, setIncludeAudio] = useState(true);
   const [quality, setQuality] = useState<QualityPreset>(QUALITY_PRESETS[1]);
+  const [format, setFormat] = useState<RecordingFormat>(() => defaultRecordingFormat(isNativePlatform()));
+  const availableFormats = getAvailableFormats(isNativePlatform());
   const [includeCamera, setIncludeCamera] = useState(false);
   const [fps, setFps] = useState<30 | 60>(60);
   const [noiseSuppressionEnabled, setNoiseSuppressionEnabled] = useState(false);
