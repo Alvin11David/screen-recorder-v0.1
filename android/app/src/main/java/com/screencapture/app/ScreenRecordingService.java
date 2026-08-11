@@ -38,6 +38,7 @@ public class ScreenRecordingService extends Service {
     public static final String EXTRA_RESULT_CODE = "resultCode";
     public static final String EXTRA_RESULT_DATA = "resultData";
     public static final String EXTRA_RECORD_AUDIO = "recordAudio";
+    public static final String EXTRA_RECORD_FORMAT = "recordFormat";
 
     private static volatile boolean recording = false;
     private static volatile CompletableFuture<RecordingResult> pendingResult;
@@ -48,6 +49,7 @@ public class ScreenRecordingService extends Service {
     private int width;
     private int height;
     private long startTimeMs;
+    private FormatSpec formatSpec;
 
     public static class RecordingResult {
         public final String fileName;
@@ -57,13 +59,52 @@ public class ScreenRecordingService extends Service {
         public final long durationMs;
         public final boolean cancelled;
 
-        public RecordingResult(String fileName, int width, int height, long durationMs, boolean cancelled) {
+        public RecordingResult(String fileName, String mimeType, int width, int height, long durationMs, boolean cancelled) {
             this.fileName = fileName;
-            this.mimeType = "video/mp4";
+            this.mimeType = mimeType;
             this.width = width;
             this.height = height;
             this.durationMs = durationMs;
             this.cancelled = cancelled;
+        }
+    }
+
+    /** Describes a supported recording output container and its codecs. */
+    private static class FormatSpec {
+        final int outputFormat;
+        final int videoEncoder;
+        final int audioEncoder;
+        final String extension;
+        final String mimeType;
+
+        FormatSpec(int outputFormat, int videoEncoder, int audioEncoder, String extension, String mimeType) {
+            this.outputFormat = outputFormat;
+            this.videoEncoder = videoEncoder;
+            this.audioEncoder = audioEncoder;
+            this.extension = extension;
+            this.mimeType = mimeType;
+        }
+
+        static FormatSpec forName(String name) {
+            if ("webm".equals(name)) {
+                return new FormatSpec(
+                        MediaRecorder.OutputFormat.WEBM,
+                        MediaRecorder.VideoEncoder.VP9,
+                        MediaRecorder.AudioEncoder.VORBIS,
+                        ".webm", "video/webm");
+            }
+            if ("mpegts".equals(name)) {
+                return new FormatSpec(
+                        MediaRecorder.OutputFormat.MPEG_2_TS,
+                        MediaRecorder.VideoEncoder.H264,
+                        MediaRecorder.AudioEncoder.AAC,
+                        ".ts", "video/mp2t");
+            }
+            return new FormatSpec(
+                    MediaRecorder.OutputFormat.MPEG_4,
+                    MediaRecorder.VideoEncoder.H264,
+                    MediaRecorder.AudioEncoder.AAC,
+                    ".mp4", "video/mp4");
         }
     }
 
