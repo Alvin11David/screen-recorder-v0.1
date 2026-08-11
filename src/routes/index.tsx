@@ -1688,6 +1688,7 @@ function Index() {
           sizeBytes: file.size,
           createdAt: new Date(),
           mimeType,
+          fileName: file.name.replace(/\.(webm|mp4)$/i, ""),
           interrupted: false,
           autoStopped: false,
         });
