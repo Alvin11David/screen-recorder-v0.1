@@ -63,7 +63,9 @@ import {
   formatResolution,
   buildFileName,
   sanitizeFileName,
+  extensionForMimeType,
 } from "@/lib/recording-utils";
+import type { RecordingFormat, RecordingFormatInfo } from "@/lib/recording-formats";
 import type { RecordingHistoryEntry } from "@/lib/recording-history-api";
 import { MODIFIER_LABEL, isAndroid, isStandalonePwa } from "@/lib/platform";
 import { isNativePlatform, isNativeAndroid } from "@/lib/native";
