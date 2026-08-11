@@ -65,15 +65,20 @@ export const saveRecording = async (
   // Prefer File System Access API where available.
   const picker = window.showSaveFilePicker;
   if (typeof picker === "function") {
+    const ext = extensionForMimeType(blob.type);
+    const accept: Record<string, string[]> =
+      ext === ".mp4"
+        ? { "video/mp4": [".mp4"] }
+        : ext === ".ts"
+          ? { "video/mp2t": [".ts"] }
+          : { "video/webm": [".webm"] };
     try {
       const handle = await picker({
         suggestedName,
         types: [
           {
             description: "Video",
-            accept: blob.type.includes("mp4")
-              ? { "video/mp4": [".mp4"] }
-              : { "video/webm": [".webm"] },
+            accept,
           },
         ],
       });
