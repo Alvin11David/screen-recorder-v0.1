@@ -300,7 +300,7 @@ export function RecordingHistory({
                     onClick={drive.beginConnect}
                     className="flex shrink-0 items-center gap-1.5 rounded-lg bg-white/[0.08] px-2.5 py-1.5 text-[11px] font-semibold text-white transition-all hover:bg-white/[0.14]"
                   >
-                    <Cloud className="h-3 w-3" />
+                    <GoogleDriveIcon className="h-3 w-3" />
                     Connect
                   </button>
                 </div>
