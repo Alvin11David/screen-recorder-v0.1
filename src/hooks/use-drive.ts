@@ -59,20 +59,18 @@ export function useDrive() {
   }, [isAuthenticated]);
 
   const saveToDrive = useCallback(
-    async (result: RecordingResult): Promise<void> => {
+    async (result: RecordingResult): Promise<RecordingHistoryEntry | null> => {
       let token = accessToken;
       if (!token) {
         token = await getDriveAccessToken();
         sessionStorage.setItem("sc-drive-token", token);
         setAccessToken(token);
       }
-      const stamp = result.createdAt.toISOString().replace(/[:.]/g, "-").slice(0, 19);
-      const ext = result.mimeType.includes("mp4") ? ".mp4" : ".webm";
-      const fileName = `ScreenFlow_${stamp}${ext}`;
+      const fileName = buildFileName(result.fileName, result.mimeType, result.createdAt);
       console.info(`[use-drive] saveToDrive: upload "${fileName}" (${result.sizeBytes} bytes)`);
       const { fileId, webViewLink } = await uploadRecordingToDrive(result.blob, token, fileName);
       console.info(`[use-drive] uploaded fileId=${fileId}`);
-      await createRecordingEntry({
+      const entry = await createRecordingEntry({
         driveFileId: fileId,
         driveUrl: webViewLink,
         durationSeconds: result.durationSeconds,
@@ -80,14 +78,24 @@ export function useDrive() {
         height: result.height,
         sizeBytes: result.sizeBytes,
         mimeType: result.mimeType,
+        fileName,
       });
       setAutoUploadEnabled(true);
       setAutoUpload(true);
       setReloadKey((k) => k + 1);
       console.info("[use-drive] recording entry created, auto-upload enabled");
+      return entry;
     },
     [accessToken],
   );
+
+  const renameEntry = useCallback(async (id: number, fileName: string) => {
+    const cleaned = sanitizeFileName(fileName);
+    if (!cleaned) return;
+    console.info(`[use-drive] renameEntry id=${id} -> "${cleaned}"`);
+    await renameRecordingEntry(id, cleaned);
+    setReloadKey((k) => k + 1);
+  }, []);
 
   const deleteEntry = useCallback(async (id: number) => {
     console.info(`[use-drive] deleteEntry id=${id}`);
