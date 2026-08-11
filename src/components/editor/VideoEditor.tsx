@@ -495,7 +495,7 @@ export function VideoEditor({
                   className="w-64 rounded-xl bg-white/[0.05] px-3.5 py-2.5 text-sm text-white ring-1 ring-white/[0.08] outline-none transition-all placeholder:text-white/25 focus:ring-primary/50"
                 />
                 <span className="shrink-0 rounded-xl bg-white/[0.04] px-2.5 py-2 text-xs text-white/35 ring-1 ring-white/[0.06]">
-                  .webm
+                  {extensionForMimeType(resultBlob.type)}
                 </span>
               </div>
               <div className="flex gap-3 mt-2">
