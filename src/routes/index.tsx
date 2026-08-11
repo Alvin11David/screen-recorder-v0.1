@@ -1198,7 +1198,7 @@ function RecordingResultPanel({
   const [driveState, setDriveState] = useState<"idle" | "uploading" | "done" | "error">("idle");
   const [driveError, setDriveError] = useState<string | null>(null);
 
-  const fileExt = result.mimeType.includes("mp4") ? ".mp4" : ".webm";
+  const fileExt = extensionForMimeType(result.mimeType);
 
   const handleSaveToDrive = async () => {
     if (!drive) return;
