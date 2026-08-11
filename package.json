@@ -6,12 +6,17 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build && node scripts/generate-sw.mjs",
+    "build:native": "node scripts/build-native.mjs",
     "build:dev": "vite build --mode development && node scripts/generate-sw.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.0",
+    "@capacitor/cli": "^8.5.0",
+    "@capacitor/core": "^8.5.0",
+    "@capacitor/filesystem": "^8.1.2",
     "@hookform/resolvers": "^5.2.2",
     "@paper-design/shaders-react": "^0.0.76",
     "@radix-ui/react-accordion": "^1.2.12",

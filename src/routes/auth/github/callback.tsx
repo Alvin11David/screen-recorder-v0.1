@@ -47,7 +47,8 @@ function GitHubCallbackPage() {
     (async () => {
       try {
         const user = await exchangeGitHubCode({
-          data: { code, action: savedAction ?? "signin" },
+          code,
+          action: savedAction ?? "signin",
         });
         if (cancelled) return;
         setUser(user, user.token);

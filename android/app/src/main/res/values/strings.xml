@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ScreenFlow</string>
+    <string name="title_activity_main">ScreenFlow</string>
+    <string name="package_name">com.screencapture.app</string>
+    <string name="custom_url_scheme">com.screencapture.app</string>
+</resources>

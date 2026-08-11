@@ -48,7 +48,9 @@ function GoogleCallbackPage() {
       try {
         const redirectUri = `${window.location.origin}/auth/google/callback`;
         const user = await exchangeGoogleCode({
-          data: { code, redirectUri, action: savedAction ?? "signin" },
+          code,
+          redirectUri,
+          action: savedAction ?? "signin",
         });
         if (cancelled) return;
         setUser(user, user.token);

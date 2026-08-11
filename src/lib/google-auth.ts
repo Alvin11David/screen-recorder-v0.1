@@ -1,4 +1,4 @@
-import { createServerFn } from "@tanstack/react-start";
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export type OAuthAction = "signin" | "signup";
 
@@ -36,31 +36,32 @@ export interface GoogleUser {
   token: string;
 }
 
-export const exchangeGoogleCode = createServerFn({ method: "POST" })
-  .validator((data: { code: string; redirectUri: string; action?: OAuthAction }) => data)
-  .handler(async (ctx): Promise<GoogleUser> => {
-    const { code, redirectUri } = ctx.data;
-    const action = ctx.data.action || "signin";
-    const apiBase = process.env.API_URL || "http://localhost:8080";
+export async function exchangeGoogleCode(input: {
+  code: string;
+  redirectUri: string;
+  action?: OAuthAction;
+}): Promise<GoogleUser> {
+  const { code, redirectUri } = input;
+  const action = input.action || "signin";
 
-    const res = await fetch(`${apiBase}/api/auth/google/callback`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code, redirectUri, action }),
-    });
-    console.info(`[google-auth] POST ${apiBase}/api/auth/google/callback -> ${res.status}`);
-
-    if (!res.ok) {
-      const data = (await res.json()) as Record<string, string>;
-      console.error(`[google-auth] backend error ${res.status}:`, data);
-      throw new Error(data.error || "Google authentication failed");
-    }
-
-    const data = (await res.json()) as Record<string, string>;
-    return {
-      email: data.email,
-      name: data.name,
-      avatar: data.avatar || "",
-      token: data.token,
-    };
+  const res = await fetch(`${API_BASE}/api/auth/google/callback`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ code, redirectUri, action }),
   });
+  console.info(`[google-auth] POST ${API_BASE}/api/auth/google/callback -> ${res.status}`);
+
+  if (!res.ok) {
+    const data = (await res.json()) as Record<string, string>;
+    console.error(`[google-auth] backend error ${res.status}:`, data);
+    throw new Error(data.error || "Google authentication failed");
+  }
+
+  const data = (await res.json()) as Record<string, string>;
+  return {
+    email: data.email,
+    name: data.name,
+    avatar: data.avatar || "",
+    token: data.token,
+  };
+}

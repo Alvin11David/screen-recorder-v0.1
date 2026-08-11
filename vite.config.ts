@@ -11,6 +11,9 @@ export default defineConfig({
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
+    // Adaptive client entry: hydrates on SSR (web) and bootstraps as a plain
+    // SPA in the Capacitor WebView where there is no window.$_TSR payload.
+    client: { entry: "client" },
   },
   nitro: {
     preset: "vercel",

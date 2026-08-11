@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { isAndroid, isStandalonePwa } from "../lib/platform";
 import { defaultRecordingName } from "../lib/recording-utils";
+import { isNativePlatform } from "../lib/native";
+import {
+  startNativeScreenRecording as startNativeRecorder,
+  stopNativeScreenRecording as stopNativeRecorder,
+  cancelNativeScreenRecording,
+} from "../lib/native-recorder";
 
 export type RecorderStatus = "idle" | "countdown" | "crop" | "multi-setup" | "recording" | "paused";
 export type CaptureSurface = "monitor" | "window" | "browser" | "multi-monitor";
@@ -105,6 +111,9 @@ export function useScreenRecorder() {
   const [countdown, setCountdown] = useState(0);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [result, setResult] = useState<RecordingResult | null>(null);
+  const [nativeRecording, setNativeRecording] = useState(false);
+  const nativeRecordingRef = useRef(false);
+  const nativeStopInFlightRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
   const [includeAudio, setIncludeAudio] = useState(true);
@@ -1089,17 +1098,89 @@ export function useScreenRecorder() {
     setStatus("idle");
   }, []);
 
+  // Native (Capacitor/MediaProjection) whole-screen recording — used on Android where
+  // getDisplayMedia isn't available. The OS consent prompt doubles as the recording gate,
+  // so no countdown is needed: once the user approves, the foreground service starts.
+  const startNativeScreenRecording = useCallback(async () => {
+    setError(null);
+    setWarning(null);
+    captureCancelledRef.current = false;
+    if (!isNativePlatform()) {
+      setError("Native screen recording isn't available in this environment.");
+      setStatus("idle");
+      return;
+    }
+    try {
+      await startNativeRecorder({ recordAudio: includeAudio });
+      nativeRecordingRef.current = true;
+      setNativeRecording(true);
+      setResult(null);
+      accumulatedRef.current = 0;
+      setElapsed(0);
+      setStream(null);
+      setStatus("recording");
+      startTimer();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not start screen recording.");
+      setStatus("idle");
+    }
+  }, [includeAudio, startTimer]);
+
+  const stopNativeRecordingAsync = useCallback(async (reason: StopReason) => {
+    if (nativeStopInFlightRef.current) return;
+    nativeStopInFlightRef.current = true;
+    const duration =
+      accumulatedRef.current + (Date.now() - startTimeRef.current) / 1000;
+    clearTimer();
+    setNativeRecording(false);
+    nativeRecordingRef.current = false;
+    setStatus("idle");
+    try {
+      const file = await stopNativeRecorder();
+      const interrupted = reason === "track-ended";
+      const empty = interrupted && (duration < MIN_MEANINGFUL_DURATION || file.blob.size < MIN_MEANINGFUL_BYTES);
+      if (empty) {
+        setError(
+          "Screen recording stopped before anything could be captured, so nothing was saved.",
+        );
+        return;
+      }
+      const url = URL.createObjectURL(file.blob);
+      setResult({
+        url,
+        blob: file.blob,
+        durationSeconds: duration,
+        width: file.width,
+        height: file.height,
+        sizeBytes: file.blob.size,
+        createdAt: new Date(),
+        mimeType: file.mimeType,
+        fileName: defaultRecordingName(new Date()),
+        interrupted,
+        autoStopped: reason === "auto",
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not finish the screen recording.");
+    } finally {
+      nativeStopInFlightRef.current = false;
+    }
+  }, []);
+
   const startRecording = useCallback(
     (surface: CaptureSurface = "monitor") => {
       setError(null);
       setWarning(null);
+      if (isNativePlatform()) {
+        startNativeScreenRecording();
+        return;
+      }
       if (captureModeRef.current === "region" && surface !== "multi-monitor") {
         beginCapture(surface);
         return;
       }
       runCountdown(() => beginCapture(surface));
     },
-    [beginCapture, runCountdown],
+    [beginCapture, runCountdown, startNativeScreenRecording],
   );
 
   // Camera capture — the mobile-friendly alternative to screen capture.
@@ -1188,6 +1269,7 @@ export function useScreenRecorder() {
   }, [stopComposite]);
 
   const pauseRecording = useCallback(() => {
+    if (nativeRecordingRef.current) return;
     const recorder = recorderRef.current;
     if (recorder && recorder.state === "recording") {
       recorder.pause();
@@ -1203,6 +1285,7 @@ export function useScreenRecorder() {
   }, []);
 
   const resumeRecording = useCallback(() => {
+    if (nativeRecordingRef.current) return;
     const recorder = recorderRef.current;
     if (recorder && recorder.state === "paused") {
       recorder.resume();
@@ -1217,6 +1300,10 @@ export function useScreenRecorder() {
 
   const stopRecording = useCallback((reason: StopReason = "user") => {
     stopReasonRef.current = reason;
+    if (nativeRecordingRef.current) {
+      stopNativeRecordingAsync(reason);
+      return;
+    }
     const recorder = recorderRef.current;
     if (recorder && recorder.state !== "inactive") {
       if (recorder.state === "recording") {
@@ -1224,7 +1311,7 @@ export function useScreenRecorder() {
       }
       recorder.stop();
     }
-  }, []);
+  }, [stopNativeRecordingAsync]);
 
   const reset = useCallback(() => {
     if (result?.url) URL.revokeObjectURL(result.url);
@@ -1240,6 +1327,10 @@ export function useScreenRecorder() {
     return () => {
       if (countdownRef.current) clearInterval(countdownRef.current);
       clearTimer();
+      if (nativeRecordingRef.current) {
+        nativeRecordingRef.current = false;
+        cancelNativeScreenRecording();
+      }
       if (recorderRef.current && recorderRef.current.state !== "inactive") {
         recorderRef.current.stop();
       }
@@ -1261,6 +1352,7 @@ export function useScreenRecorder() {
     countdown,
     stream,
     result,
+    nativeRecording,
     error,
     warning,
     cropRect,

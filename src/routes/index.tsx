@@ -66,6 +66,7 @@ import {
 } from "@/lib/recording-utils";
 import type { RecordingHistoryEntry } from "@/lib/recording-history-api";
 import { MODIFIER_LABEL, isAndroid, isStandalonePwa } from "@/lib/platform";
+import { isNativePlatform, isNativeAndroid } from "@/lib/native";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -228,6 +229,7 @@ function RecordingPreview({
   status,
   elapsed,
   result,
+  nativeRecording,
   mirrored,
   label,
 }: {
@@ -235,6 +237,7 @@ function RecordingPreview({
   status: string;
   elapsed: number;
   result: RecordingResult | null;
+  nativeRecording?: boolean;
   mirrored?: boolean;
   label?: string;
 }) {
@@ -429,7 +432,30 @@ function RecordingPreview({
           )}
 
           {/* ── Live state ── */}
-          {isLive && (
+          {isLive && nativeRecording && (
+            <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-black/60">
+              <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_3px,oklch(0_0_0/0.04)_3px,oklch(0_0_0/0.04)_4px)]" />
+              <motion.div
+                animate={{ scale: [1, 1.12, 1], opacity: [0.5, 0.2, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="relative flex h-20 w-20 items-center justify-center rounded-full border border-red-500/30"
+              >
+                <span className="relative flex h-4 w-4">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
+                  <span className="relative inline-flex h-4 w-4 rounded-full bg-red-500" />
+                </span>
+              </motion.div>
+              <p className="relative mt-4 font-display text-sm font-semibold text-white/70 tracking-wide">
+                Recording entire screen
+              </p>
+              <p className="relative mt-1 text-[11px] text-white/30 leading-relaxed text-center max-w-[240px]">
+                Live preview isn't available for native recordings. Tap Stop when you're done.
+              </p>
+            </div>
+          )}
+
+          {/* ── Live state ── */}
+          {isLive && !nativeRecording && (
             <>
               <video
                 ref={liveRef}
@@ -612,11 +638,13 @@ function SourceCards({
   onChange,
   onSelect,
   disabled,
+  disabledIds = [],
 }: {
   value: RecordSource;
   onChange: (v: RecordSource) => void;
   onSelect?: (v: RecordSource) => void;
   disabled?: boolean;
+  disabledIds?: RecordSource[];
 }) {
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -653,7 +681,7 @@ function SourceCards({
           >
             <button
               type="button"
-              disabled={disabled}
+              disabled={disabled || disabledIds.includes(id)}
               onClick={() => {
                 onChange(id);
                 onSelect?.(id);
@@ -1420,6 +1448,7 @@ function Index() {
     countdown,
     stream,
     result,
+    nativeRecording,
     error,
     warning,
     cropRect,
@@ -1468,13 +1497,20 @@ function Index() {
   const showClickFX = status === "recording" || whiteboardActive;
   const showCursorFX = status === "recording" || whiteboardActive;
   const screenUnsupported =
-    typeof navigator !== "undefined" && !navigator.mediaDevices?.getDisplayMedia;
+    !isNativePlatform() && typeof navigator !== "undefined" && !navigator.mediaDevices?.getDisplayMedia;
   const androidStandalone = isAndroid() && isStandalonePwa();
+  const isNative = isNativePlatform();
 
   const beginRecording = useCallback(() => {
     if (source === "camera") startCameraRecording();
     else startRecording(source);
   }, [source, startRecording, startCameraRecording]);
+
+  useEffect(() => {
+    if (isNative && source !== "monitor" && source !== "camera") {
+      setSource("monitor");
+    }
+  }, [isNative, source]);
 
   const resultRef = useRef(result);
   resultRef.current = result;
@@ -1843,6 +1879,7 @@ function Index() {
       <FloatingMiniBar
         status={status}
         elapsed={elapsed}
+        canPause={!nativeRecording}
         onPause={pauseRecording}
         onResume={resumeRecording}
         onStop={stopRecording}
@@ -2062,6 +2099,7 @@ function Index() {
             status={status}
             elapsed={elapsed}
             result={result}
+            nativeRecording={nativeRecording}
             mirrored={source === "camera"}
             label={source === "camera" ? "camera preview" : undefined}
           />
@@ -2078,7 +2116,12 @@ function Index() {
               transition={{ duration: 0.4 }}
               className="mb-4"
             >
-              <SourceCards value={source} onChange={setSource} disabled={!isIdle} />
+              <SourceCards
+                value={source}
+                onChange={setSource}
+                disabled={!isIdle}
+                disabledIds={isNative ? ["window", "browser", "multi-monitor"] : undefined}
+              />
               {screenUnsupported && androidStandalone && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -2146,7 +2189,7 @@ function Index() {
 
         {/* ── Capture mode ── */}
         <AnimatePresence>
-          {isIdle && !result && source !== "multi-monitor" && source !== "camera" && (
+          {isIdle && !result && !isNative && source !== "multi-monitor" && source !== "camera" && (
             <motion.div
               key="capture-mode"
               initial={{ opacity: 0, y: 12 }}

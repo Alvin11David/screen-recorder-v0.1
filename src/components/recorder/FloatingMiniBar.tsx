@@ -7,6 +7,7 @@ import { formatTimer } from "@/lib/recording-utils";
 interface FloatingMiniBarProps {
   status: string;
   elapsed: number;
+  canPause?: boolean;
   onPause: () => void;
   onResume: () => void;
   onStop: () => void;
@@ -16,6 +17,7 @@ interface FloatingMiniBarProps {
 export function FloatingMiniBar({
   status,
   elapsed,
+  canPause = true,
   onPause,
   onResume,
   onStop,
@@ -170,7 +172,7 @@ export function FloatingMiniBar({
 
           {/* Controls */}
           <div className="flex items-center gap-1">
-            {isRecording ? (
+            {canPause && isRecording ? (
               <button
                 onClick={onPause}
                 className="flex h-7 w-7 items-center justify-center rounded-full text-red-300/70 transition-all hover:bg-red-400/15 hover:text-red-200"
@@ -178,7 +180,7 @@ export function FloatingMiniBar({
               >
                 <Pause className="h-3.5 w-3.5 fill-current" />
               </button>
-            ) : (
+            ) : canPause ? (
               <button
                 onClick={onResume}
                 className="flex h-7 w-7 items-center justify-center rounded-full text-yellow-300/70 transition-all hover:bg-yellow-400/15 hover:text-yellow-200"
@@ -186,7 +188,7 @@ export function FloatingMiniBar({
               >
                 <Play className="h-3.5 w-3.5 fill-current" />
               </button>
-            )}
+            ) : null}
             <button
               onClick={onStop}
               className={cn(
