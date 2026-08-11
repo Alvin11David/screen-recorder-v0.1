@@ -246,12 +246,14 @@ export function VideoEditor({
         width: vidW,
         height: vidH,
         fps: 30,
+        format,
       });
       if (outputW !== rect.width || outputH !== rect.height) {
         const resized = await resizeVideo(cropped, outputW, outputH, {
           width: outputW,
           height: outputH,
           fps: 30,
+          format,
         });
         setResultBlob(resized);
       } else {
