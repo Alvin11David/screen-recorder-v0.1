@@ -1841,6 +1841,7 @@ function Index() {
           reloadKey: drive.reloadKey,
           beginConnect: drive.beginConnect,
           deleteEntry: drive.deleteEntry,
+          renameEntry: drive.renameEntry,
           disconnect: drive.disconnect,
         }}
         isAuthenticated={isAuthenticated}
