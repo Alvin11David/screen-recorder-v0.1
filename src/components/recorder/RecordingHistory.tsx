@@ -194,6 +194,31 @@ export function RecordingHistory({
     [cloudActive, drive, entries],
   );
 
+  const startRename = (entry: HistoryEntry) => {
+    setEditingId(entry.id);
+    setEditName(entry.fileName ?? "");
+  };
+
+  const commitRename = async (entry: HistoryEntry) => {
+    const cleaned = editName.trim();
+    setEditingId(null);
+    if (!cleaned || cleaned === entry.fileName) return;
+    if (cloudActive && drive?.renameEntry) {
+      try {
+        await drive.renameEntry(Number(entry.id), cleaned);
+        setEntries((prev) => prev.map((e) => (e.id === entry.id ? { ...e, fileName: cleaned } : e)));
+      } catch {
+        // leave entry unchanged on failure
+      }
+    } else {
+      const updated = entries.map((e) =>
+        e.id === entry.id ? { ...e, fileName: cleaned } : e,
+      );
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      setEntries(updated);
+    }
+  };
+
   return (
     <AnimatePresence>
       {open && (
