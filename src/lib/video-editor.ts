@@ -224,6 +224,7 @@ export async function trimVideo(
         reject(err);
       },
       audio ? [audio.track] : [],
+      options.format,
     );
 
     video.onerror = () => {
