@@ -12,12 +12,14 @@ public class RecordingResponse {
     private int height;
     private long sizeBytes;
     private String mimeType;
+    private String fileName;
     private Instant createdAt;
 
     public RecordingResponse() {}
 
     public RecordingResponse(long id, String driveFileId, String driveUrl, double durationSeconds,
-                             int width, int height, long sizeBytes, String mimeType, Instant createdAt) {
+                             int width, int height, long sizeBytes, String mimeType,
+                             String fileName, Instant createdAt) {
         this.id = id;
         this.driveFileId = driveFileId;
         this.driveUrl = driveUrl;
@@ -26,6 +28,7 @@ public class RecordingResponse {
         this.height = height;
         this.sizeBytes = sizeBytes;
         this.mimeType = mimeType;
+        this.fileName = fileName;
         this.createdAt = createdAt;
     }
 
@@ -37,5 +40,6 @@ public class RecordingResponse {
     public int getHeight() { return height; }
     public long getSizeBytes() { return sizeBytes; }
     public String getMimeType() { return mimeType; }
+    public String getFileName() { return fileName; }
     public Instant getCreatedAt() { return createdAt; }
 }
