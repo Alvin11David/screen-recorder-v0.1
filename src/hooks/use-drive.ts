@@ -127,6 +127,7 @@ export function useDrive() {
     beginConnect,
     saveToDrive,
     deleteEntry,
+    renameEntry,
     disconnect,
     reconnect: checkConnection,
   };
