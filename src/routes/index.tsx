@@ -1459,28 +1459,77 @@ function Index() {
     else startRecording(source);
   }, [source, startRecording, startCameraRecording]);
 
-  // Save to history whenever a recording completes
+  const resultRef = useRef(result);
+  resultRef.current = result;
+  const historySavedKeyRef = useRef<string | null>(null);
+  const autoUploadedKeyRef = useRef<string | null>(null);
+  const cloudSyncRef = useRef<{ entryId: number; nameAtUpload: string } | null>(null);
+
+  // Save to history once per recording (keyed by createdAt so renames don't duplicate entries)
   useEffect(() => {
-    if (result) saveToHistory(result);
+    if (!result) return;
+    const key = result.createdAt.toISOString();
+    if (historySavedKeyRef.current === key) return;
+    historySavedKeyRef.current = key;
+    saveToHistory(result);
   }, [result]);
 
-  // Auto-upload to Google Drive once the user has saved at least one recording
+  // Rename the recording: update result, local history, and the Drive file/cloud entry.
+  const handleRename = useCallback(
+    (name: string) => {
+      const current = resultRef.current;
+      if (!current) return;
+      const cleaned = sanitizeFileName(name);
+      if (cleaned === current.fileName) return;
+      setResult((prev) => (prev ? { ...prev, fileName: cleaned } : prev));
+      updateHistoryEntryName({ ...current, fileName: cleaned });
+      const sync = cloudSyncRef.current;
+      if (sync && drive.connected === true) {
+        drive.renameEntry(sync.entryId, cleaned).catch((err) =>
+          console.info(`[rename] Drive rename failed: ${err instanceof Error ? err.message : err}`),
+        );
+      }
+    },
+    [drive, setResult],
+  );
+
+  // Auto-upload to Google Drive once the user has saved at least one recording.
+  // Uploads once per recording with the name at upload time; if the user renames
+  // afterward (or while the upload is in flight) the Drive file + entry get renamed.
   const driveConnected = drive.connected === true;
   const driveAutoUpload = drive.autoUpload;
   const saveRecordingToDrive = drive.saveToDrive;
   useEffect(() => {
     if (!result) return;
     if (driveConnected && driveAutoUpload) {
+      const key = result.createdAt.toISOString();
+      if (autoUploadedKeyRef.current === key) return;
+      autoUploadedKeyRef.current = key;
+      const nameAtUpload = result.fileName;
       console.info(`[auto-upload] start: ${result.sizeBytes} bytes`);
-      saveRecordingToDrive(result).catch((err) =>
-        console.info(`[auto-upload] FAILED: ${err instanceof Error ? err.message : err}`),
-      );
+      saveRecordingToDrive(result)
+        .then((entry) => {
+          if (entry) {
+            cloudSyncRef.current = { entryId: entry.id, nameAtUpload };
+            const current = resultRef.current;
+            if (current && current.fileName !== nameAtUpload) {
+              drive.renameEntry(entry.id, current.fileName).catch((err) =>
+                console.info(
+                  `[auto-upload] rename sync failed: ${err instanceof Error ? err.message : err}`,
+                ),
+              );
+            }
+          }
+        })
+        .catch((err) =>
+          console.info(`[auto-upload] FAILED: ${err instanceof Error ? err.message : err}`),
+        );
     } else {
       console.info(
         `[auto-upload] skipped: driveConnected=${driveConnected} autoUpload=${driveAutoUpload}`,
       );
     }
-  }, [result, driveConnected, driveAutoUpload, saveRecordingToDrive]);
+  }, [result, driveConnected, driveAutoUpload, saveRecordingToDrive, drive.renameEntry]);
 
   // Global keyboard shortcuts
   useEffect(() => {
