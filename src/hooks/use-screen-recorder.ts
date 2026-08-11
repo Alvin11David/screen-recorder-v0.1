@@ -1122,7 +1122,7 @@ export function useScreenRecorder() {
       return;
     }
     try {
-      await startNativeRecorder({ recordAudio: includeAudio });
+      await startNativeRecorder({ recordAudio: includeAudio, format });
       nativeRecordingRef.current = true;
       setNativeRecording(true);
       setResult(null);
