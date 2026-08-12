@@ -18,14 +18,14 @@ export const RECORDING_FORMATS: Record<RecordingFormat, RecordingFormatInfo> = {
     short: "MP4",
     extension: ".mp4",
     mimeType: "video/mp4",
-    description: "H.264 · best compatibility",
+    description: "MP4 · best compatibility",
     webMimeTypes: [
-      // Note: avoid `mp4a.40.2` (AAC) audio in Chrome's MP4 muxer — it produces
-      // malformed/glitchy files (crbug 362873381, 370040409). `opus` audio is
-      // the verified-stable combination.
-      "video/mp4;codecs=avc1,opus",
-      "video/mp4;codecs=avc1.42E01E,opus",
-      "video/mp4;codecs=avc1",
+      // Chrome's MediaRecorder MP4 muxer is broken for H.264 (avc1) — it
+      // produces files whose playback freezes/glitches (crbug 362873381,
+      // 370040409). VP9 in MP4 is verified-stable, so web MP4 uses VP9.
+      // Native Android still records real H.264 via its own encoder.
+      "video/mp4;codecs=vp9,opus",
+      "video/mp4;codecs=vp9",
       "video/mp4",
     ],
     nativeOutputFormat: "mpeg4",
