@@ -97,7 +97,7 @@ const pickMimeType = (format: RecordingFormat): string => {
     "video/webm;codecs=vp8,opus",
     "video/webm;codecs=vp8",
     "video/webm",
-    "video/mp4;codecs=avc1,opus",
+    "video/mp4;codecs=vp9,opus",
     "video/mp4",
   ];
   for (const type of candidates) {
