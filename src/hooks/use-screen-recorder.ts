@@ -108,6 +108,27 @@ const pickMimeType = (format: RecordingFormat): string => {
   return "video/webm";
 };
 
+interface CaptureControllerLike {
+  setFocusBehavior(behavior: "no-focus-change" | "focus-captured-surface"): void;
+}
+
+function createCaptureController(): CaptureControllerLike | null {
+  const Ctor =
+    typeof window !== "undefined" &&
+    (window as { CaptureController?: new () => CaptureControllerLike }).CaptureController;
+  return Ctor ? new Ctor() : null;
+}
+
+// Keep the app focused when a window/tab is shared (Chrome's Conditional Focus).
+// Throws for monitor captures — the app keeps focus anyway, so it's ignored.
+function keepAppFocused(controller: CaptureControllerLike | null): void {
+  try {
+    controller?.setFocusBehavior("no-focus-change");
+  } catch {
+    // no-op
+  }
+}
+
 export function useScreenRecorder() {
   const [status, setStatus] = useState<RecorderStatus>("idle");
   const statusRef = useRef<RecorderStatus>("idle");
