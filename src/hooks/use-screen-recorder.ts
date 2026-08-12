@@ -969,11 +969,17 @@ export function useScreenRecorder() {
 
   const addMonitorStream = useCallback(async () => {
     try {
+      const controller = createCaptureController();
       const newStream = await navigator.mediaDevices.getDisplayMedia({
         video: { frameRate: { ideal: fpsRef.current, max: fpsRef.current } },
         audio: includeAudio,
         systemAudio: includeAudio ? "include" : "exclude",
-      } as DisplayMediaStreamOptions & { systemAudio?: "include" | "exclude" });
+        controller: controller ?? undefined,
+      } as DisplayMediaStreamOptions & {
+        systemAudio?: "include" | "exclude";
+        controller?: CaptureControllerLike;
+      });
+      keepAppFocused(controller);
       const updated = [...multiStreamsRef.current, newStream];
       multiStreamsRef.current = updated;
       setMultiStreams(updated);
