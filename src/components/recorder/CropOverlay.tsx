@@ -554,7 +554,7 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
           <button
             type="button"
             onClick={onCancel}
-            className="flex items-center gap-2 rounded-full bg-white/[0.06] px-6 py-3 text-sm text-white/50 ring-1 ring-white/[0.08] transition-all hover:bg-white/[0.1] hover:text-white/80"
+            className="flex items-center gap-2 rounded-full bg-white/15 px-6 py-3 text-sm font-semibold text-white/90 ring-1 ring-white/20 transition-all hover:bg-white/25 hover:text-white"
           >
             <X className="h-4 w-4" />
             Cancel
