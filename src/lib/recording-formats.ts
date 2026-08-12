@@ -20,8 +20,12 @@ export const RECORDING_FORMATS: Record<RecordingFormat, RecordingFormatInfo> = {
     mimeType: "video/mp4",
     description: "H.264 · best compatibility",
     webMimeTypes: [
-      "video/mp4;codecs=avc1.42E01E,mp4a.40.2",
-      "video/mp4;codecs=avc1.42E01E",
+      // Note: avoid `mp4a.40.2` (AAC) audio in Chrome's MP4 muxer — it produces
+      // malformed/glitchy files (crbug 362873381, 370040409). `opus` audio is
+      // the verified-stable combination.
+      "video/mp4;codecs=avc1,opus",
+      "video/mp4;codecs=avc1.42E01E,opus",
+      "video/mp4;codecs=avc1",
       "video/mp4",
     ],
     nativeOutputFormat: "mpeg4",
