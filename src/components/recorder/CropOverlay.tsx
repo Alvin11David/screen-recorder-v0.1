@@ -581,7 +581,7 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
             </button>
           </div>
 
-          <div className="flex items-center gap-1.5 rounded-lg bg-white/[0.03] px-3 py-2 text-[10px] text-white/20 ring-1 ring-white/[0.06]">
+          <div className="flex items-center gap-1.5 rounded-lg bg-white/[0.08] px-3 py-2 text-[10px] font-medium text-white/50 ring-1 ring-white/15">
             <Keyboard className="h-3 w-3" />
             <span>Esc to cancel</span>
           </div>
