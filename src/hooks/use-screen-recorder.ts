@@ -589,18 +589,14 @@ export function useScreenRecorder() {
                 }
                 ctx.clip();
 
-                const src = camVideo;
-                const sw = r * 2;
-                const sh = r * 2;
-
                 if (set.mirrored) {
                   ctx.save();
                   ctx.translate(cx, 0);
                   ctx.scale(-1, 1);
-                  ctx.drawImage(src, -r, cy - r, sw, sh);
+                  drawCameraCover(ctx, camVideo, 0, cy, r * 2);
                   ctx.restore();
                 } else {
-                  ctx.drawImage(src, cx - r, cy - r, sw, sh);
+                  drawCameraCover(ctx, camVideo, cx, cy, r * 2);
                 }
                 ctx.restore();
 
