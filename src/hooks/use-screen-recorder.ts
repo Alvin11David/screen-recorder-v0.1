@@ -841,10 +841,10 @@ export function useScreenRecorder() {
               ctx.save();
               ctx.translate(cx, 0);
               ctx.scale(-1, 1);
-              ctx.drawImage(camVideo, -r, cy - r, r * 2, r * 2);
+              drawCameraCover(ctx, camVideo, 0, cy, r * 2);
               ctx.restore();
             } else {
-              ctx.drawImage(camVideo, cx - r, cy - r, r * 2, r * 2);
+              drawCameraCover(ctx, camVideo, cx, cy, r * 2);
             }
             ctx.restore();
 
