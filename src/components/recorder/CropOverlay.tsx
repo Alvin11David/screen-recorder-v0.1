@@ -550,7 +550,7 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
         </div>
 
         {/* Bottom bar */}
-        <div className="flex items-center justify-center gap-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-8 py-5">
+        <div className="flex items-center justify-center gap-6 border-t border-white/10 bg-black/70 px-8 py-5 backdrop-blur-md">
           <button
             type="button"
             onClick={onCancel}
