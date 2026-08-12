@@ -430,9 +430,11 @@ export function useScreenRecorder() {
       }
 
       try {
+        const controller = createCaptureController();
         const constraints: DisplayMediaStreamOptions & {
           displaySurface?: string;
           systemAudio?: "include" | "exclude";
+          controller?: CaptureControllerLike;
         } = {
           displaySurface: surface,
           video: {
@@ -442,8 +444,10 @@ export function useScreenRecorder() {
           } as MediaTrackConstraints,
           audio: includeAudio,
           systemAudio: includeAudio ? "include" : "exclude",
+          controller: controller ?? undefined,
         };
         const displayStream = await navigator.mediaDevices.getDisplayMedia(constraints);
+        keepAppFocused(controller);
 
         if (captureCancelledRef.current) {
           displayStream.getTracks().forEach((t) => t.stop());
