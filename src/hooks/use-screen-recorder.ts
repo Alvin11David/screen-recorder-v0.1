@@ -129,6 +129,38 @@ function keepAppFocused(controller: CaptureControllerLike | null): void {
   }
 }
 
+// Draw the camera feed into a circle/square PIP with "cover" fit — crop the
+// source to fill the target without distorting it (matches the live preview's
+// object-cover). Stretching a 16:9 camera into a square is what makes the
+// person look elongated / egg-shaped in the output.
+function drawCameraCover(
+  ctx: CanvasRenderingContext2D,
+  video: HTMLVideoElement,
+  cx: number,
+  cy: number,
+  diameter: number,
+): void {
+  const vw = video.videoWidth || 1280;
+  const vh = video.videoHeight || 720;
+  if (vw <= 0 || vh <= 0) {
+    ctx.drawImage(video, cx - diameter / 2, cy - diameter / 2, diameter, diameter);
+    return;
+  }
+  const sourceAspect = vw / vh;
+  let sx = 0;
+  let sy = 0;
+  let sw = vw;
+  let sh = vh;
+  if (sourceAspect > 1) {
+    sw = vh;
+    sx = (vw - sw) / 2;
+  } else {
+    sh = vw;
+    sy = (vh - sh) / 2;
+  }
+  ctx.drawImage(video, sx, sy, sw, sh, cx - diameter / 2, cy - diameter / 2, diameter, diameter);
+}
+
 export function useScreenRecorder() {
   const [status, setStatus] = useState<RecorderStatus>("idle");
   const statusRef = useRef<RecorderStatus>("idle");
