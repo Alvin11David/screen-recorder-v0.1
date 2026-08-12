@@ -326,7 +326,7 @@ export function CropOverlay({ stream, onConfirm, onCancel }: CropOverlayProps) {
       {/* Header */}
       <div className="relative z-10 flex flex-col h-full">
         {/* Step indicator */}
-        <div className="flex items-center justify-between px-8 py-5">
+        <div className="flex items-center justify-between gap-4 bg-gradient-to-b from-black/80 via-black/40 to-transparent px-8 py-5">
           <div className="flex items-center gap-8">
             {/* Step 1 */}
             <div className="flex items-center gap-3">
