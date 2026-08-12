@@ -470,13 +470,10 @@ export function useScreenRecorder() {
 
         if (annotationsEnabledRef.current) setupAnnotationCanvas(width, height);
 
-        const actualSurface = (settings as { displaySurface?: string }).displaySurface ?? surface;
-        const isWindowLike = actualSurface === "window" || actualSurface === "browser";
-
         // ── Crop mode for single-surface capture (region mode only) ──
-        // A window/tab is already the region — the OS cropped it for us, so skip
-        // the in-app crop overlay and record it as-is.
-        if (surface !== "multi-monitor" && captureModeRef.current === "region" && !isWindowLike) {
+        // Windows/tabs are included: CaptureController's no-focus-change keeps
+        // the app in front, so the crop overlay is usable after any pick.
+        if (surface !== "multi-monitor" && captureModeRef.current === "region") {
           pendingStreamRef.current = displayStream;
           setStream(displayStream);
           setStatus("crop");
