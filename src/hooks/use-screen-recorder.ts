@@ -184,6 +184,7 @@ export function useScreenRecorder() {
   const [nativeRecording, setNativeRecording] = useState(false);
   const nativeRecordingRef = useRef(false);
   const nativeStopInFlightRef = useRef(false);
+  const nativeFilePathRef = useRef<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
   const [includeAudio, setIncludeAudio] = useState(true);
