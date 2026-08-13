@@ -28,7 +28,8 @@ export const Route = createFileRoute("/install")({
       { title: "Thank You — Download ScreenFlow for Android" },
       {
         name: "description",
-        content: "Thank you for downloading ScreenFlow. Follow these steps to install the Android app.",
+        content:
+          "Thank you for downloading ScreenFlow. Follow these steps to install the Android app.",
       },
       { name: "robots", content: "noindex, nofollow" },
     ],
