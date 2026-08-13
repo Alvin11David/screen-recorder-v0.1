@@ -16,6 +16,7 @@ import { Route as ScreenRecorderRouteImport } from './routes/screen-recorder'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as OnlineScreenRecorderRouteImport } from './routes/online-screen-recorder'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as InstallRouteImport } from './routes/install'
 import { Route as FreeScreenRecorderRouteImport } from './routes/free-screen-recorder'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DemoRouteImport } from './routes/demo'
@@ -60,6 +61,11 @@ const OnlineScreenRecorderRoute = OnlineScreenRecorderRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InstallRoute = InstallRouteImport.update({
+  id: '/install',
+  path: '/install',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FreeScreenRecorderRoute = FreeScreenRecorderRouteImport.update({
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/demo': typeof DemoRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/free-screen-recorder': typeof FreeScreenRecorderRoute
+  '/install': typeof InstallRoute
   '/login': typeof LoginRoute
   '/online-screen-recorder': typeof OnlineScreenRecorderRoute
   '/register': typeof RegisterRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/demo': typeof DemoRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/free-screen-recorder': typeof FreeScreenRecorderRoute
+  '/install': typeof InstallRoute
   '/login': typeof LoginRoute
   '/online-screen-recorder': typeof OnlineScreenRecorderRoute
   '/register': typeof RegisterRoute
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/demo': typeof DemoRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/free-screen-recorder': typeof FreeScreenRecorderRoute
+  '/install': typeof InstallRoute
   '/login': typeof LoginRoute
   '/online-screen-recorder': typeof OnlineScreenRecorderRoute
   '/register': typeof RegisterRoute
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/demo'
     | '/forgot-password'
     | '/free-screen-recorder'
+    | '/install'
     | '/login'
     | '/online-screen-recorder'
     | '/register'
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/demo'
     | '/forgot-password'
     | '/free-screen-recorder'
+    | '/install'
     | '/login'
     | '/online-screen-recorder'
     | '/register'
@@ -219,6 +230,7 @@ export interface FileRouteTypes {
     | '/demo'
     | '/forgot-password'
     | '/free-screen-recorder'
+    | '/install'
     | '/login'
     | '/online-screen-recorder'
     | '/register'
@@ -239,6 +251,7 @@ export interface RootRouteChildren {
   DemoRoute: typeof DemoRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   FreeScreenRecorderRoute: typeof FreeScreenRecorderRoute
+  InstallRoute: typeof InstallRoute
   LoginRoute: typeof LoginRoute
   OnlineScreenRecorderRoute: typeof OnlineScreenRecorderRoute
   RegisterRoute: typeof RegisterRoute
@@ -302,6 +315,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/install': {
+      id: '/install'
+      path: '/install'
+      fullPath: '/install'
+      preLoaderRoute: typeof InstallRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/free-screen-recorder': {
@@ -383,6 +403,7 @@ const rootRouteChildren: RootRouteChildren = {
   DemoRoute: DemoRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   FreeScreenRecorderRoute: FreeScreenRecorderRoute,
+  InstallRoute: InstallRoute,
   LoginRoute: LoginRoute,
   OnlineScreenRecorderRoute: OnlineScreenRecorderRoute,
   RegisterRoute: RegisterRoute,
