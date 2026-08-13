@@ -8,11 +8,13 @@ export interface NativeScreenRecorderStartOptions {
 }
 
 export interface NativeScreenRecording {
-  blob: Blob;
+  url: string;
+  filePath: string;
   mimeType: string;
   width: number;
   height: number;
   durationMs: number;
+  sizeBytes: number;
 }
 
 interface ScreenRecorderPlugin {
