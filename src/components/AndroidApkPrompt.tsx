@@ -95,7 +95,6 @@ export function AndroidApkPrompt() {
               <div className="flex gap-2">
                 <a
                   href={APK_URL}
-                  download
                   className="relative flex flex-1 items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-[oklch(0.74_0.15_222)] to-[oklch(0.72_0.16_200)] py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_oklch(0.74_0.15_222/0.3)] transition-all hover:shadow-[0_0_28px_oklch(0.74_0.15_222/0.45)] hover:brightness-110 active:scale-[0.98]"
                 >
                   <Download className="h-4 w-4" />
