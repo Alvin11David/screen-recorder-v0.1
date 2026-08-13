@@ -1216,7 +1216,14 @@ function RecordingResultPanel({
   const handleSave = async () => {
     setSaveState("saving");
     const suggestedName = buildFileName(result.fileName, result.mimeType, result.createdAt);
-    const blob = await resolveRecordingBlob(result);
+    let blob: Blob;
+    try {
+      blob = await resolveRecordingBlob(result);
+    } catch (err) {
+      console.info(`[save] failed to load recording: ${err instanceof Error ? err.message : err}`);
+      setSaveState("idle");
+      return;
+    }
     const picker = window.showSaveFilePicker;
     if (typeof picker === "function") {
       try {
