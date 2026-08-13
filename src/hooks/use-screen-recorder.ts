@@ -91,7 +91,7 @@ export interface RecordingResult {
 
 export async function resolveRecordingBlob(result: RecordingResult): Promise<Blob> {
   if (result.blob) return result.blob;
-  if (result.nativeFilePath) return readNativeRecordingBlob(result.nativeFilePath);
+  if (result.nativeFilePath) return readNativeRecordingBlob(result.nativeFilePath, result.mimeType);
   throw new Error("Recording data is no longer available.");
 }
 
