@@ -76,7 +76,8 @@ export const DEFAULT_CAMERA_POSITION = { x: 85, y: 85 };
 
 export interface RecordingResult {
   url: string;
-  blob: Blob;
+  blob: Blob | null;
+  nativeFilePath?: string;
   durationSeconds: number;
   width: number;
   height: number;
@@ -86,6 +87,12 @@ export interface RecordingResult {
   fileName: string;
   interrupted?: boolean;
   autoStopped?: boolean;
+}
+
+export async function resolveRecordingBlob(result: RecordingResult): Promise<Blob> {
+  if (result.blob) return result.blob;
+  if (result.nativeFilePath) return readNativeRecordingBlob(result.nativeFilePath);
+  throw new Error("Recording data is no longer available.");
 }
 
 type StopReason = "user" | "track-ended" | "auto";
