@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Clock, MonitorPlay, HardDrive, Calendar, Download, RotateCcw, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatBytes, formatResolution, formatTimer, saveRecording } from "@/lib/recording-utils";
-import type { RecordingResult } from "@/hooks/use-screen-recorder";
+import { resolveRecordingBlob, type RecordingResult } from "@/hooks/use-screen-recorder";
 
 interface Props {
   result: RecordingResult;
