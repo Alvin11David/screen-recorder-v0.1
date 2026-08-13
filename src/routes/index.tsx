@@ -1235,7 +1235,7 @@ function RecordingResultPanel({
           ],
         });
         const writable = await handle.createWritable();
-        await writable.write(result.blob);
+        await writable.write(blob);
         await writable.close();
         setSaveState("done");
         return;
@@ -1247,7 +1247,7 @@ function RecordingResultPanel({
       }
     }
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(result.blob);
+    a.href = URL.createObjectURL(blob);
     a.download = suggestedName;
     document.body.appendChild(a);
     a.click();
