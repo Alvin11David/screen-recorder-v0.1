@@ -1224,21 +1224,22 @@ export function useScreenRecorder() {
       const interrupted = reason === "track-ended";
       const empty =
         interrupted &&
-        (duration < MIN_MEANINGFUL_DURATION || file.blob.size < MIN_MEANINGFUL_BYTES);
+        (duration < MIN_MEANINGFUL_DURATION || file.sizeBytes < MIN_MEANINGFUL_BYTES);
       if (empty) {
+        deleteNativeRecording(file.filePath);
         setError(
           "Screen recording stopped before anything could be captured, so nothing was saved.",
         );
         return;
       }
-      const url = URL.createObjectURL(file.blob);
       setResult({
-        url,
-        blob: file.blob,
+        url: file.url,
+        blob: null,
+        nativeFilePath: file.filePath,
         durationSeconds: duration,
         width: file.width,
         height: file.height,
-        sizeBytes: file.blob.size,
+        sizeBytes: file.sizeBytes,
         createdAt: new Date(),
         mimeType: file.mimeType,
         fileName: defaultRecordingName(new Date()),
