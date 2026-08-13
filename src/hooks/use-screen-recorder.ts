@@ -1197,6 +1197,9 @@ export function useScreenRecorder() {
       return;
     }
     try {
+      const previousPath = nativeFilePathRef.current;
+      nativeFilePathRef.current = null;
+      if (previousPath) deleteNativeRecording(previousPath);
       await startNativeRecorder({ recordAudio: includeAudio, format });
       nativeRecordingRef.current = true;
       setNativeRecording(true);
