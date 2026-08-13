@@ -1216,6 +1216,7 @@ function RecordingResultPanel({
   const handleSave = async () => {
     setSaveState("saving");
     const suggestedName = buildFileName(result.fileName, result.mimeType, result.createdAt);
+    const blob = await resolveRecordingBlob(result);
     const picker = window.showSaveFilePicker;
     if (typeof picker === "function") {
       try {
