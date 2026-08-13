@@ -1228,11 +1228,13 @@ export function useScreenRecorder() {
         (duration < MIN_MEANINGFUL_DURATION || file.sizeBytes < MIN_MEANINGFUL_BYTES);
       if (empty) {
         deleteNativeRecording(file.filePath);
+        nativeFilePathRef.current = null;
         setError(
           "Screen recording stopped before anything could be captured, so nothing was saved.",
         );
         return;
       }
+      nativeFilePathRef.current = file.filePath;
       setResult({
         url: file.url,
         blob: null,
