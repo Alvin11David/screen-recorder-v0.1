@@ -58,21 +58,34 @@ export async function startNativeScreenRecording(
 
 export async function stopNativeScreenRecording(): Promise<NativeScreenRecording> {
   const res = await ScreenRecorder.stop();
-  const read = await Filesystem.readFile({ path: res.path, directory: Directory.Cache });
-  const data = typeof read.data === "string" ? read.data : "";
-  const bytes = base64ToBytes(data);
-  const mimeType = res.mimeType || "video/mp4";
-  const buffer = new ArrayBuffer(bytes.length);
-  new Uint8Array(buffer).set(bytes);
-  const blob = new Blob([buffer], { type: mimeType });
-  Filesystem.deleteFile({ path: res.path, directory: Directory.Cache }).catch(() => {});
+  const readUri = await Filesystem.getUri({ path: res.path, directory: Directory.Cache });
+  const stat = await Filesystem.stat({ path: res.path, directory: Directory.Cache });
   return {
-    blob,
-    mimeType,
+    url: Capacitor.convertFileSrc(readUri.uri),
+    filePath: res.path,
+    mimeType: res.mimeType || "video/mp4",
     width: res.width,
     height: res.height,
     durationMs: res.durationMs,
+    sizeBytes: stat.size,
   };
+}
+
+export async function readNativeRecordingBlob(filePath: string): Promise<Blob> {
+  const read = await Filesystem.readFile({ path: filePath, directory: Directory.Cache });
+  const data = typeof read.data === "string" ? read.data : "";
+  const bytes = base64ToBytes(data);
+  const buffer = new ArrayBuffer(bytes.length);
+  new Uint8Array(buffer).set(bytes);
+  return new Blob([buffer], { type: "video/mp4" });
+}
+
+export async function deleteNativeRecording(filePath: string): Promise<void> {
+  try {
+    await Filesystem.deleteFile({ path: filePath, directory: Directory.Cache });
+  } catch {
+    // ignore cleanup errors
+  }
 }
 
 export async function cancelNativeScreenRecording(): Promise<void> {
