@@ -14,7 +14,8 @@ export function RecordingInfo({ result, onReset }: Props) {
 
   const handleSave = async () => {
     setSaveState("saving");
-    const outcome = await saveRecording(result.blob, result.createdAt);
+    const blob = await resolveRecordingBlob(result);
+    const outcome = await saveRecording(blob, result.createdAt);
     setSaveState(outcome === "cancelled" ? "idle" : "done");
   };
 
