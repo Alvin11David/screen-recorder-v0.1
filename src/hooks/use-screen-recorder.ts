@@ -1410,7 +1410,12 @@ export function useScreenRecorder() {
   );
 
   const reset = useCallback(() => {
-    if (result?.url) URL.revokeObjectURL(result.url);
+    if (result?.url?.startsWith("blob:")) URL.revokeObjectURL(result.url);
+    const nativePath = result?.nativeFilePath ?? nativeFilePathRef.current;
+    if (nativePath) {
+      nativeFilePathRef.current = null;
+      deleteNativeRecording(nativePath);
+    }
     setResult(null);
     setElapsed(0);
     setCropRect(null);
@@ -1426,6 +1431,10 @@ export function useScreenRecorder() {
       if (nativeRecordingRef.current) {
         nativeRecordingRef.current = false;
         cancelNativeScreenRecording();
+      }
+      if (nativeFilePathRef.current) {
+        deleteNativeRecording(nativeFilePathRef.current);
+        nativeFilePathRef.current = null;
       }
       if (recorderRef.current && recorderRef.current.state !== "inactive") {
         recorderRef.current.stop();
