@@ -49,6 +49,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useDrive } from "@/hooks/use-drive";
 import {
   useScreenRecorder,
+  resolveRecordingBlob,
   type CaptureSurface,
   type CaptureMode,
   type RecordingResult,
