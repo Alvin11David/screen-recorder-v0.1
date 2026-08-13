@@ -1624,6 +1624,18 @@ function Index() {
 
   const resultRef = useRef(result);
   resultRef.current = result;
+
+  const openEditor = useCallback(async () => {
+    if (!result) return;
+    try {
+      const blob = await resolveRecordingBlob(result);
+      setEditorBlob(blob);
+    } catch (err) {
+      console.info(
+        `[editor] failed to load recording: ${err instanceof Error ? err.message : err}`,
+      );
+    }
+  }, [result]);
   const historySavedKeyRef = useRef<string | null>(null);
   const autoUploadedKeyRef = useRef<string | null>(null);
   const cloudSyncRef = useRef<{ entryId: number; nameAtUpload: string } | null>(null);
