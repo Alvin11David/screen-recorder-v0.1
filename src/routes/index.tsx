@@ -2620,7 +2620,7 @@ function Index() {
               <RecordingResultPanel
                 result={result}
                 onReset={reset}
-                onEdit={() => setEditorBlob(result.blob)}
+                onEdit={openEditor}
                 onRename={handleRename}
                 onDriveSaved={(entryId, nameAtUpload) =>
                   (cloudSyncRef.current = { entryId, nameAtUpload })
