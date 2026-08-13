@@ -1809,6 +1809,7 @@ function Index() {
     stopRecording,
     cancelCountdown,
     reset,
+    openEditor,
     setAnnotationsEnabled,
     setupAnnotationCanvas,
   ]);
