@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import type { RecordingResult } from "@/hooks/use-screen-recorder";
+import { resolveRecordingBlob } from "@/hooks/use-screen-recorder";
 import {
   getDriveAuthUrl,
   getDriveAccessToken,
