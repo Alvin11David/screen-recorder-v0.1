@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Download, Monitor, Wifi, Zap, X } from "lucide-react";
 
+import { isAndroid } from "@/lib/platform";
+
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
@@ -23,6 +25,8 @@ export function PwaInstallPrompt() {
   useEffect(() => {
     // Already installed as PWA — don't show
     if (window.matchMedia("(display-mode: standalone)").matches) return;
+    // Android gets the native APK prompt instead
+    if (isAndroid()) return;
 
     const handler = (e: Event) => {
       e.preventDefault();

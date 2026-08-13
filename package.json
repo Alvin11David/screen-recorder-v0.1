@@ -7,6 +7,7 @@
     "dev": "vite dev",
     "build": "vite build && node scripts/generate-sw.mjs",
     "build:native": "node scripts/build-native.mjs",
+    "build:apk": "node scripts/build-apk.mjs",
     "build:dev": "vite build --mode development && node scripts/generate-sw.mjs",
     "preview": "vite preview",
     "lint": "eslint .",

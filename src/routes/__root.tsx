@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "@/hooks/use-auth";
 import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
+import { AndroidApkPrompt } from "@/components/AndroidApkPrompt";
 
 function NotFoundComponent() {
   return (
@@ -211,6 +212,7 @@ function RootComponent() {
         <OfflineIndicator />
         <ServiceWorkerRegister />
         <PwaInstallPrompt />
+        <AndroidApkPrompt />
         <Outlet />
       </AuthProvider>
     </QueryClientProvider>

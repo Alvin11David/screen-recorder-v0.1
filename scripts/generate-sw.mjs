@@ -29,6 +29,7 @@ const files = walk(CLIENT_DIR);
 const precache = files.filter(
   (f) =>
     !f.endsWith(".map") &&
+    !f.endsWith(".apk") &&
     !f.endsWith("sw.js") &&
     !f.endsWith("registerSW.js") &&
     !f.startsWith("/server") &&
