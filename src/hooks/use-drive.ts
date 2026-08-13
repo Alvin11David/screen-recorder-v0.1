@@ -69,7 +69,8 @@ export function useDrive() {
       }
       const fileName = buildFileName(result.fileName, result.mimeType, result.createdAt);
       console.info(`[use-drive] saveToDrive: upload "${fileName}" (${result.sizeBytes} bytes)`);
-      const { fileId, webViewLink } = await uploadRecordingToDrive(result.blob, token, fileName);
+      const blob = await resolveRecordingBlob(result);
+      const { fileId, webViewLink } = await uploadRecordingToDrive(blob, token, fileName);
       console.info(`[use-drive] uploaded fileId=${fileId}`);
       const entry = await createRecordingEntry({
         driveFileId: fileId,
