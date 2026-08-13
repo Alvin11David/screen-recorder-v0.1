@@ -5,7 +5,7 @@ import { Download, MonitorSmartphone, Smartphone, Wifi, X, Zap } from "lucide-re
 import { isAndroid } from "@/lib/platform";
 import { isNativeAndroid } from "@/lib/native";
 
-const APK_URL = "/ScreenFlow.apk";
+const APK_URL = "/install";
 const DISMISS_KEY = "screenflow:apk-prompt-dismissed";
 
 const PERKS = [
