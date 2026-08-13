@@ -71,13 +71,13 @@ export async function stopNativeScreenRecording(): Promise<NativeScreenRecording
   };
 }
 
-export async function readNativeRecordingBlob(filePath: string): Promise<Blob> {
+export async function readNativeRecordingBlob(filePath: string, mimeType?: string): Promise<Blob> {
   const read = await Filesystem.readFile({ path: filePath, directory: Directory.Cache });
   const data = typeof read.data === "string" ? read.data : "";
   const bytes = base64ToBytes(data);
   const buffer = new ArrayBuffer(bytes.length);
   new Uint8Array(buffer).set(bytes);
-  return new Blob([buffer], { type: "video/mp4" });
+  return new Blob([buffer], { type: mimeType || "video/mp4" });
 }
 
 export async function deleteNativeRecording(filePath: string): Promise<void> {
