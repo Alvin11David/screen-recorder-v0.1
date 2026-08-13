@@ -1732,7 +1732,7 @@ function Index() {
             break;
           case "e":
             e.preventDefault();
-            if (result) setEditorBlob(result.blob);
+            if (result) openEditor();
             break;
           case "t":
             e.preventDefault();
