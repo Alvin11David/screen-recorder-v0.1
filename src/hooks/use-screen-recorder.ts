@@ -12,6 +12,8 @@ import {
   startNativeScreenRecording as startNativeRecorder,
   stopNativeScreenRecording as stopNativeRecorder,
   cancelNativeScreenRecording,
+  deleteNativeRecording,
+  readNativeRecordingBlob,
 } from "../lib/native-recorder";
 
 export type RecorderStatus = "idle" | "countdown" | "crop" | "multi-setup" | "recording" | "paused";
