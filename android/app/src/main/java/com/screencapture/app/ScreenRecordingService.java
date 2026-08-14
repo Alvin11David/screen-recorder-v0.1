@@ -441,6 +441,7 @@ public class ScreenRecordingService extends Service {
         if (recording) {
             finishRecording(true);
         }
+        stopPreview();
         if (mediaProjection != null) {
             mediaProjection.stop();
             mediaProjection = null;
