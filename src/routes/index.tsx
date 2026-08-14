@@ -2066,7 +2066,10 @@ function Index() {
         className="mx-auto max-w-5xl px-4 py-6 md:py-12"
       >
         {/* ── Header ── */}
-        <motion.div variants={fadeUp} className="flex flex-wrap items-center justify-between gap-3 mb-8 md:mb-12">
+        <motion.div
+          variants={fadeUp}
+          className="flex flex-wrap items-center justify-between gap-3 mb-8 md:mb-12"
+        >
           <div className="flex items-center gap-2.5">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-primary shadow-[0_0_20px_-4px_oklch(0.74_0.15_222/0.3)]">
               <ScreenFlowLogo className="h-4 w-4 text-white" />
