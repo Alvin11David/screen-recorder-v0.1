@@ -1654,11 +1654,11 @@ function Index() {
 
   const beginRecording = useCallback(() => {
     if (source === "camera") startCameraRecording();
-    else startRecording(source);
+    else startRecording(source === "region" ? "monitor" : source);
   }, [source, startRecording, startCameraRecording]);
 
   useEffect(() => {
-    if (isNative && source !== "monitor" && source !== "camera") {
+    if (isNative && source !== "monitor" && source !== "camera" && source !== "region") {
       setSource("monitor");
     }
   }, [isNative, source]);
