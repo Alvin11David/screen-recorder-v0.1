@@ -2300,6 +2300,7 @@ function Index() {
                 }}
                 disabled={!isIdle}
                 mobile={isMobile}
+                includeCamera={isNative}
                 disabledIds={isNative ? ["window", "browser", "multi-monitor"] : undefined}
               />
               {screenUnsupported && androidStandalone && (
