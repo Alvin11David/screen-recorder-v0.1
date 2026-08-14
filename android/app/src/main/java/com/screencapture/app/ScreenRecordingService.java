@@ -49,6 +49,10 @@ public class ScreenRecordingService extends Service {
     public static final String EXTRA_RECORD_AUDIO = "recordAudio";
     public static final String EXTRA_RECORD_FORMAT = "recordFormat";
 
+    private static final String TAG = "ScreenFlowRecorder";
+    private static final int PREVIEW_MAX_DIMENSION = 640;
+    private static final int PREVIEW_JPEG_QUALITY = 55;
+
     private static volatile boolean recording = false;
     private static volatile CompletableFuture<RecordingResult> pendingResult;
 
@@ -59,6 +63,12 @@ public class ScreenRecordingService extends Service {
     private int height;
     private long startTimeMs;
     private FormatSpec formatSpec;
+
+    private ImageReader previewReader;
+    private VirtualDisplay previewDisplay;
+    private HandlerThread previewThread;
+    private Handler previewHandler;
+    private volatile boolean previewActive;
 
     public static class RecordingResult {
         public final String fileName;
