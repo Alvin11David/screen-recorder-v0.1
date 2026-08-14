@@ -142,6 +142,36 @@ const SOURCES: {
   },
 ];
 
+const MOBILE_SOURCES: {
+  id: RecordSource;
+  label: string;
+  icon: typeof Monitor;
+  description: string;
+  tip: string;
+}[] = [
+  {
+    id: "monitor",
+    label: "Entire Screen",
+    icon: Monitor,
+    description: "Capture everything on your phone's display.",
+    tip: "Records your full screen in one go.",
+  },
+  {
+    id: "region",
+    label: "Select Region",
+    icon: Crop,
+    description: "Choose a specific area of the screen.",
+    tip: "Drag on screen to pick the area to record.",
+  },
+  {
+    id: "window",
+    label: "Specific Screen",
+    icon: AppWindow,
+    description: "Pick one app or screen to record.",
+    tip: "Choose from the picker that appears.",
+  },
+];
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -642,12 +672,14 @@ function SourceCards({
   onSelect,
   disabled,
   disabledIds = [],
+  mobile = false,
 }: {
   value: RecordSource;
   onChange: (v: RecordSource) => void;
   onSelect?: (v: RecordSource) => void;
   disabled?: boolean;
   disabledIds?: RecordSource[];
+  mobile?: boolean;
 }) {
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
