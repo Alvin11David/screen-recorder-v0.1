@@ -707,82 +707,80 @@ function SourceCards({
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-      {(
-        mobile
-          ? includeCamera
-            ? [...MOBILE_SOURCES, SOURCES.find((s) => s.id === "camera")!]
-            : MOBILE_SOURCES
-          : SOURCES
+      {(mobile
+        ? includeCamera
+          ? [...MOBILE_SOURCES, SOURCES.find((s) => s.id === "camera")!]
+          : MOBILE_SOURCES
+        : SOURCES
       ).map(({ id, label, icon: Icon, description, tip }, idx) => {
-          const active = value === id;
-          return (
-            <motion.div
-              key={id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.06, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-              className="perspective-[600px]"
+        const active = value === id;
+        return (
+          <motion.div
+            key={id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.06, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+            className="perspective-[600px]"
+          >
+            <button
+              type="button"
+              disabled={disabled || disabledIds.includes(id)}
+              onClick={() => {
+                onChange(id);
+                onSelect?.(id);
+              }}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+              className={cn(
+                "relative flex flex-col items-start gap-2.5 rounded-xl p-4 text-left w-full h-28 sm:h-36 md:h-[150px] transition-all duration-200 ease-out text-balance overflow-hidden",
+                "bg-white/[0.03] backdrop-blur-sm border border-white/[0.06]",
+                "hover:border-white/[0.18] hover:bg-white/[0.06]",
+                "disabled:cursor-not-allowed disabled:opacity-30",
+                active && [
+                  "bg-white/[0.06] border-primary/30",
+                  "shadow-[0_0_30px_-8px_oklch(0.74_0.15_222/0.25)]",
+                ],
+              )}
             >
-              <button
-                type="button"
-                disabled={disabled || disabledIds.includes(id)}
-                onClick={() => {
-                  onChange(id);
-                  onSelect?.(id);
-                }}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
-                className={cn(
-                  "relative flex flex-col items-start gap-2.5 rounded-xl p-4 text-left w-full h-28 sm:h-36 md:h-[150px] transition-all duration-200 ease-out text-balance overflow-hidden",
-                  "bg-white/[0.03] backdrop-blur-sm border border-white/[0.06]",
-                  "hover:border-white/[0.18] hover:bg-white/[0.06]",
-                  "disabled:cursor-not-allowed disabled:opacity-30",
-                  active && [
-                    "bg-white/[0.06] border-primary/30",
-                    "shadow-[0_0_30px_-8px_oklch(0.74_0.15_222/0.25)]",
-                  ],
-                )}
-              >
-                {active && (
-                  <motion.div
-                    layoutId="source-glow"
-                    className="absolute inset-0 -z-10 rounded-xl bg-gradient-to-b from-primary/[0.08] to-transparent"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
-                )}
-                <div className="flex items-center gap-3 w-full">
+              {active && (
+                <motion.div
+                  layoutId="source-glow"
+                  className="absolute inset-0 -z-10 rounded-xl bg-gradient-to-b from-primary/[0.08] to-transparent"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
+              <div className="flex items-center gap-3 w-full">
+                <span
+                  className={cn(
+                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300",
+                    active
+                      ? "bg-gradient-primary text-white shadow-[0_0_20px_-4px_oklch(0.74_0.15_222/0.35)] ring-1 ring-white/10"
+                      : "bg-white/[0.04] text-white/35 ring-1 ring-white/[0.04]",
+                  )}
+                >
+                  <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
+                </span>
+                <div className="min-w-0">
                   <span
                     className={cn(
-                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300",
-                      active
-                        ? "bg-gradient-primary text-white shadow-[0_0_20px_-4px_oklch(0.74_0.15_222/0.35)] ring-1 ring-white/10"
-                        : "bg-white/[0.04] text-white/35 ring-1 ring-white/[0.04]",
+                      "block font-display text-sm font-semibold transition-colors truncate",
+                      active ? "text-white" : "text-white/55",
                     )}
                   >
-                    <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
+                    {label}
                   </span>
-                  <div className="min-w-0">
-                    <span
-                      className={cn(
-                        "block font-display text-sm font-semibold transition-colors truncate",
-                        active ? "text-white" : "text-white/55",
-                      )}
-                    >
-                      {label}
-                    </span>
-                    <span className="block text-[10px] text-white/25 mt-0.5 leading-tight hidden md:block line-clamp-2 min-h-[25px]">
-                      {description}
-                    </span>
-                  </div>
+                  <span className="block text-[10px] text-white/25 mt-0.5 leading-tight hidden md:block line-clamp-2 min-h-[25px]">
+                    {description}
+                  </span>
                 </div>
-                <span className="text-[10px] text-white/15 leading-tight italic hidden sm:block line-clamp-2 mt-auto min-h-[25px]">
-                  {tip}
-                </span>
-              </button>
-            </motion.div>
-          );
-        },
-      )}
+              </div>
+              <span className="text-[10px] text-white/15 leading-tight italic hidden sm:block line-clamp-2 mt-auto min-h-[25px]">
+                {tip}
+              </span>
+            </button>
+          </motion.div>
+        );
+      })}
     </div>
   );
 }
