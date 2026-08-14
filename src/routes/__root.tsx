@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "@/hooks/use-auth";
 import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
 import { AndroidApkPrompt } from "@/components/AndroidApkPrompt";
+import { AndroidDownloadButton } from "@/components/AndroidDownloadButton";
 
 function NotFoundComponent() {
   return (
