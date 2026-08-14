@@ -96,7 +96,7 @@ import { TeleprompterOverlay } from "@/components/recorder/TeleprompterOverlay";
 import { ScreenFlowLogo } from "@/components/ui/ScreenFlowLogo";
 import ParticleBackground from "@/components/ui/particle-background";
 
-type RecordSource = CaptureSurface | "camera";
+type RecordSource = CaptureSurface | "camera" | "region";
 
 const SOURCES: {
   id: RecordSource;
