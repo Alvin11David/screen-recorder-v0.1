@@ -29,8 +29,43 @@ import java.util.concurrent.CompletableFuture;
 )
 public class ScreenRecorderPlugin extends Plugin {
 
+    private static final String EVENT_PREVIEW_FRAME = "screenflow:previewFrame";
+    private static final String EVENT_PREVIEW_STOPPED = "screenflow:previewStopped";
+
+    private static ScreenRecorderPlugin instance;
+
     private boolean pendingRecordAudio = true;
     private String pendingFormat = "mp4";
+
+    @Override
+    public void load() {
+        instance = this;
+        super.load();
+    }
+
+    @Override
+    protected void handleOnDestroy() {
+        if (instance == this) {
+            instance = null;
+        }
+        super.handleOnDestroy();
+    }
+
+    /** Streams a JPEG preview frame to the WebView while native recording is active. */
+    static void emitPreview(String base64) {
+        ScreenRecorderPlugin plugin = instance;
+        if (plugin == null) return;
+        JSObject payload = new JSObject();
+        payload.put("data", base64);
+        plugin.notifyListeners(EVENT_PREVIEW_FRAME, payload);
+    }
+
+    /** Notifies the WebView that the live native preview has ended. */
+    static void emitPreviewStopped() {
+        ScreenRecorderPlugin plugin = instance;
+        if (plugin == null) return;
+        plugin.notifyListeners(EVENT_PREVIEW_STOPPED, new JSObject());
+    }
 
     @PluginMethod
     public void start(PluginCall call) {
