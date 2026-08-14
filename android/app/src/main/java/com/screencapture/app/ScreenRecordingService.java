@@ -70,6 +70,7 @@ public class ScreenRecordingService extends Service {
     private HandlerThread previewThread;
     private Handler previewHandler;
     private volatile boolean previewActive;
+    private long previewLastFrameMs;
 
     public static class RecordingResult {
         public final String fileName;
