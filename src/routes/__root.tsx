@@ -214,6 +214,7 @@ function RootComponent() {
         <ServiceWorkerRegister />
         <PwaInstallPrompt />
         <AndroidApkPrompt />
+        <AndroidDownloadButton />
         <Outlet />
       </AuthProvider>
     </QueryClientProvider>
