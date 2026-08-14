@@ -52,6 +52,7 @@ public class ScreenRecordingService extends Service {
     private static final String TAG = "ScreenFlowRecorder";
     private static final int PREVIEW_MAX_DIMENSION = 640;
     private static final int PREVIEW_JPEG_QUALITY = 55;
+    private static final long PREVIEW_FRAME_INTERVAL_MS = 90;
 
     private static volatile boolean recording = false;
     private static volatile CompletableFuture<RecordingResult> pendingResult;
