@@ -46,6 +46,7 @@ import {
   Upload,
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useDrive } from "@/hooks/use-drive";
 import {
   useScreenRecorder,
@@ -704,7 +705,7 @@ function SourceCards({
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-      {SOURCES.map(({ id, label, icon: Icon, description, tip }, idx) => {
+      {(mobile ? MOBILE_SOURCES : SOURCES).map(({ id, label, icon: Icon, description, tip }, idx) => {
         const active = value === id;
         return (
           <motion.div
