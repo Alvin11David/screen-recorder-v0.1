@@ -2316,9 +2316,8 @@ function Index() {
                   animate={{ opacity: 1 }}
                   className="mt-3 rounded-xl bg-amber-500/[0.07] px-4 py-3 text-xs leading-relaxed text-amber-200/70 ring-1 ring-amber-500/20"
                 >
-                  Screen capture isn't supported in this browser. Record with the{" "}
-                  <span className="font-semibold text-amber-200">Phone Camera</span>, or use your
-                  phone's built-in screen recorder and upload the video below.
+                  Screen capture isn't supported in this browser. Use your phone's built-in
+                  screen recorder and upload the video below.
                 </motion.p>
               )}
             </motion.div>
@@ -2360,7 +2359,7 @@ function Index() {
 
         {/* ── Capture mode ── */}
         <AnimatePresence>
-          {isIdle && !result && !isNative && source !== "multi-monitor" && source !== "camera" && (
+          {isIdle && !result && !isNative && !isMobile && source !== "multi-monitor" && source !== "camera" && (
             <motion.div
               key="capture-mode"
               initial={{ opacity: 0, y: 12 }}
