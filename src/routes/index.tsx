@@ -466,26 +466,11 @@ function RecordingPreview({
             </div>
           )}
 
-          {/* ── Live state ── */}
+          {/* ── Live state (native recording) ── */}
           {isLive && nativeRecording && (
-            <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-black/60">
+            <div className="relative h-full w-full overflow-hidden bg-black/60">
               <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_3px,oklch(0_0_0/0.04)_3px,oklch(0_0_0/0.04)_4px)]" />
-              <motion.div
-                animate={{ scale: [1, 1.12, 1], opacity: [0.5, 0.2, 0.5] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="relative flex h-20 w-20 items-center justify-center rounded-full border border-red-500/30"
-              >
-                <span className="relative flex h-4 w-4">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
-                  <span className="relative inline-flex h-4 w-4 rounded-full bg-red-500" />
-                </span>
-              </motion.div>
-              <p className="relative mt-4 font-display text-sm font-semibold text-white/70 tracking-wide">
-                Recording entire screen
-              </p>
-              <p className="relative mt-1 text-[11px] text-white/30 leading-relaxed text-center max-w-[240px]">
-                Live preview isn't available for native recordings. Tap Stop when you're done.
-              </p>
+              <NativeScreenPreview paused={isPaused} />
             </div>
           )}
 
