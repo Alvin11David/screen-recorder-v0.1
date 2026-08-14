@@ -334,6 +334,9 @@ public class ScreenRecordingService extends Service {
 
     private void onPreviewFrame(ImageReader reader) {
         if (!previewActive) return;
+        long now = SystemClock.elapsedRealtime();
+        if (now - previewLastFrameMs < PREVIEW_FRAME_INTERVAL_MS) return;
+        previewLastFrameMs = now;
         Image image = null;
         try {
             image = reader.acquireLatestImage();
