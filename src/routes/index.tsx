@@ -2075,7 +2075,7 @@ function Index() {
               ScreenFlow
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center justify-end gap-2">
             {/* History button */}
             <button
               onClick={() => setShowHistory(true)}
