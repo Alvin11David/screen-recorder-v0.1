@@ -1566,6 +1566,7 @@ function TrustMetrics() {
 }
 
 function Index() {
+  const isMobile = useIsMobile();
   const [source, setSource] = useState<RecordSource>("monitor");
   const [whiteboardActive, setWhiteboardActive] = useState(false);
   const [spotlightActive, setSpotlightActive] = useState(false);
