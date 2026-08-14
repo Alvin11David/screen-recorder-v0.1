@@ -674,6 +674,7 @@ function SourceCards({
   disabled,
   disabledIds = [],
   mobile = false,
+  includeCamera = false,
 }: {
   value: RecordSource;
   onChange: (v: RecordSource) => void;
@@ -681,6 +682,7 @@ function SourceCards({
   disabled?: boolean;
   disabledIds?: RecordSource[];
   mobile?: boolean;
+  includeCamera?: boolean;
 }) {
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
