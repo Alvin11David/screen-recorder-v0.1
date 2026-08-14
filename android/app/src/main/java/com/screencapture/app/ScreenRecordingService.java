@@ -256,6 +256,7 @@ public class ScreenRecordingService extends Service {
         long durationMs = SystemClock.elapsedRealtime() - startTimeMs;
         recording = false;
 
+        stopPreview();
         releaseRecorder();
         if (mediaProjection != null) {
             mediaProjection.stop();
