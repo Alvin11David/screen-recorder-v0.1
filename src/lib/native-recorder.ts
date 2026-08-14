@@ -1,4 +1,5 @@
 import { Capacitor, registerPlugin } from "@capacitor/core";
+import type { PluginListenerHandle } from "@capacitor/core";
 import { Directory, Filesystem } from "@capacitor/filesystem";
 import type { RecordingFormat } from "./recording-formats";
 
@@ -13,6 +14,25 @@ export interface NativePreviewSubscription {
   remove: () => void;
 }
 
+interface ScreenRecorderPlugin {
+  start(options: NativeScreenRecorderStartOptions): Promise<void>;
+  stop(): Promise<{
+    path: string;
+    mimeType: string;
+    width: number;
+    height: number;
+    durationMs: number;
+  }>;
+  cancel(): Promise<void>;
+  isRecording(): Promise<{ recording: boolean }>;
+  addListener(
+    eventName: string,
+    listenerFunc: (data: NativePreviewFrame) => void,
+  ): Promise<PluginListenerHandle>;
+}
+
+const ScreenRecorder = registerPlugin<ScreenRecorderPlugin>("ScreenRecorder");
+
 /**
  * Subscribes to live preview frames streamed by the native Android
  * ScreenRecorder service. `onFrame` receives a `data:image/jpeg;base64,...`
@@ -23,14 +43,11 @@ export async function subscribeNativePreview(
   onStopped?: () => void,
 ): Promise<NativePreviewSubscription> {
   if (!nativeScreenRecordingAvailable()) return { remove: () => {} };
-  const frameHandle = await Capacitor.addListener<NativePreviewFrame>(
-    PREVIEW_FRAME_EVENT,
-    (e) => {
-      if (e?.data) onFrame(`data:image/jpeg;base64,${e.data}`);
-    },
-  );
+  const frameHandle = await ScreenRecorder.addListener(PREVIEW_FRAME_EVENT, (e) => {
+    if (e?.data) onFrame(`data:image/jpeg;base64,${e.data}`);
+  });
   const stoppedHandle = onStopped
-    ? await Capacitor.addListener(PREVIEW_STOPPED_EVENT, onStopped)
+    ? await ScreenRecorder.addListener(PREVIEW_STOPPED_EVENT, () => onStopped())
     : null;
   return {
     remove: () => {
