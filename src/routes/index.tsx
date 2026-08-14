@@ -2285,8 +2285,12 @@ function Index() {
             >
               <SourceCards
                 value={source}
-                onChange={setSource}
+                onChange={(v) => {
+                  setSource(v);
+                  setCaptureMode(v === "region" ? "region" : "full");
+                }}
                 disabled={!isIdle}
+                mobile={isMobile}
                 disabledIds={isNative ? ["window", "browser", "multi-monitor"] : undefined}
               />
               {screenUnsupported && androidStandalone && (
