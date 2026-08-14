@@ -31,8 +31,6 @@ interface ScreenRecorderPlugin {
   ): Promise<PluginListenerHandle>;
 }
 
-const ScreenRecorder = registerPlugin<ScreenRecorderPlugin>("ScreenRecorder");
-
 /**
  * Subscribes to live preview frames streamed by the native Android
  * ScreenRecorder service. `onFrame` receives a `data:image/jpeg;base64,...`
