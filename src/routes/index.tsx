@@ -77,6 +77,7 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { ClickFX } from "@/components/recorder/ClickFX";
 import { CursorFX } from "@/components/recorder/CursorFX";
+import { NativeScreenPreview } from "@/components/recorder/NativeScreenPreview";
 import { WhiteboardMode } from "@/components/recorder/WhiteboardMode";
 import { CountdownOverlay } from "@/components/recorder/CountdownOverlay";
 import { CameraOverlay } from "@/components/recorder/CameraOverlay";
