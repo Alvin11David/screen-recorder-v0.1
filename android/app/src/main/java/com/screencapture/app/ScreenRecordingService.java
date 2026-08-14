@@ -236,6 +236,7 @@ public class ScreenRecordingService extends Service {
 
             recording = true;
             startTimeMs = SystemClock.elapsedRealtime();
+            startPreview();
             Log.i(TAG, "Recording started: " + fileName + " " + width + "x" + height);
         } catch (Exception ex) {
             Log.e(TAG, "Failed to start recording", ex);
