@@ -290,6 +290,103 @@ public class ScreenRecordingService extends Service {
         }
     }
 
+    /**
+     * Creates a low-resolution second virtual display and streams JPEG frames to
+     * the WebView via the ScreenRecorder plugin so the app can show a live preview
+     * while the native foreground service records to disk.
+     */
+    private void startPreview() {
+        if (previewActive) return;
+        try {
+            int pvW = width;
+            int pvH = height;
+            int maxDim = Math.max(width, height);
+            if (maxDim > PREVIEW_MAX_DIMENSION) {
+                pvW = Math.round((float) width * PREVIEW_MAX_DIMENSION / maxDim);
+                pvH = Math.round((float) height * PREVIEW_MAX_DIMENSION / maxDim);
+            }
+            if (pvW % 2 != 0) pvW -= 1;
+            if (pvH % 2 != 0) pvH -= 1;
+            if (pvW < 2 || pvH < 2) return;
+
+            previewThread = new HandlerThread("ScreenFlowPreview");
+            previewThread.start();
+            previewHandler = new Handler(previewThread.getLooper());
+
+            previewReader = ImageReader.newInstance(pvW, pvH, PixelFormat.RGBA_8888, 3);
+            previewReader.setOnImageAvailableListener(this::onPreviewFrame, previewHandler);
+
+            previewDisplay = mediaProjection.createVirtualDisplay(
+                    "ScreenFlowPreview",
+                    pvW, pvH,
+                    getResources().getDisplayMetrics().densityDpi,
+                    DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
+                    previewReader.getSurface(), null, previewHandler);
+            previewActive = true;
+            Log.i(TAG, "Preview started: " + pvW + "x" + pvH);
+        } catch (Exception ex) {
+            Log.w(TAG, "Preview unavailable: " + ex.getMessage());
+            stopPreview();
+        }
+    }
+
+    private void onPreviewFrame(ImageReader reader) {
+        if (!previewActive) return;
+        Image image = null;
+        try {
+            image = reader.acquireLatestImage();
+            if (image == null) return;
+
+            Image.Plane[] planes = image.getPlanes();
+            if (planes.length == 0) return;
+            Image.Plane plane = planes[0];
+            ByteBuffer buffer = plane.getBuffer();
+            int pixelStride = plane.getPixelStride();
+            int rowStride = plane.getRowStride();
+            int rowPadding = rowStride - pixelStride * image.getWidth();
+
+            int bmpWidth = image.getWidth() + rowPadding / pixelStride;
+            Bitmap bitmap = Bitmap.createBitmap(bmpWidth, image.getHeight(), Bitmap.Config.ARGB_8888);
+            bitmap.copyPixelsFromBuffer(buffer);
+            Bitmap cropped = Bitmap.createBitmap(bitmap, 0, 0, image.getWidth(), image.getHeight());
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream(64 * 1024);
+            cropped.compress(Bitmap.CompressFormat.JPEG, PREVIEW_JPEG_QUALITY, out);
+            String base64 = Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP);
+
+            cropped.recycle();
+            bitmap.recycle();
+
+            ScreenRecorderPlugin.emitPreview(base64);
+        } catch (Exception ex) {
+            Log.w(TAG, "Preview frame error", ex);
+        } finally {
+            if (image != null) image.close();
+        }
+    }
+
+    private void stopPreview() {
+        previewActive = false;
+        if (previewDisplay != null) {
+            try {
+                previewDisplay.release();
+            } catch (Exception ex) {
+                Log.w(TAG, "Preview display release failed", ex);
+            }
+            previewDisplay = null;
+        }
+        if (previewReader != null) {
+            previewReader.close();
+            previewReader = null;
+        }
+        if (previewThread != null) {
+            previewThread.quitSafely();
+            previewThread = null;
+        }
+        previewHandler = null;
+        ScreenRecorderPlugin.emitPreviewStopped();
+    }
+
     private void completeWithError(String message) {
         recording = false;
         CompletableFuture<RecordingResult> future = pendingResult;
